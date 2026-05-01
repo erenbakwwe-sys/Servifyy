@@ -545,7 +545,8 @@ function setupAIHandlers(userId, content) {
     
     // Try Gemini API first
     try {
-      html = await generateThemeWithAI(prompt, menuItems, userData?.restaurant?.name);
+      const themeLang = content.querySelector('#ai-lang')?.value || 'tr';
+      html = await generateThemeWithAI(prompt, menuItems, userData?.restaurant?.name, themeLang);
       showToast('AI tema başarıyla oluşturuldu! ✨', 'success');
     } catch (apiErr) {
       console.warn('Gemini API failed:', apiErr.message);
@@ -588,6 +589,12 @@ function setupAIHandlers(userId, content) {
         themeHtml: html,
         lastPrompt: prompt
       }, { merge: true });
+
+      // Update local cache so it persists when switching tabs
+      if (userData) {
+        userData.themeHtml = html;
+        userData.lastPrompt = prompt;
+      }
 
       // Update preview header
       const previewHeader = content.querySelector('.ai-preview-header');

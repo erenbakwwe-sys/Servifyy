@@ -115,6 +115,13 @@ function renderCustomTheme(container) {
   setupWaiterCall();
   updateFloatingCart(container);
   
+  // Listen for AI theme openCart event
+  try {
+    iframeDoc.addEventListener('openCart', () => {
+      openCartPanel();
+    });
+  } catch(e) {}
+  
   // Track active orders
   setupOrderTracking(container);
 }
@@ -406,9 +413,22 @@ function openCartPanel() {
               <div class="payment-label">${t('cash', 'customer')}</div>
             </div>
             <div class="payment-option" data-method="pos">
-              <div class="payment-icon">💳</div>
+              <div class="payment-icon">📲</div>
               <div class="payment-label">${t('creditCard', 'customer')}</div>
             </div>
+            <div class="payment-option" data-method="online">
+              <div class="payment-icon">💳</div>
+              <div class="payment-label">${t('onlinePos', 'customer') || 'Online POS'}</div>
+            </div>
+            <div class="payment-option" data-method="split">
+              <div class="payment-icon">✂️</div>
+              <div class="payment-label">${t('splitBill', 'customer') || 'Hesap Bölüşme'}</div>
+            </div>
+          </div>
+          <div id="split-bill-section" style="display:none; margin-top:12px; background:var(--bg-elevated); padding:16px; border-radius:12px;">
+            <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">Kaç kişiye bölünecek?</label>
+            <input type="number" id="split-count" class="input-field" min="2" max="20" value="2" style="background:var(--bg-primary); border:1px solid var(--border);">
+            <div style="font-size:0.95rem; color:var(--primary); margin-top:8px; font-weight:700;" id="split-amount">Kişi başı: ${formatCurrency(total / 2)}</div>
           </div>
         </div>
         <button class="btn btn-primary btn-block btn-lg" id="place-order-btn">
@@ -444,10 +464,26 @@ function openCartPanel() {
   });
 
   // Payment method selection
+  const splitSection = panel.querySelector('#split-bill-section');
+  const splitCount = panel.querySelector('#split-count');
+  const splitAmt = panel.querySelector('#split-amount');
+
+  if (splitCount) {
+    splitCount.addEventListener('input', () => {
+      const count = Math.max(1, parseInt(splitCount.value) || 1);
+      splitAmt.textContent = 'Kişi başı: ' + formatCurrency(total / count);
+    });
+  }
+
   panel.querySelectorAll('.payment-option').forEach(opt => {
     opt.addEventListener('click', () => {
       panel.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
+      if (opt.dataset.method === 'split') {
+        splitSection.style.display = 'block';
+      } else {
+        splitSection.style.display = 'none';
+      }
     });
   });
 
@@ -459,12 +495,22 @@ async function placeOrder(panel) {
   const paymentMethod = panel.querySelector('.payment-option.selected')?.dataset.method || 'cash';
   const orderNote = panel.querySelector('#order-note')?.value.trim() || '';
   const orderBtn = panel.querySelector('#place-order-btn');
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
   
+  const splitCountVal = paymentMethod === 'split' ? parseInt(panel.querySelector('#split-count').value) : null;
+
   orderBtn.disabled = true;
-  orderBtn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> Gönderiliyor...';
+  orderBtn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> İşleniyor...';
+
+  // Online Payment Simulation
+  if (paymentMethod === 'online') {
+    showToast('Sanal POS ekranına yönlendiriliyorsunuz...', 'info');
+    await new Promise(r => setTimeout(r, 1500));
+    // In a real app, redirect to Stripe/Iyzico here
+    showToast('Ödeme başarıyla alındı ✓', 'success');
+  }
 
   try {
-    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
     
     // Automatically flag priority if note contains keywords
     let priority = '';
@@ -477,6 +523,7 @@ async function placeOrder(panel) {
       items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
       total: total,
       paymentMethod: paymentMethod,
+      splitCount: splitCountVal,
       note: orderNote,
       priority: priority,
       status: 'new',

@@ -29,6 +29,13 @@ export function renderAIThemeContent(userData, userId) {
           </div>
           <p style="font-size:0.7rem;color:var(--text-muted);margin-top:8px;">⚠️ Firebase API key ile Gemini API key farklıdır. <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--primary-light);">aistudio.google.com/apikey</a> adresinden yeni bir key oluşturun.</p>
         </div>
+        <div style="display:flex;gap:10px;margin-bottom:8px;">
+          <select id="ai-lang" class="input-field" style="width:140px;padding:8px 12px;font-size:0.85rem;font-weight:600;">
+            <option value="tr">🇹🇷 Türkçe Menu</option>
+            <option value="en">🇬🇧 English Menu</option>
+            <option value="de">🇩🇪 Deutsch Menu</option>
+          </select>
+        </div>
         <textarea id="ai-prompt" placeholder="Örnek: Animasyonlu iPhone UI'sine benzer minimal bir menü arayüzü istiyorum. Kartlar yumuşak gölgeli, blur efektli, açılır-kapanır kategoriler olsun. Siyah arka plan üzerinde beyaz cam efektli kartlar...">${userData?.lastPrompt || ''}</textarea>
         <div class="ai-examples">
           <span class="ai-example-chip" data-prompt="iPhone iOS tarzı minimal menü. Blur glassmorphism kartlar, yumuşak animasyonlar, San Francisco fontu, açık gri arka plan, rounded köşeler, smooth geçişler, bottom navigation bar">📱 iOS Style</span>
@@ -57,63 +64,54 @@ export function renderAIThemeContent(userData, userId) {
     </div>`;
 }
 
-function buildSystemPrompt(menuItems, restaurantName) {
+function buildSystemPrompt(menuItems, restaurantName, lang) {
   const cats = [...new Set(menuItems.map(i => i.category || 'Genel'))];
   const sampleItems = menuItems.slice(0, 12);
   
-  return `Sen bir restoran dijital menü tasarımcısısın. Kullanıcının tarif ettiği konsepte göre TAM ve EKSIKSIZ bir HTML sayfası üreteceksin.
+  return `Sen üst düzey bir dijital menü UI/UX tasarımcısısın. Kullanıcının tarif ettiği konsepte göre MÜKEMMEL, TAM ve EKSİKSİZ bir HTML sayfası üreteceksin.
 
-KURALLAR:
-1. Çıktın SADECE HTML kodu olacak, başka hiçbir şey yazma. Markdown code fence kullanma.
-2. <!DOCTYPE html> ile başla, </html> ile bitir.
-3. Tüm CSS <style> tagı içinde, tüm JS <script> tagı içinde olacak.
-4. Kullanıcının istediği HER DETAYI uygula: animasyonlar, efektler, layout, renkler, fontlar.
-5. Google Fonts kullanabilirsin (link tag ile).
-6. Material Icons kullanabilirsin: <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-7. Responsive olmalı (mobil öncelikli).
-8. Menü öğeleri için aşağıdaki verileri kullan.
+HAYATİ KURALLAR (BUNLARA UYMAZSAN SİSTEM ÇÖKER):
+1. SADECE HTML kodu yazacaksın. Açıklama, "İşte kodunuz" gibi metinler ASLA YAZMA.
+2. <!DOCTYPE html> ile başla ve </html> ile bitir.
+3. ÇOK ÖNEMLİ: Menü öğelerini (ürünleri) JAVASCRIPT İLE RENDER ETMEYE ÇALIŞMA! JSON'u parse edip ekrana basmak siyah ekrana sebep oluyor. Bütün ürünleri DOĞRUDAN HTML İÇİNE statik kartlar (<div class="card"> vb.) olarak tek tek YAZACAKSIN.
+4. CSS'leri <style>, JS'leri <script> içine yaz. Harici JS kütüphanesi (React, Vue, jQuery vb) KULLANMA. Sadece saf (vanilla) JS ve CSS kullan.
+5. Menü arayüzündeki tüm butonları (Sepete Ekle, Garson Çağır, Tümü vb.) kesinlikle şu dilde yazmalısın: ${lang === 'en' ? 'İngilizce (English)' : lang === 'de' ? 'Almanca (Deutsch)' : 'Türkçe (Turkish)'}.
+6. Google Fonts ve Material Icons (<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">) kullan.
 
 RESTORAN: ${restaurantName || 'Restoran'}
 KATEGORİLER: ${cats.join(', ')}
-MENÜ ÖĞELERİ (JSON):
-${JSON.stringify(sampleItems.map(i => ({
-  id: i.id, name: i.name, description: i.description || '',
-  price: i.price || 0, category: i.category || 'Genel', emoji: i.emoji || '🍽️'
-})), null, 2)}
+MENÜ ÖĞELERİ (BUNLARI DOĞRUDAN HTML KARTLARI OLARAK KODUN İÇİNE GÖM):
+${sampleItems.map(i => `- [${i.category}] ${i.name} (${i.price} ₺) ${i.emoji} : ${i.description || ''}`).join('\n')}
 
-FONKSİYONEL GEREKSİNİMLER (bunları mutlaka ekle):
-- Kategori filtreleme (tümü + her kategori için buton)
-- Sepete ekleme butonu (her üründe + butonu)
-- Floating sepet barı (altta sabit, ürün sayısı ve toplam tutar gösterir)
-- Garson çağır butonu (sağ üstte sabit)
-- Fiyatlar ₺ formatında gösterilsin
-- Sepete eklenince buton kısa süre ✓ göstersin
-- Kartlara tıklama ve hover animasyonları olsun
+GEREKSİNİMLER:
+- Görsellik MUAZZAM olmalı. Kullanıcının konseptini %100 yansıt. (Örn: Cyberpunk ise neonlar, Minimal ise bol boşluk ve blur).
+- Hover animasyonları ve şık gölgeler kullan.
+- Kategorilere tıklayınca o kategoriye ait ürünler kalsın (bunu JS ile display:none yaparak sağla).
+- Sepete ekleme butonu (her üründe) ve sabit (fixed) bir "Sepeti Görüntüle" barı (ekranın altında) olsun.
+- Garson çağır butonu (sağ üstte).
 
-JAVASCRIPT FONKSİYONLARI (bu kodların İÇERİĞİNİ YAZ, sakın "..." bırakma, çalışan fonksiyonlar yaz):
-\`\`\`
+ZORUNLU JAVASCRIPT KODLARI (Aşağıdaki script'i doğrudan kullan, içindeki mantığı bozma):
+\`\`\`javascript
 let cart=[];
-// sepete ekle
 function ac(id,name,price){ 
   const e=cart.find(i=>i.id===id); if(e)e.qty++; else cart.push({id,name,price:parseFloat(price),qty:1}); uc();
+  // Butona tıklandığında görsel efekt (örn: renk değişimi) yapabilirsin.
 } 
-// sepet güncelle
 function uc(){ 
   const n=cart.reduce((s,i)=>s+i.qty,0), t=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  const cn=document.getElementById('cn'), tp=document.getElementById('tp'), fc=document.getElementById('fc');
-  if(cn) cn.textContent=n; if(tp) tp.textContent='₺'+t.toFixed(2);
-  if(fc) { if(n>0) fc.style.display='flex'; else fc.style.display='none'; }
+  const cn=document.getElementById('cn'); if(cn) cn.textContent=n;
+  const tp=document.getElementById('tp'); if(tp) tp.textContent=t.toFixed(2)+'₺';
+  const fc=document.getElementById('fc'); if(fc) fc.style.display = n>0 ? 'flex' : 'none';
 } 
-// kategori filtrele
-function fc(btn,cat){ 
-  document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on')); btn.classList.add('on');
-  document.querySelectorAll('.card').forEach(x=>{x.style.display=(cat==='all'||x.dataset.c===cat)?'block':'none'});
+function fc_cat(btn,cat){ 
+  document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
+  document.querySelectorAll('.product-card').forEach(x=>{ x.style.display = (cat==='all'||x.dataset.category===cat) ? 'block' : 'none'; });
 } 
-// garson çağır
 function callWaiter(){ alert('Garson çağrıldı!'); }
 \`\`\`
 
-ÖNEMLİ: Kullanıcının tarif ettiği tasarım konseptini %100 uygula. Animasyonlar, özel efektler, benzersiz layout - ne istenmişse hepsini yap. SIRADAN bir menü yapma, ÖZEL ve ETKİLEYİCİ bir deneyim yarat.`;
+DİKKAT: Ürün kartlarına 'product-card' class'ı ver ve 'data-category' attribute'una kategorisini yaz ki filtreleme çalışsın.
+Sepeti görüntüleme butonuna 'id="fc"' ver ve tıklandığında 'document.dispatchEvent(new Event("openCart"))' kodunu çalıştır ki ana sistem sepeti açabilsin.`;
 }
 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
@@ -206,11 +204,11 @@ async function getWorkingModels(key) {
   return ['gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-pro'];
 }
 
-export async function generateThemeWithAI(prompt, menuItems, restaurantName) {
+export async function generateThemeWithAI(prompt, menuItems, restaurantName, lang = 'tr') {
   const key = getGeminiKey();
   if (!key) throw new Error('API_KEY_MISSING');
   
-  const systemPrompt = buildSystemPrompt(menuItems, restaurantName);
+  const systemPrompt = buildSystemPrompt(menuItems, restaurantName, lang);
   const userPrompt = `Şu konsepte göre menü tasarla: ${prompt}`;
   
   _onStatus?.(`AI modelleri tespit ediliyor...`);
