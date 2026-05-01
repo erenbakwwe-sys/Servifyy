@@ -447,7 +447,7 @@
 }
 
 .pricing-card.featured::before {
-  content: 'Popüler';
+  content: attr(data-badge);
   position: absolute;
   top: -12px;
   left: 50%;

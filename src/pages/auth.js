@@ -1,8 +1,9 @@
 // ============================================
 // AUTH PAGE - Login & Register
 // ============================================
-import { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, doc, setDoc, serverTimestamp } from '../firebase.js';
+import { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification, doc, setDoc, serverTimestamp } from '../firebase.js';
 import { showToast } from '../utils.js';
+import { t } from '../i18n.js';
 
 export function renderAuth(container, params = {}) {
   const isRegister = params.mode === 'register';
@@ -20,40 +21,40 @@ export function renderAuth(container, params = {}) {
           </div>
           <span class="gradient-text">QR Menü</span>
         </div>
-        <h2 class="auth-title">${isRegister ? 'Hesap Oluştur' : 'Hoş Geldiniz'}</h2>
-        <p class="auth-subtitle">${isRegister ? '14 gün ücretsiz deneyin, kredi kartı gerekmez' : 'Hesabınıza giriş yapın'}</p>
+        <h2 class="auth-title">${isRegister ? t('createAccount', 'auth') : t('welcome', 'auth')}</h2>
+        <p class="auth-subtitle">${isRegister ? t('registerSub', 'auth') : t('loginSub', 'auth')}</p>
         
         <form class="auth-form" id="auth-form">
           ${isRegister ? `
             <div class="input-group">
-              <label for="auth-name">Ad Soyad</label>
-              <input type="text" id="auth-name" class="input-field" placeholder="Adınız Soyadınız" required>
+              <label for="auth-name">${t('fullName', 'auth')}</label>
+              <input type="text" id="auth-name" class="input-field" placeholder="${t('fullName', 'auth')}" required>
             </div>
           ` : ''}
           <div class="input-group">
-            <label for="auth-email">E-posta</label>
-            <input type="email" id="auth-email" class="input-field" placeholder="ornek@email.com" required>
+            <label for="auth-email">${t('email', 'auth')}</label>
+            <input type="email" id="auth-email" class="input-field" placeholder="${t('emailPh', 'auth')}" required>
           </div>
           <div class="input-group">
-            <label for="auth-password">Şifre</label>
-            <input type="password" id="auth-password" class="input-field" placeholder="${isRegister ? 'Min. 6 karakter' : 'Şifreniz'}" required minlength="6">
+            <label for="auth-password">${t('password', 'auth')}</label>
+            <input type="password" id="auth-password" class="input-field" placeholder="${isRegister ? t('passPh', 'auth') : t('password', 'auth')}" required minlength="6">
           </div>
           ${isRegister ? `
             <div class="input-group">
-              <label for="auth-password2">Şifre Tekrar</label>
-              <input type="password" id="auth-password2" class="input-field" placeholder="Şifrenizi tekrar girin" required minlength="6">
+              <label for="auth-password2">${t('passwordAgain', 'auth')}</label>
+              <input type="password" id="auth-password2" class="input-field" placeholder="${t('passwordAgain', 'auth')}" required minlength="6">
             </div>
           ` : ''}
           <button type="submit" class="btn btn-primary btn-block btn-lg" id="auth-submit">
             <span class="material-icons-round">${isRegister ? 'person_add' : 'login'}</span>
-            ${isRegister ? 'Kayıt Ol' : 'Giriş Yap'}
+            ${isRegister ? t('registerBtn', 'auth') : t('loginBtn', 'auth')}
           </button>
         </form>
 
         <div class="auth-switch">
           ${isRegister 
-            ? 'Zaten hesabınız var mı? <a onclick="window.location.hash=\'/auth\'">Giriş Yap</a>'
-            : 'Hesabınız yok mu? <a onclick="window.location.hash=\'/auth?mode=register\'">Ücretsiz Kayıt Ol</a>'
+            ? `${t('alreadyHaveAcc', 'auth')} <a onclick="window.location.hash='/auth'">${t('loginBtn', 'auth')}</a>`
+            : `${t('dontHaveAcc', 'auth')} <a onclick="window.location.hash='/auth?mode=register'">${t('registerBtn', 'auth')}</a>`
           }
         </div>
       </div>
@@ -68,7 +69,7 @@ export function renderAuth(container, params = {}) {
     const password = document.getElementById('auth-password').value;
 
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> İşleniyor...';
+    submitBtn.innerHTML = `<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> ${t('processing', 'auth')}`;
 
     try {
       if (isRegister) {
@@ -76,13 +77,14 @@ export function renderAuth(container, params = {}) {
         const password2 = document.getElementById('auth-password2').value;
 
         if (password !== password2) {
-          showToast('Şifreler eşleşmiyor!', 'error');
+          showToast(t('passMatchError', 'auth'), 'error');
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '<span class="material-icons-round">person_add</span> Kayıt Ol';
+          submitBtn.innerHTML = `<span class="material-icons-round">person_add</span> ${t('registerBtn', 'auth')}`;
           return;
         }
 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(userCredential.user);
         
         await setDoc(doc(db, 'users', userCredential.user.uid), {
           name: name,
@@ -95,29 +97,35 @@ export function renderAuth(container, params = {}) {
           settings: {}
         });
 
-        showToast('Hesap oluşturuldu! Hoş geldiniz 🎉', 'success');
-        window.location.hash = '/onboarding';
+        await signOut(auth);
+        showToast(t('verifyEmailSent', 'auth'), 'success');
+        window.location.hash = '/auth';
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
-        showToast('Giriş başarılı!', 'success');
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        if (!userCredential.user.emailVerified) {
+          await signOut(auth);
+          showToast(t('emailNotVerified', 'auth'), 'error');
+          return;
+        }
+        showToast(t('loginSuccess', 'auth'), 'success');
         // Will be redirected by auth state listener
       }
     } catch (error) {
-      let message = 'Bir hata oluştu';
-      if (error.code === 'auth/email-already-in-use') message = 'Bu e-posta zaten kullanılıyor';
-      else if (error.code === 'auth/invalid-email') message = 'Geçersiz e-posta adresi';
-      else if (error.code === 'auth/weak-password') message = 'Şifre en az 6 karakter olmalı';
-      else if (error.code === 'auth/user-not-found') message = 'Kullanıcı bulunamadı';
-      else if (error.code === 'auth/wrong-password') message = 'Hatalı şifre';
-      else if (error.code === 'auth/invalid-credential') message = 'E-posta veya şifre hatalı';
+      let message = t('errorOccurred', 'auth');
+      if (error.code === 'auth/email-already-in-use') message = t('emailInUse', 'auth');
+      else if (error.code === 'auth/invalid-email') message = t('invalidEmail', 'auth');
+      else if (error.code === 'auth/weak-password') message = t('weakPass', 'auth');
+      else if (error.code === 'auth/user-not-found') message = t('userNotFound', 'auth');
+      else if (error.code === 'auth/wrong-password') message = t('wrongPass', 'auth');
+      else if (error.code === 'auth/invalid-credential') message = t('invalidCred', 'auth');
       else message = error.message;
       showToast(message, 'error');
     } finally {
       submitBtn.disabled = false;
       if (isRegister) {
-        submitBtn.innerHTML = '<span class="material-icons-round">person_add</span> Kayıt Ol';
+        submitBtn.innerHTML = `<span class="material-icons-round">person_add</span> ${t('registerBtn', 'auth')}`;
       } else {
-        submitBtn.innerHTML = '<span class="material-icons-round">login</span> Giriş Yap';
+        submitBtn.innerHTML = `<span class="material-icons-round">login</span> ${t('loginBtn', 'auth')}`;
       }
     }
   });

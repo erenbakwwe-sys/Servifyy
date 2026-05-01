@@ -1,12 +1,12 @@
 import { db, doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, onSnapshot, where } from '../firebase.js';
 import { showToast, formatCurrency } from '../utils.js';
+import { t, getLang, setLang } from '../i18n.js';
 
 let cart = [];
 let restaurantData = null;
 let menuItemsData = [];
 let currentUserId = null;
 let currentTableNo = null;
-let currentLang = 'tr';
 let unsubCustomerOrders = null;
 let activeOrders = [];
 
@@ -29,7 +29,7 @@ export async function renderCustomerMenu(container, params) {
       <div class="loading-logo">
         <span class="material-icons-round">restaurant_menu</span>
       </div>
-      <div class="loading-text">Menü yükleniyor...</div>
+      <div class="loading-text">${t('menuLoading', 'customer')}</div>
       <div class="spinner"></div>
     </div>
   `;
@@ -38,7 +38,7 @@ export async function renderCustomerMenu(container, params) {
     // Load restaurant data
     const userDoc = await getDoc(doc(db, 'users', currentUserId));
     if (!userDoc.exists()) {
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;"><div><h2>Restoran bulunamadı</h2><p style="color:var(--text-muted);margin-top:8px;">Bu QR kod geçersiz olabilir.</p></div></div>';
+      container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;"><div><h2>${t('restaurantNotFound', 'customer')}</h2><p style="color:var(--text-muted);margin-top:8px;">${t('invalidQr', 'customer')}</p></div></div>`;
       return;
     }
     restaurantData = userDoc.data();
@@ -63,7 +63,7 @@ export async function renderCustomerMenu(container, params) {
     }
   } catch (e) {
     console.error('Menu load error:', e);
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;"><div><h2>Bir hata oluştu</h2><p style="color:var(--text-muted);margin-top:8px;">Lütfen tekrar deneyin.</p></div></div>';
+    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;"><div><h2>${t('errorOccurred', 'customer')}</h2><p style="color:var(--text-muted);margin-top:8px;">${t('tryAgain', 'customer')}</p></div></div>`;
   }
 }
 
@@ -78,7 +78,7 @@ function renderCustomTheme(container) {
     </div>
     <button class="waiter-call-btn" id="waiter-call-btn" style="position:fixed;top:12px;right:12px;z-index:9999;">
       <span class="material-icons-round">room_service</span>
-      Garson Çağır
+      ${t('callWaiter', 'customer')}
     </button>
     <div id="floating-cart-wrapper"></div>
   `;
@@ -133,9 +133,9 @@ function renderDefaultMenu(container) {
           <p class="table-info" style="margin:0;">Masa ${currentTableNo}</p>
           <div class="lang-switcher">
             <select id="lang-select" class="input-field" style="padding:4px 8px; font-size:0.85rem; border-radius:12px; width:auto; background:var(--bg-secondary); border:1px solid var(--border);">
-              <option value="tr" ${currentLang === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
-              <option value="en" ${currentLang === 'en' ? 'selected' : ''}>🇬🇧 English</option>
-              <option value="de" ${currentLang === 'de' ? 'selected' : ''}>🇩🇪 Deutsch</option>
+              <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
+              <option value="en" ${getLang() === 'en' ? 'selected' : ''}>🇬🇧 English</option>
+              <option value="de" ${getLang() === 'de' ? 'selected' : ''}>🇩🇪 Deutsch</option>
             </select>
           </div>
         </div>
@@ -156,11 +156,11 @@ function renderDefaultMenu(container) {
 
       <button class="waiter-call-btn" id="waiter-call-btn">
         <span class="material-icons-round">room_service</span>
-        <span id="btn-call-text">${currentLang === 'tr' ? 'Garson Çağır' : (currentLang === 'en' ? 'Call Waiter' : 'Kellner rufen')}</span>
+        <span id="btn-call-text">${t('callWaiter', 'customer')}</span>
       </button>
 
       <div class="category-tabs" id="category-tabs">
-        <button class="category-tab active" data-cat="all">${currentLang === 'tr' ? 'Tümü' : (currentLang === 'en' ? 'All' : 'Alle')}</button>
+        <button class="category-tab active" data-cat="all">${t('all', 'customer')}</button>
         ${categories.map(c => `<button class="category-tab" data-cat="${c}">${c}</button>`).join('')}
       </div>
 
@@ -168,15 +168,15 @@ function renderDefaultMenu(container) {
         ${menuItemsData.length === 0 ? `
           <div style="grid-column:1/-1;text-align:center;padding:60px 20px;">
             <span class="material-icons-round" style="font-size:3rem;color:var(--text-muted);">menu_book</span>
-            <p style="color:var(--text-muted);margin-top:12px;">Menü henüz hazırlanmamış</p>
+            <p style="color:var(--text-muted);margin-top:12px;">${t('noMenu', 'customer')}</p>
           </div>
         ` : menuItemsData.filter(i => i.available !== false).map(item => {
           let displayName = item.name;
-          if (currentLang === 'en' && item.name_en) displayName = item.name_en;
-          if (currentLang === 'de' && item.name_de) displayName = item.name_de;
+          if (getLang() === 'en' && item.name_en) displayName = item.name_en;
+          if (getLang() === 'de' && item.name_de) displayName = item.name_de;
           
           const isOutOfStock = item.stock !== undefined && item.stock !== null && item.stock <= 0;
-          const outOfStockText = currentLang === 'tr' ? 'Tükendi' : (currentLang === 'en' ? 'Sold Out' : 'Ausverkauft');
+          const outOfStockText = t('soldOut', 'customer');
           const allergens = (item.allergens || []).map(a => ALLERGENS.find(x => x.id === a)?.emoji || '').join('');
 
           return `
@@ -223,7 +223,7 @@ function renderDefaultMenu(container) {
   const langSelect = container.querySelector('#lang-select');
   if (langSelect) {
     langSelect.addEventListener('change', (e) => {
-      currentLang = e.target.value;
+      setLang(e.target.value);
       renderDefaultMenu(container); // Re-render with new language
       updateFloatingCart(container); // Re-render cart labels too
     });
@@ -303,13 +303,13 @@ function renderActiveOrders(container) {
   }
 
   banner.style.display = 'block';
-  text.textContent = currentLang === 'tr' ? `${activeOrders.length} Aktif Siparişiniz Var` : (currentLang === 'en' ? `${activeOrders.length} Active Orders` : `${activeOrders.length} Aktive Bestellungen`);
+  text.textContent = `${activeOrders.length} ${t('activeOrders', 'customer')}`;
   
   list.innerHTML = activeOrders.map(o => {
-    let statusText = currentLang === 'tr' ? 'Yeni' : 'New';
+    let statusText = t('new', 'customer');
     let statusColor = '#fff';
     if (o.status === 'preparing') {
-      statusText = currentLang === 'tr' ? 'Hazırlanıyor' : 'Preparing';
+      statusText = t('preparing', 'customer');
       statusColor = '#fde047'; // yellow-300
     }
     
@@ -351,7 +351,7 @@ function updateFloatingCart(container) {
     <button class="floating-cart" id="open-cart-btn">
       <div class="cart-left">
         <div class="cart-count">${count}</div>
-        <span class="cart-label">Sepeti Görüntüle</span>
+        <span class="cart-label">${t('viewCart', 'customer')}</span>
       </div>
       <span class="cart-total">${formatCurrency(total)}</span>
     </button>
@@ -370,7 +370,7 @@ function openCartPanel() {
     <div class="cart-panel-overlay" id="close-cart-overlay"></div>
     <div class="cart-panel-content">
       <div class="cart-panel-header">
-        <h3>Sepetim (${cart.reduce((s,i)=>s+i.qty,0)} ürün)</h3>
+        <h3>${t('myCart', 'customer')} (${cart.reduce((s,i)=>s+i.qty,0)} ${t('items', 'customer')})</h3>
         <button class="btn btn-ghost btn-icon" id="close-cart-btn">
           <span class="material-icons-round">close</span>
         </button>
@@ -392,28 +392,28 @@ function openCartPanel() {
       </div>
       <div class="cart-panel-footer">
         <div class="cart-summary">
-          <span class="total-label">Toplam Tutar</span>
+          <span class="total-label">${t('totalAmount', 'customer')}</span>
           <span class="total-amount">${formatCurrency(total)}</span>
         </div>
         <div class="cart-summary" style="margin-top:16px;">
-          <textarea class="input-field" id="order-note" placeholder="${currentLang==='tr'?'Sipariş notunuz (örn: Acil, Alerjim var, Az pişmiş)':'Order notes...'}" rows="2" style="background:var(--bg-elevated);"></textarea>
+          <textarea class="input-field" id="order-note" placeholder="${t('orderNote', 'customer')}" rows="2" style="background:var(--bg-elevated);"></textarea>
         </div>
         <div class="payment-methods" style="margin-top:16px;">
-          <div class="payment-method-title">Ödeme Yöntemi Seçin</div>
+          <div class="payment-method-title">${t('selectPayment', 'customer')}</div>
           <div class="payment-options">
             <div class="payment-option selected" data-method="cash">
               <div class="payment-icon">💵</div>
-              <div class="payment-label">Nakit</div>
+              <div class="payment-label">${t('cash', 'customer')}</div>
             </div>
             <div class="payment-option" data-method="pos">
               <div class="payment-icon">💳</div>
-              <div class="payment-label">Kredi Kartı (POS)</div>
+              <div class="payment-label">${t('creditCard', 'customer')}</div>
             </div>
           </div>
         </div>
         <button class="btn btn-primary btn-block btn-lg" id="place-order-btn">
           <span class="material-icons-round">send</span>
-          Siparişi Gönder
+          ${t('sendOrder', 'customer')}
         </button>
       </div>
     </div>
@@ -505,10 +505,10 @@ function showOrderConfirmation() {
       <div class="confirm-icon">
         <span class="material-icons-round">check_circle</span>
       </div>
-      <h3>Siparişiniz Alındı! 🎉</h3>
-      <p>Siparişiniz mutfağa iletildi. Kısa sürede hazırlanacaktır.</p>
+      <h3>${t('orderReceived', 'customer')}</h3>
+      <p>${t('orderReceivedDesc', 'customer')}</p>
       <button class="btn btn-primary btn-block" onclick="this.closest('.order-confirm').remove()">
-        Tamam
+        ${t('ok', 'customer')}
       </button>
     </div>
   `;
@@ -526,7 +526,7 @@ function setupWaiterCall() {
   btn.addEventListener('click', async () => {
     try {
       btn.classList.add('called');
-      btn.innerHTML = '<span class="material-icons-round">check_circle</span> Çağrıldı';
+      btn.innerHTML = `<span class="material-icons-round">check_circle</span> ${t('called', 'customer')}`;
 
       await addDoc(collection(db, 'users', currentUserId, 'calls'), {
         tableNo: currentTableNo,
@@ -538,12 +538,12 @@ function setupWaiterCall() {
 
       setTimeout(() => {
         btn.classList.remove('called');
-        btn.innerHTML = '<span class="material-icons-round">room_service</span> Garson Çağır';
+        btn.innerHTML = `<span class="material-icons-round">room_service</span> ${t('callWaiter', 'customer')}`;
       }, 5000);
     } catch (e) {
       showToast('Çağrı gönderilemedi', 'error');
       btn.classList.remove('called');
-      btn.innerHTML = '<span class="material-icons-round">room_service</span> Garson Çağır';
+      btn.innerHTML = `<span class="material-icons-round">room_service</span> ${t('callWaiter', 'customer')}`;
     }
   });
 }

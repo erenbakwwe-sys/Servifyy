@@ -1,6 +1,7 @@
 // ============================================
 // LANDING PAGE
 // ============================================
+import { t, getLang, setLang } from '../i18n.js';
 
 export function renderLanding(container) {
   container.innerHTML = `
@@ -14,11 +15,16 @@ export function renderLanding(container) {
           <span class="gradient-text">QR Menü</span>
         </a>
         <div class="nav-links" id="nav-links">
-          <a href="#features">Özellikler</a>
-          <a href="#how-it-works">Nasıl Çalışır</a>
-          <a href="#pricing">Fiyatlandırma</a>
-          <a href="#/auth" class="btn btn-ghost">Giriş Yap</a>
-          <a href="#/auth?mode=register" class="btn btn-primary">Ücretsiz Dene</a>
+          <a href="#features">${t('features', 'landing')}</a>
+          <a href="#how-it-works">${t('howItWorks', 'landing')}</a>
+          <a href="#pricing">${t('pricing', 'landing')}</a>
+          <a href="#/auth" class="btn btn-ghost">${t('login', 'landing')}</a>
+          <a href="#/auth?mode=register" class="btn btn-primary">${t('freeTrial', 'landing')}</a>
+          <select id="landing-lang-select" class="input-field" style="padding:4px 8px; font-size:0.85rem; border-radius:12px; width:auto; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary); margin-left:16px;">
+            <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 TR</option>
+            <option value="en" ${getLang() === 'en' ? 'selected' : ''}>🇬🇧 EN</option>
+            <option value="de" ${getLang() === 'de' ? 'selected' : ''}>🇩🇪 DE</option>
+          </select>
         </div>
         <div class="mobile-menu-btn" id="mobile-menu-btn">
           <span></span>
@@ -30,11 +36,18 @@ export function renderLanding(container) {
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
-      <a href="#features" onclick="document.getElementById('mobile-menu').classList.remove('active')">Özellikler</a>
-      <a href="#how-it-works" onclick="document.getElementById('mobile-menu').classList.remove('active')">Nasıl Çalışır</a>
-      <a href="#pricing" onclick="document.getElementById('mobile-menu').classList.remove('active')">Fiyatlandırma</a>
-      <a href="#/auth" class="btn btn-ghost btn-block">Giriş Yap</a>
-      <a href="#/auth?mode=register" class="btn btn-primary btn-block">Ücretsiz Dene</a>
+      <a href="#features" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('features', 'landing')}</a>
+      <a href="#how-it-works" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('howItWorks', 'landing')}</a>
+      <a href="#pricing" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('pricing', 'landing')}</a>
+      <a href="#/auth" class="btn btn-ghost btn-block">${t('login', 'landing')}</a>
+      <a href="#/auth?mode=register" class="btn btn-primary btn-block">${t('freeTrial', 'landing')}</a>
+      <div style="margin-top:16px;text-align:center;">
+        <select id="mobile-lang-select" class="input-field" style="padding:8px 16px; font-size:1rem; border-radius:12px; width:100%; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
+          <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
+          <option value="en" ${getLang() === 'en' ? 'selected' : ''}>🇬🇧 English</option>
+          <option value="de" ${getLang() === 'de' ? 'selected' : ''}>🇩🇪 Deutsch</option>
+        </select>
+      </div>
     </div>
 
     <!-- Hero Section -->
@@ -48,37 +61,36 @@ export function renderLanding(container) {
       <div class="hero-content">
         <div class="hero-badge">
           <span class="material-icons-round">auto_awesome</span>
-          14 Gün Ücretsiz Deneme
+          ${t('heroBadge', 'landing')}
         </div>
         <h1 class="hero-title">
-          Restoranınızı <span class="gradient-text">Dijitale</span> Taşıyın
+          ${t('heroTitle', 'landing')}
         </h1>
         <p class="hero-subtitle">
-          QR kodlu dijital menü, anlık sipariş takibi, garson çağırma ve yapay zeka destekli tema tasarımı. 
-          Müşterilerinize modern bir deneyim sunun.
+          ${t('heroSubtitle', 'landing')}
         </p>
         <div class="hero-actions">
           <a href="#/auth?mode=register" class="btn btn-primary btn-lg animate-glow">
             <span class="material-icons-round">rocket_launch</span>
-            Ücretsiz Başla
+            ${t('freeStart', 'landing')}
           </a>
           <a href="#how-it-works" class="btn btn-secondary btn-lg">
             <span class="material-icons-round">play_circle</span>
-            Nasıl Çalışır?
+            ${t('howItWorks', 'landing')}
           </a>
         </div>
         <div class="hero-stats">
           <div class="hero-stat">
             <div class="stat-number">500+</div>
-            <div class="stat-label">Restoran</div>
+            <div class="stat-label">${t('restaurant', 'landing')}</div>
           </div>
           <div class="hero-stat">
             <div class="stat-number">50K+</div>
-            <div class="stat-label">Sipariş</div>
+            <div class="stat-label">${t('order', 'landing')}</div>
           </div>
           <div class="hero-stat">
             <div class="stat-number">%98</div>
-            <div class="stat-label">Memnuniyet</div>
+            <div class="stat-label">${t('satisfaction', 'landing')}</div>
           </div>
         </div>
       </div>
@@ -90,53 +102,53 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">stars</span>
-            Özellikler
+            ${t('secFeatures', 'landing')}
           </div>
-          <h2 class="section-title">İşletmeniz İçin <span class="gradient-text">Her Şey</span></h2>
-          <p class="section-subtitle">Modern restoranınız için ihtiyacınız olan tüm araçlar tek bir platformda.</p>
+          <h2 class="section-title">${t('featuresTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('featuresSub', 'landing')}</p>
         </div>
         <div class="features-grid stagger-children">
           <div class="feature-card">
             <div class="feature-icon purple">
               <span class="material-icons-round">qr_code_2</span>
             </div>
-            <h3>QR Kod Menü</h3>
-            <p>Her masa için benzersiz QR kod oluşturun. Müşteriler telefonlarıyla tarayıp anında menüye ulaşsın.</p>
+            <h3>${t('f1T', 'landing')}</h3>
+            <p>${t('f1D', 'landing')}</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon teal">
               <span class="material-icons-round">shopping_cart</span>
             </div>
-            <h3>Online Sipariş</h3>
-            <p>Müşteriler menüden sipariş versin, siparişler doğrudan mutfağa iletilsin. Kağıt menüye son!</p>
+            <h3>${t('f2T', 'landing')}</h3>
+            <p>${t('f2D', 'landing')}</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon pink">
               <span class="material-icons-round">notifications_active</span>
             </div>
-            <h3>Garson Çağırma</h3>
-            <p>Tek tuşla garson çağırma. Müşteriler beklemek zorunda kalmasın, çağrılar anında panele düşsün.</p>
+            <h3>${t('f3T', 'landing')}</h3>
+            <p>${t('f3D', 'landing')}</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon gold">
               <span class="material-icons-round">dashboard</span>
             </div>
-            <h3>Gerçek Zamanlı Panel</h3>
-            <p>Siparişler, çağrılar ve tüm işlemler anlık olarak admin panelinde. Sesli bildirimlerle hiçbir şeyi kaçırmayın.</p>
+            <h3>${t('f4T', 'landing')}</h3>
+            <p>${t('f4D', 'landing')}</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon green">
               <span class="material-icons-round">auto_awesome</span>
             </div>
-            <h3>AI Tema Tasarımı</h3>
-            <p>Yapay zeka ile restoranınızın konseptine uygun profesyonel menü tasarımı oluşturun. Tek bir prompt yeter!</p>
+            <h3>${t('f5T', 'landing')}</h3>
+            <p>${t('f5D', 'landing')}</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon blue">
               <span class="material-icons-round">analytics</span>
             </div>
-            <h3>Finans & Analiz</h3>
-            <p>Günlük, haftalık ve aylık gelir raporları. Hangi ürünlerin popüler olduğunu görün.</p>
+            <h3>${t('f6T', 'landing')}</h3>
+            <p>${t('f6D', 'landing')}</p>
           </div>
         </div>
       </div>
@@ -148,31 +160,31 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">route</span>
-            Adımlar
+            ${t('secSteps', 'landing')}
           </div>
-          <h2 class="section-title">Nasıl <span class="gradient-text">Çalışır?</span></h2>
-          <p class="section-subtitle">Sadece 4 adımda dijital menünüzü kurun ve kullanmaya başlayın.</p>
+          <h2 class="section-title">${t('stepsTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('stepsSub', 'landing')}</p>
         </div>
         <div class="steps-container stagger-children">
           <div class="step-card">
             <div class="step-number">1</div>
-            <h3>Kayıt Olun</h3>
-            <p>Ücretsiz hesap oluşturun ve restoran bilgilerinizi girin. Kredi kartı gerekmez.</p>
+            <h3>${t('s1T', 'landing')}</h3>
+            <p>${t('s1D', 'landing')}</p>
           </div>
           <div class="step-card">
             <div class="step-number">2</div>
-            <h3>Menünüzü Ekleyin</h3>
-            <p>Kategoriler ve ürünler ekleyin. Fiyat, açıklama ve fotoğraf eklemek çok kolay.</p>
+            <h3>${t('s2T', 'landing')}</h3>
+            <p>${t('s2D', 'landing')}</p>
           </div>
           <div class="step-card">
             <div class="step-number">3</div>
-            <h3>QR Kodları Yazdırın</h3>
-            <p>Masalarınız için otomatik QR kod oluşturun ve masalara yerleştirin.</p>
+            <h3>${t('s3T', 'landing')}</h3>
+            <p>${t('s3D', 'landing')}</p>
           </div>
           <div class="step-card">
             <div class="step-number">4</div>
-            <h3>Siparişleri Alın</h3>
-            <p>Müşteriler QR kodu okutup sipariş versin. Siz panelden takip edin!</p>
+            <h3>${t('s4T', 'landing')}</h3>
+            <p>${t('s4D', 'landing')}</p>
           </div>
         </div>
       </div>
@@ -184,39 +196,39 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">sell</span>
-            Fiyatlandırma
+            ${t('secPricing', 'landing')}
           </div>
-          <h2 class="section-title">Şeffaf <span class="gradient-text">Fiyatlandırma</span></h2>
-          <p class="section-subtitle">14 gün ücretsiz deneyin, kredi kartı gerekmez. Beğenirseniz devam edin.</p>
+          <h2 class="section-title">${t('pricingTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('pricingSub', 'landing')}</p>
         </div>
         <div class="pricing-cards">
           <div class="pricing-card">
-            <div class="pricing-name">Deneme</div>
-            <div class="pricing-price">₺0 <span>/ 14 gün</span></div>
-            <div class="pricing-desc">Tüm özellikleri ücretsiz deneyin</div>
+            <div class="pricing-name">${t('p1Name', 'landing')}</div>
+            <div class="pricing-price">${t('p1Price', 'landing')}</div>
+            <div class="pricing-desc">${t('p1Desc', 'landing')}</div>
             <ul class="pricing-features">
-              <li><span class="material-icons-round">check_circle</span> Sınırsız menü ürünü</li>
-              <li><span class="material-icons-round">check_circle</span> QR kod oluşturma</li>
-              <li><span class="material-icons-round">check_circle</span> Online sipariş alma</li>
-              <li><span class="material-icons-round">check_circle</span> Garson çağırma</li>
-              <li><span class="material-icons-round">check_circle</span> AI tema tasarımı</li>
-              <li><span class="material-icons-round">check_circle</span> Gerçek zamanlı panel</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf1', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf2', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf3', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf4', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf5', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf6', 'landing')}</li>
             </ul>
-            <a href="#/auth?mode=register" class="btn btn-secondary btn-block btn-lg">Ücretsiz Başla</a>
+            <a href="#/auth?mode=register" class="btn btn-secondary btn-block btn-lg">${t('freeStart', 'landing')}</a>
           </div>
-          <div class="pricing-card featured">
-            <div class="pricing-name">Profesyonel</div>
-            <div class="pricing-price">Teklif Alın</div>
-            <div class="pricing-desc">İşletmenize özel fiyatlandırma</div>
+          <div class="pricing-card featured" data-badge="${t('popular', 'landing')}">
+            <div class="pricing-name">${t('p2Name', 'landing')}</div>
+            <div class="pricing-price">${t('p2Price', 'landing')}</div>
+            <div class="pricing-desc">${t('p2Desc', 'landing')}</div>
             <ul class="pricing-features">
-              <li><span class="material-icons-round">check_circle</span> Deneme paketindeki her şey</li>
-              <li><span class="material-icons-round">check_circle</span> Sınırsız masa & QR kod</li>
-              <li><span class="material-icons-round">check_circle</span> Gelişmiş analitikler</li>
-              <li><span class="material-icons-round">check_circle</span> Öncelikli destek</li>
-              <li><span class="material-icons-round">check_circle</span> Özel tema tasarımı</li>
-              <li><span class="material-icons-round">check_circle</span> API erişimi</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf7', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf8', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf9', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf10', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf11', 'landing')}</li>
+              <li><span class="material-icons-round">check_circle</span> ${t('pf12', 'landing')}</li>
             </ul>
-            <a href="#/auth?mode=register" class="btn btn-primary btn-block btn-lg">Fiyat Teklifi Al</a>
+            <a href="#/auth?mode=register" class="btn btn-primary btn-block btn-lg">${t('getQuote', 'landing')}</a>
           </div>
         </div>
       </div>
@@ -226,11 +238,11 @@ export function renderLanding(container) {
     <section class="cta-section">
       <div class="container">
         <div class="cta-box">
-          <h2>Restoranınızı <span class="gradient-text">Geleceğe</span> Taşımaya Hazır mısınız?</h2>
-          <p>14 gün boyunca tüm özellikleri ücretsiz deneyin. Kredi kartı gerekmez.</p>
+          <h2>${t('ctaTitle', 'landing')}</h2>
+          <p>${t('ctaSub', 'landing')}</p>
           <a href="#/auth?mode=register" class="btn btn-primary btn-lg animate-glow" style="position:relative;">
             <span class="material-icons-round">rocket_launch</span>
-            Hemen Başla — Ücretsiz
+            ${t('ctaBtn', 'landing')}
           </a>
         </div>
       </div>
@@ -247,16 +259,27 @@ export function renderLanding(container) {
             <span class="gradient-text" style="font-size:1.1rem;">QR Menü</span>
           </div>
           <div class="footer-links">
-            <a href="#features">Özellikler</a>
-            <a href="#pricing">Fiyatlandırma</a>
+            <a href="#features">${t('features', 'landing')}</a>
+            <a href="#pricing">${t('pricing', 'landing')}</a>
             <a href="#">Gizlilik</a>
             <a href="#">İletişim</a>
           </div>
-          <div class="footer-copy">© 2026 QR Menü. Tüm hakları saklıdır.</div>
+          <div class="footer-copy">${t('footerCopy', 'landing')}</div>
         </div>
       </div>
     </footer>
   `;
+
+  // Language selectors
+  container.querySelector('#landing-lang-select')?.addEventListener('change', (e) => {
+    setLang(e.target.value);
+    window.location.reload();
+  });
+  
+  container.querySelector('#mobile-lang-select')?.addEventListener('change', (e) => {
+    setLang(e.target.value);
+    window.location.reload();
+  });
 
   // Scroll-based navbar styling
   const nav = document.getElementById('landing-nav');

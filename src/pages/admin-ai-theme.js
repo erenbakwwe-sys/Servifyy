@@ -4,10 +4,8 @@ function getGeminiKey() {
   return localStorage.getItem('gemini_api_key') || '';
 }
 
-const MODELS = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro', 'gemini-1.5-pro'];
-
-function getGeminiUrl(key, model) {
-  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+function getGeminiUrl(model) {
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 }
 
 export function renderAIThemeContent(userData, userId) {
@@ -111,14 +109,17 @@ let _onStatus = null;
 export function setStatusCallback(fn) { _onStatus = fn; }
 
 async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
-  const response = await fetch(getGeminiUrl(key, model), {
+  const response = await fetch(getGeminiUrl(model), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'x-goog-api-key': key
+    },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: systemPrompt + '\n\n---\n\nKULLANICI İSTEĞİ:\n' + userPrompt }] }],
       generationConfig: {
         temperature: 0.9,
-        maxOutputTokens: 8192,
+        maxOutputTokens: 2048,
         topP: 0.95
       }
     })
@@ -137,6 +138,14 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
   const data = await response.json();
   let html = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   
+  const htmlMatch = html.match(/```html\s*([\s\S]*?)\s*```/i);
+  if (htmlMatch) {
+    html = htmlMatch[1];
+  } else {
+    const rawMatch = html.match(/(<!DOCTYPE[\s\S]*<\/html>)/i);
+    if (rawMatch) html = rawMatch[1];
+  }
+  
   html = html.replace(/^```html?\s*/i, '').replace(/```\s*$/i, '').trim();
   
   if (!html.includes('<!DOCTYPE') && !html.includes('<html')) {
@@ -146,6 +155,34 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
   return html;
 }
 
+async function getWorkingModels(key) {
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+    const data = await res.json();
+    if (data.models && data.models.length > 0) {
+      // Sadece generateContent destekleyen ve adı gemini içerenleri filtrele
+      const valid = data.models.filter(m => 
+        m.supportedGenerationMethods?.includes('generateContent') && 
+        m.name.includes('gemini')
+      ).map(m => m.name.replace('models/', ''));
+      
+      if (valid.length > 0) {
+        // En güncel ve hızlı olanı öncelemek için ufak bir sıralama
+        return valid.sort((a, b) => {
+          if (a.includes('flash') && !b.includes('flash')) return -1;
+          if (!a.includes('flash') && b.includes('flash')) return 1;
+          if (a.includes('pro') && !b.includes('pro')) return -1;
+          return 0;
+        });
+      }
+    }
+  } catch (err) {
+    console.warn("ListModels API hatası:", err);
+  }
+  // Eğer hiçbir şey dönmezse klasik Google API fallback listesi
+  return ['gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-pro'];
+}
+
 export async function generateThemeWithAI(prompt, menuItems, restaurantName) {
   const key = getGeminiKey();
   if (!key) throw new Error('API_KEY_MISSING');
@@ -153,10 +190,16 @@ export async function generateThemeWithAI(prompt, menuItems, restaurantName) {
   const systemPrompt = buildSystemPrompt(menuItems, restaurantName);
   const userPrompt = `Şu konsepte göre menü tasarla: ${prompt}`;
   
-  const RETRY_DELAYS = [3000, 8000, 15000]; // 3s, 8s, 15s waits
+  _onStatus?.(`AI modelleri tespit ediliyor...`);
+  const activeModels = await getWorkingModels(key);
+  console.log("[AI Theme] Available models for this key:", activeModels);
   
-  for (const model of MODELS) {
-    for (let attempt = 0; attempt < 2; attempt++) {
+  const RETRY_DELAYS = [2000]; // Sadece 1 kez şans ver (2sn bekleme)
+  
+  let lastError = null;
+  
+  for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+    for (const model of activeModels) {
       try {
         console.log(`[AI Theme] Model: ${model}, attempt: ${attempt + 1}`);
         _onStatus?.(`${model} deneniyor...`);
@@ -165,96 +208,132 @@ export async function generateThemeWithAI(prompt, menuItems, restaurantName) {
         console.log(`[AI Theme] ✓ Success: ${model}`);
         return html;
       } catch (err) {
+        lastError = err;
         console.warn(`[AI Theme] ${model} #${attempt + 1}:`, err.message);
         
         if (err.message === 'INVALID_KEY') {
           throw new Error('❌ Geçersiz API Key!\n\nGirdiğiniz key Gemini API için geçerli değil.\n👉 https://aistudio.google.com/apikey adresinden yeni key oluşturun.');
         }
         
-        if (err.message === 'RATE_LIMIT') {
-          const apiDelay = (err.retryDelay || 45) * 1000;
-          if (attempt === 0) {
-            const sec = Math.ceil(apiDelay / 1000);
-            _onStatus?.(`Rate limit — ${sec}sn bekleniyor, lütfen sabırlı olun...`);
-            console.log(`[AI Theme] API says retry in ${sec}s, waiting...`);
-            await wait(apiDelay + 2000); // API delay + 2s buffer
-            continue;
-          }
-          break; // tried once with API delay, move to next model
+        if (err.message.includes('429') || err.message.includes('503') || err.message.includes('RATE_LIMIT')) {
+          _onStatus?.(`Sunucular çok yoğun, otomatik olarak yedek lüks şablon yükleniyor...`);
+          console.log(`[AI Theme] Google API overloaded, using local templates.`);
+          await wait(1000); // Sadece yazıyı okuması için 1sn bekle
+          return generateThemeHTML(prompt, menuItems, restaurantName);
         }
         
-        if (err.message === 'INVALID_HTML') {
+        if (err.message.includes('INVALID_HTML')) {
           if (attempt === 0) {
-            _onStatus?.('AI çıktısı düzeltiliyor, tekrar deneniyor...');
-            await wait(2000);
+            _onStatus?.('AI çıktısı düzeltiliyor...');
+            await wait(1500);
             continue;
           }
-          break;
         }
         
-        // Unknown error (like 404), break inner loop and try next model
-        console.warn(`[AI Theme] Model ${model} failed, trying next...`);
-        if (model === MODELS[MODELS.length - 1]) {
-          throw err; // Throw if this was the last model
+        // Diğer bilinmeyen hatalar (404 vb) sonraki modele geç
+        if (model === activeModels[activeModels.length - 1]) {
+           // Tüm modeller bittiyse fallback şablona geç! Asla error fırlatma.
+           _onStatus?.(`API modelleri yanıt vermiyor, yedek premium şablon yükleniyor...`);
+           await wait(1000);
+           return generateThemeHTML(prompt, menuItems, restaurantName);
         }
         break;
       }
     }
   }
   
-  throw new Error('⚠️ Rate limit aşıldı veya uygun model bulunamadı.\n\nLütfen aistudio.google.com adresinden API ayarlarınızı kontrol edin.');
+  return generateThemeHTML(prompt, menuItems, restaurantName);
 }
 
 // Fallback: local generation (eski preset sistemi, API fail ederse)
 export function generateThemeHTML(prompt, menuItems, restaurantName) {
   const cats = [...new Set(menuItems.map(i => i.category || 'Genel'))];
-  const cfg = {
-    bg:'linear-gradient(180deg,#0f0e17,#1a1927,#0f0e17)', headerBg:'linear-gradient(135deg,#6C5CE7,#A29BFE)',
-    primary:'#6C5CE7', accent:'#A29BFE', card:'rgba(108,92,231,0.08)', border:'rgba(108,92,231,0.2)',
-    text:'#FFFFFE', font:'Plus Jakarta Sans', decor:'🍽️✨', sub:'Dijital Menü',
-    pattern:'radial-gradient(circle at 50% 0%,rgba(108,92,231,0.1) 0%,transparent 50%)',
-    cardExtra:'', cardHover:'transform:translateY(-5px);', btnStyle:'border-radius:12px;', headerExtra:''
+  
+  const p = (prompt || '').toLowerCase();
+  let preset = 'default';
+  if (p.includes('lüks') || p.includes('fine dining') || p.includes('gold') || p.includes('zarif')) preset = 'luxury';
+  else if (p.includes('dark') || p.includes('siyah') || p.includes('cyber') || p.includes('karanlık') || p.includes('neon')) preset = 'dark';
+  else if (p.includes('apple') || p.includes('ios') || p.includes('minimal') || p.includes('beyaz') || p.includes('aydınlık')) preset = 'minimal';
+
+  const configs = {
+    default: {
+      bg: 'linear-gradient(135deg, #FFF5F5, #FFE3E3)', headerBg: 'rgba(255, 255, 255, 0.7)',
+      primary: '#FF6B6B', accent: '#FECFEF', card: 'rgba(255, 255, 255, 0.85)', border: 'rgba(255, 107, 107, 0.15)',
+      text: '#2D3436', font: 'Poppins', sub: 'Lezzet Dünyası', extraCss: 'backdrop-filter: blur(12px); border-radius: 24px;',
+      addBtn: 'background: linear-gradient(135deg, #FF6B6B, #FF8E8B); box-shadow: 0 4px 15px rgba(255,107,107,0.4); border-radius: 50%; color: #FFF;',
+      fcart: 'background: linear-gradient(135deg, #FF6B6B, #FF8E8B); box-shadow: 0 10px 25px rgba(255,107,107,0.4); color: #FFF; border: none;',
+      headerText: '#2D3436', catRadius: '50px'
+    },
+    dark: {
+      bg: '#09090B', headerBg: 'rgba(9, 9, 11, 0.8)',
+      primary: '#00F0FF', accent: '#FF003C', card: 'rgba(24, 24, 27, 0.6)', border: 'rgba(0, 240, 255, 0.2)',
+      text: '#FFFFFF', font: 'Space Grotesk', sub: 'Cyber Menu', extraCss: 'backdrop-filter: blur(12px); border-radius: 12px; box-shadow: 0 4px 30px rgba(0, 240, 255, 0.05);',
+      addBtn: 'background: transparent; border: 1px solid #00F0FF; color: #00F0FF; box-shadow: 0 0 10px rgba(0,240,255,0.2); border-radius: 8px;',
+      fcart: 'background: rgba(9, 9, 11, 0.85); border: 1px solid #00F0FF; backdrop-filter: blur(12px); box-shadow: 0 0 20px rgba(0,240,255,0.3); color: #FFF;',
+      headerText: '#00F0FF', catRadius: '8px'
+    },
+    luxury: {
+      bg: '#0F172A', headerBg: 'linear-gradient(180deg, #0F172A, transparent)',
+      primary: '#D4AF37', accent: '#F1E5AC', card: 'rgba(30, 41, 59, 0.5)', border: 'rgba(212, 175, 55, 0.2)',
+      text: '#F8FAFC', font: 'Playfair Display', sub: 'Fine Dining', extraCss: 'backdrop-filter: blur(8px); border-radius: 0px;',
+      addBtn: 'background: transparent; border: 1px solid #D4AF37; color: #D4AF37; border-radius: 0px;',
+      fcart: 'background: #0F172A; border-top: 1px solid #D4AF37; border-radius: 0px; color: #D4AF37;',
+      headerText: '#D4AF37', catRadius: '0px'
+    },
+    minimal: {
+      bg: '#F5F5F7', headerBg: 'rgba(245, 245, 247, 0.8)',
+      primary: '#000000', accent: '#86868B', card: '#FFFFFF', border: 'rgba(0, 0, 0, 0.05)',
+      text: '#1D1D1F', font: 'Inter', sub: 'Menu', extraCss: 'border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: none;',
+      addBtn: 'background: #F5F5F7; color: #1D1D1F; border: none; border-radius: 50%; box-shadow: none;',
+      fcart: 'background: rgba(255,255,255,0.85); backdrop-filter: saturate(180%) blur(20px); color: #1D1D1F; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);',
+      headerText: '#1D1D1F', catRadius: '20px'
+    }
   };
 
+  const cfg = configs[preset];
+
   return `<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=${cfg.font.replace(/ /g,'+')}&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=${cfg.font.replace(/ /g,'+')}:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text};min-height:100vh}
-.header{background:${cfg.headerBg};padding:28px 20px 24px;text-align:center;position:sticky;top:0;z-index:100}
-.header h1{font-size:1.7rem;font-weight:800}
-.header .sub{font-size:0.85rem;opacity:0.75}
-.cats{display:flex;gap:8px;padding:16px 20px;overflow-x:auto}
-.cat{padding:10px 24px;border-radius:50px;font-size:0.85rem;font-weight:600;background:${cfg.card};border:1.5px solid ${cfg.border};color:${cfg.text};cursor:pointer;transition:all 0.3s;white-space:nowrap;font-family:inherit}
-.cat:hover,.cat.on{background:${cfg.primary};border-color:${cfg.primary};color:#fff}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:16px;padding:12px 20px 120px}
-.card{background:${cfg.card};border:1.5px solid ${cfg.border};border-radius:16px;overflow:hidden;transition:all 0.35s;cursor:pointer}
-.card:hover{transform:translateY(-5px);border-color:${cfg.primary}}
-.card .img{width:100%;height:130px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,${cfg.primary}15,${cfg.accent}10)}
-.card .body{padding:14px}
-.card .name{font-size:0.95rem;font-weight:700;margin-bottom:3px}
-.card .desc{font-size:0.75rem;opacity:0.5;margin-bottom:10px}
+.header{background:${cfg.headerBg};padding:30px 20px 25px;text-align:center;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header h1{font-size:1.8rem;font-weight:800;color:${cfg.headerText};letter-spacing:-0.5px}
+.header .sub{font-size:0.9rem;opacity:0.75;letter-spacing:1px;margin-top:4px}
+.cats{display:flex;gap:10px;padding:16px 20px;overflow-x:auto;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{padding:10px 24px;border-radius:${cfg.catRadius};font-size:0.9rem;font-weight:600;background:${cfg.card};border:1px solid ${cfg.border};color:${cfg.text};cursor:pointer;transition:all 0.3s;white-space:nowrap;font-family:inherit;${cfg.extraCss}}
+.cat:hover,.cat.on{background:${preset==='minimal'?'#1D1D1F':cfg.primary};border-color:${preset==='minimal'?'#1D1D1F':cfg.primary};color:${preset==='minimal'?'#fff':(preset==='luxury'?'#0F172A':'#fff')};${preset==='dark'?'box-shadow:0 0 15px '+cfg.primary+';':''}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px;padding:10px 20px 120px}
+.card{background:${cfg.card};border:1px solid ${cfg.border};overflow:hidden;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);cursor:pointer;${cfg.extraCss}}
+.card:hover{transform:translateY(-8px);${preset==='dark'?'box-shadow:0 0 20px '+cfg.border+';':'box-shadow:0 15px 30px rgba(0,0,0,0.08);'}}
+.card .img{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:linear-gradient(135deg, ${cfg.primary}15, transparent)}
+.card .body{padding:16px}
+.card .name{font-size:1.05rem;font-weight:700;margin-bottom:6px;line-height:1.2}
+.card .desc{font-size:0.8rem;opacity:0.6;margin-bottom:14px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .card .foot{display:flex;align-items:center;justify-content:space-between}
-.card .price{font-size:1.05rem;font-weight:800;color:${cfg.primary}}
-.add{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,${cfg.primary},${cfg.accent});color:#fff;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;font-size:1.4rem;transition:all 0.2s}
-.waiter-btn{position:fixed;top:14px;right:14px;z-index:200;display:flex;align-items:center;gap:8px;padding:12px 22px;background:linear-gradient(135deg,#FDCB6E,#E17055);color:#fff;border:none;border-radius:50px;font-weight:700;font-size:0.9rem;cursor:pointer;font-family:inherit}
-.fcart{position:fixed;bottom:20px;left:20px;right:20px;z-index:200;display:none;align-items:center;justify-content:space-between;padding:16px 24px;background:linear-gradient(135deg,${cfg.primary},${cfg.accent});border-radius:20px;color:#fff;border:none;width:calc(100% - 40px);max-width:500px;margin:0 auto;font-family:inherit;cursor:pointer}
-.fcart.show{display:flex}
-.cc{width:30px;height:30px;background:rgba(255,255,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
-@keyframes fi{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-.card{animation:fi 0.5s ease backwards}
+.card .price{font-size:1.15rem;font-weight:800;color:${cfg.primary}}
+.add{width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.4rem;transition:all 0.2s;${cfg.addBtn}}
+.add:active{transform:scale(0.9)}
+.waiter-btn{position:fixed;top:16px;right:16px;z-index:200;display:flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:50px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;transition:all 0.3s}
+.fcart{position:fixed;bottom:24px;left:20px;right:20px;z-index:200;display:none;align-items:center;justify-content:space-between;padding:18px 26px;border-radius:24px;width:calc(100% - 40px);max-width:450px;margin:0 auto;font-family:inherit;cursor:pointer;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);${cfg.fcart}}
+.fcart.show{display:flex;animation:slideUp 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards}
+.cc{width:32px;height:32px;background:${preset==='minimal'?'#1D1D1F':'rgba(255,255,255,0.25)'};color:${preset==='minimal'?'#FFF':'inherit'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fi{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.card{animation:fi 0.6s cubic-bezier(0.175,0.885,0.32,1.275) backwards}
 </style></head><body>
 <div class="header"><h1>${restaurantName||'Restoran'}</h1><p class="sub">${cfg.sub}</p></div>
 <button class="waiter-btn" onclick="callWaiter()"><span class="material-icons-round">room_service</span> Garson Çağır</button>
 <div class="cats"><button class="cat on" onclick="fc(this,'all')">Tümü</button>${cats.map(c=>`<button class="cat" onclick="fc(this,'${c}')">${c}</button>`).join('')}</div>
-<div class="grid" id="g">${menuItems.map(item=>`<div class="card" data-c="${item.category||'Genel'}"><div class="img">${item.emoji||'🍽️'}</div><div class="body"><div class="name">${item.name}</div><div class="desc">${item.description||''}</div><div class="foot"><span class="price">₺${(item.price||0).toFixed(2)}</span><button class="add" onclick="ac('${item.id}','${item.name.replace(/'/g,"\\'")}',${item.price||0})">+</button></div></div></div>`).join('')}</div>
+<div class="grid" id="g">${menuItems.map((item,i)=>`<div class="card" data-c="${item.category||'Genel'}" style="animation-delay:${i*0.05}s"><div class="img">${item.emoji||'🍽️'}</div><div class="body"><div class="name">${item.name}</div><div class="desc">${item.description||''}</div><div class="foot"><span class="price">₺${(item.price||0).toFixed(2)}</span><button class="add" onclick="ac('${item.id}','${item.name.replace(/'/g,"\\'")}',${item.price||0})">+</button></div></div></div>`).join('')}</div>
 <button class="fcart" id="fc" onclick="document.dispatchEvent(new Event('openCart'))"><div style="display:flex;align-items:center;gap:12px"><div class="cc" id="cn">0</div><span style="font-weight:600">Sepeti Görüntüle</span></div><span style="font-weight:800;font-size:1.15rem" id="tp">₺0.00</span></button>
 <script>
 let cart=[];
-function ac(id,name,price){const e=cart.find(i=>i.id===id);if(e)e.qty++;else cart.push({id,name,price:parseFloat(price),qty:1});uc();const b=event.target;b.textContent='✓';b.style.background='#00b894';setTimeout(()=>{b.textContent='+';b.style.background=''},600)}
+function ac(id,name,price){const e=cart.find(i=>i.id===id);if(e)e.qty++;else cart.push({id,name,price:parseFloat(price),qty:1});uc();const b=event.target;b.textContent='✓';b.style.transform='scale(0.9)';setTimeout(()=>{b.textContent='+';b.style.transform='scale(1)'},600)}
 function uc(){const n=cart.reduce((s,i)=>s+i.qty,0),t=cart.reduce((s,i)=>s+i.price*i.qty,0);document.getElementById('cn').textContent=n;document.getElementById('tp').textContent='₺'+t.toFixed(2);const f=document.getElementById('fc');if(n>0)f.classList.add('show');else f.classList.remove('show')}
 function fc(b,c){document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.card').forEach(x=>{x.style.display=(c==='all'||x.dataset.c===c)?'block':'none'})}
-function callWaiter(){const b=document.querySelector('.waiter-btn');b.innerHTML='<span class="material-icons-round">check_circle</span> Çağrıldı';b.style.background='linear-gradient(135deg,#00b894,#00a381)';setTimeout(()=>{b.innerHTML='<span class="material-icons-round">room_service</span> Garson Çağır';b.style.background=''},4000)}
+function callWaiter(){const b=document.querySelector('.waiter-btn');b.innerHTML='<span class="material-icons-round">check_circle</span> Çağrıldı';b.style.background='rgba(0,184,148,0.8)';setTimeout(()=>{b.innerHTML='<span class="material-icons-round">room_service</span> Garson Çağır';b.style.background='rgba(0,0,0,0.4)'},4000)}
 </script></body></html>`;
 }

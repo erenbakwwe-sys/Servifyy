@@ -3,64 +3,7 @@
 // ============================================
 import { auth, db, doc, setDoc, serverTimestamp } from '../firebase.js';
 import { showToast } from '../utils.js';
-
-const steps = [
-  {
-    title: 'Restoran Adı',
-    subtitle: 'Restoranınızın adını girin',
-    icon: 'storefront',
-    field: 'restaurantName',
-    type: 'text',
-    placeholder: 'Örn: Lezzet Durağı'
-  },
-  {
-    title: 'Şehir',
-    subtitle: 'İşletmenizin bulunduğu şehri seçin',
-    icon: 'location_city',
-    field: 'city',
-    type: 'select',
-    options: ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya', 'Adana', 'Konya', 'Gaziantep', 'Mersin', 'Diyarbakır', 'Kayseri', 'Eskişehir', 'Trabzon', 'Samsun', 'Denizli', 'Malatya', 'Diğer']
-  },
-  {
-    title: 'Telefon',
-    subtitle: 'İletişim numaranızı girin',
-    icon: 'phone',
-    field: 'phone',
-    type: 'tel',
-    placeholder: '05XX XXX XX XX'
-  },
-  {
-    title: 'İşletme Türü',
-    subtitle: 'İşletmenizin türünü seçin',
-    icon: 'category',
-    field: 'businessType',
-    type: 'business-type'
-  },
-  {
-    title: 'Masa Sayısı',
-    subtitle: 'Restoranınızdaki toplam masa sayısı',
-    icon: 'table_restaurant',
-    field: 'tableCount',
-    type: 'number',
-    placeholder: 'Örn: 20'
-  },
-  {
-    title: 'Menü Yükleme',
-    subtitle: 'Menünüzü daha sonra da ekleyebilirsiniz',
-    icon: 'menu_book',
-    field: 'menuUpload',
-    type: 'menu-upload'
-  }
-];
-
-const businessTypes = [
-  { id: 'restaurant', name: 'Restoran', icon: '🍽️' },
-  { id: 'cafe', name: 'Kafe', icon: '☕' },
-  { id: 'fastfood', name: 'Fast Food', icon: '🍔' },
-  { id: 'bar', name: 'Bar / Pub', icon: '🍺' },
-  { id: 'patisserie', name: 'Pastane', icon: '🧁' },
-  { id: 'pizzeria', name: 'Pizzacı', icon: '🍕' }
-];
+import { t } from '../i18n.js';
 
 let currentStep = 0;
 let formData = {};
@@ -71,7 +14,70 @@ export function renderOnboarding(container) {
   renderStep(container);
 }
 
+function getSteps() {
+  return [
+    {
+      title: t('s1Title', 'onboarding'),
+      subtitle: t('s1Sub', 'onboarding'),
+      icon: 'storefront',
+      field: 'restaurantName',
+      type: 'text',
+      placeholder: t('s1Ph', 'onboarding')
+    },
+    {
+      title: t('s2Title', 'onboarding'),
+      subtitle: t('s2Sub', 'onboarding'),
+      icon: 'public',
+      field: 'country',
+      type: 'select',
+      options: ['Türkiye', 'Almanya', 'İngiltere', 'Amerika Birleşik Devletleri', 'Fransa', 'İtalya', 'İspanya', 'Hollanda', 'Belçika', 'Avusturya', 'İsviçre', 'Diğer']
+    },
+    {
+      title: t('s3Title', 'onboarding'),
+      subtitle: t('s3Sub', 'onboarding'),
+      icon: 'phone',
+      field: 'phone',
+      type: 'tel',
+      placeholder: t('s3Ph', 'onboarding')
+    },
+    {
+      title: t('s4Title', 'onboarding'),
+      subtitle: t('s4Sub', 'onboarding'),
+      icon: 'category',
+      field: 'businessType',
+      type: 'business-type'
+    },
+    {
+      title: t('s5Title', 'onboarding'),
+      subtitle: t('s5Sub', 'onboarding'),
+      icon: 'table_restaurant',
+      field: 'tableCount',
+      type: 'number',
+      placeholder: t('s5Ph', 'onboarding')
+    },
+    {
+      title: t('s6Title', 'onboarding'),
+      subtitle: t('s6Sub', 'onboarding'),
+      icon: 'menu_book',
+      field: 'menuUpload',
+      type: 'menu-upload'
+    }
+  ];
+}
+
+function getBusinessTypes() {
+  return [
+    { id: 'restaurant', name: t('bt1', 'onboarding'), icon: '🍽️' },
+    { id: 'cafe', name: t('bt2', 'onboarding'), icon: '☕' },
+    { id: 'fastfood', name: t('bt3', 'onboarding'), icon: '🍔' },
+    { id: 'bar', name: t('bt4', 'onboarding'), icon: '🍺' },
+    { id: 'patisserie', name: t('bt5', 'onboarding'), icon: '🧁' },
+    { id: 'pizzeria', name: t('bt6', 'onboarding'), icon: '🍕' }
+  ];
+}
+
 function renderStep(container) {
+  const steps = getSteps();
   const step = steps[currentStep];
   
   container.innerHTML = `
@@ -86,7 +92,7 @@ function renderStep(container) {
             <div class="step ${i < currentStep ? 'completed' : ''} ${i === currentStep ? 'active' : ''}"></div>
           `).join('')}
         </div>
-        <div class="onboarding-step-info">Adım ${currentStep + 1} / ${steps.length}</div>
+        <div class="onboarding-step-info">${t('step', 'onboarding')} ${currentStep + 1} / ${steps.length}</div>
         <h2 class="onboarding-title">
           <span class="material-icons-round" style="vertical-align: middle; margin-right: 8px; color: var(--primary-light);">${step.icon}</span>
           ${step.title}
@@ -101,11 +107,11 @@ function renderStep(container) {
           ${currentStep > 0 ? `
             <button class="btn btn-secondary" id="prev-btn">
               <span class="material-icons-round">arrow_back</span>
-              Geri
+              ${t('prev', 'onboarding')}
             </button>
           ` : '<div></div>'}
           <button class="btn btn-primary" id="next-btn">
-            ${currentStep === steps.length - 1 ? 'Tamamla' : 'Devam'}
+            ${currentStep === steps.length - 1 ? t('complete', 'onboarding') : t('next', 'onboarding')}
             <span class="material-icons-round">${currentStep === steps.length - 1 ? 'check' : 'arrow_forward'}</span>
           </button>
         </div>
@@ -162,6 +168,7 @@ function renderStep(container) {
 }
 
 function renderStepField(step) {
+  const businessTypes = getBusinessTypes();
   switch (step.type) {
     case 'text':
     case 'tel':
@@ -184,7 +191,7 @@ function renderStepField(step) {
       return `
         <div class="input-group">
           <select id="step-input" class="input-field">
-            <option value="">Seçiniz...</option>
+            <option value="">${t('selectType', 'onboarding')}</option>
             ${step.options.map(opt => `
               <option value="${opt}" ${formData[step.field] === opt ? 'selected' : ''}>${opt}</option>
             `).join('')}
@@ -208,12 +215,12 @@ function renderStepField(step) {
           <div class="upload-icon">
             <span class="material-icons-round" style="font-size:2.5rem;">cloud_upload</span>
           </div>
-          <div class="upload-text">Menü dosyanızı sürükleyin veya tıklayın</div>
-          <div class="upload-hint">PDF, Excel veya resim dosyaları desteklenir</div>
+          <div class="upload-text">${t('uploadText', 'onboarding')}</div>
+          <div class="upload-hint">${t('uploadHint', 'onboarding')}</div>
           <input type="file" id="menu-file" style="display:none" accept=".pdf,.xlsx,.xls,.jpg,.jpeg,.png">
         </div>
         <p style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-top:12px;">
-          Menünüzü daha sonra admin panelinden de ekleyebilirsiniz
+          ${t('uploadLater', 'onboarding')}
         </p>
       `;
     default:
@@ -229,7 +236,7 @@ function validateStep(step) {
 
   if (step.type === 'business-type') {
     if (!formData[step.field]) {
-      showToast('Lütfen işletme türünü seçin', 'warning');
+      showToast(t('errType', 'onboarding'), 'warning');
       return false;
     }
     return true;
@@ -237,7 +244,7 @@ function validateStep(step) {
 
   const input = document.getElementById('step-input');
   if (!input || !input.value.trim()) {
-    showToast(`Lütfen ${step.title.toLowerCase()} bilgisini girin`, 'warning');
+    showToast(t('errReq', 'onboarding'), 'warning');
     input?.classList.add('error');
     setTimeout(() => input?.classList.remove('error'), 2000);
     return false;
@@ -250,7 +257,7 @@ function validateStep(step) {
 async function completeOnboarding(container) {
   const nextBtn = document.getElementById('next-btn');
   nextBtn.disabled = true;
-  nextBtn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> Kaydediliyor...';
+  nextBtn.innerHTML = `<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> ${t('saving', 'onboarding')}`;
 
   try {
     const user = auth.currentUser;
@@ -262,7 +269,7 @@ async function completeOnboarding(container) {
     await setDoc(doc(db, 'users', user.uid), {
       restaurant: {
         name: formData.restaurantName || '',
-        city: formData.city || '',
+        country: formData.country || '',
         phone: formData.phone || '',
         businessType: formData.businessType || '',
         tableCount: parseInt(formData.tableCount) || 10,
@@ -271,12 +278,12 @@ async function completeOnboarding(container) {
       updatedAt: serverTimestamp()
     }, { merge: true });
 
-    showToast('Tebrikler! Restoranınız hazır 🎉', 'success');
+    showToast(t('success', 'onboarding'), 'success');
     window.location.hash = '/admin';
   } catch (error) {
     console.error('Onboarding error:', error);
-    showToast('Kayıt sırasında bir hata oluştu', 'error');
+    showToast(t('error', 'onboarding'), 'error');
     nextBtn.disabled = false;
-    nextBtn.innerHTML = 'Tamamla <span class="material-icons-round">check</span>';
+    nextBtn.innerHTML = `${t('complete', 'onboarding')} <span class="material-icons-round">check</span>`;
   }
 }

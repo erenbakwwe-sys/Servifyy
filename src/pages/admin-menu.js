@@ -1,5 +1,6 @@
-﻿import { db, doc, updateDoc, deleteDoc, collection, addDoc, serverTimestamp } from '../firebase.js';
+import { db, doc, updateDoc, deleteDoc, collection, addDoc, serverTimestamp } from '../firebase.js';
 import { showToast, formatCurrency } from '../utils.js';
+import { t } from '../i18n.js';
 
 const ALLERGENS = [
   {id:'gluten',label:'Gluten',emoji:'🌾'},{id:'dairy',label:'Süt',emoji:'🥛'},{id:'eggs',label:'Yumurta',emoji:'🥚'},
@@ -14,28 +15,28 @@ export function renderMenuContent(menuItems, categories, userId) {
     <div class="menu-section">
       <div class="menu-header">
         <div>
-          <h3 style="font-size:1.1rem;margin-bottom:4px;">Menü Yönetimi</h3>
-          <p style="color:var(--text-muted);font-size:0.85rem;">${menuItems.length} ürün</p>
+          <h3 style="font-size:1.1rem;margin-bottom:4px;">${t('menu')}</h3>
+          <p style="color:var(--text-muted);font-size:0.85rem;">${menuItems.length} ${t('items', 'admin')}</p>
         </div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-secondary btn-sm" id="add-category-btn">
-            <span class="material-icons-round">create_new_folder</span> Kategori Ekle
+            <span class="material-icons-round">create_new_folder</span> ${t('addCat', 'admin')}
           </button>
           <button class="btn btn-primary btn-sm" id="add-item-btn">
-            <span class="material-icons-round">add</span> Ürün Ekle
+            <span class="material-icons-round">add</span> ${t('addItem', 'admin')}
           </button>
         </div>
       </div>
       <div class="menu-categories">
-        <button class="category-chip active" data-cat="all">Tümü</button>
+        <button class="category-chip active" data-cat="all">${t('customer').all || 'Tümü'}</button>
         ${categories.map(c => `<button class="category-chip" data-cat="${c}">${c}</button>`).join('')}
       </div>
       <div class="menu-items-grid" id="menu-items-grid">
         ${menuItems.length === 0 ? `
           <div style="grid-column:1/-1;text-align:center;padding:60px 20px;">
             <span class="material-icons-round" style="font-size:4rem;color:var(--text-muted);display:block;margin-bottom:16px;">menu_book</span>
-            <h3 style="margin-bottom:8px;">Henüz menü ürünü yok</h3>
-            <p style="color:var(--text-muted);margin-bottom:20px;">İlk ürününüzü ekleyerek başlayın</p>
+            <h3 style="margin-bottom:8px;">${t('noCat', 'admin').replace('kategori', 'menü ürünü').replace('category', 'menu item').replace('Kategorien', 'Menüpunkte')}</h3>
+            <p style="color:var(--text-muted);margin-bottom:20px;">${t('noCatSub', 'admin').replace('kategori ekleyin', 'ilk ürününüzü ekleyin').replace('a category', 'your first item').replace('eine Kategorie', 'Ihren ersten Artikel')}</p>
           </div>
         ` : menuItems.map(item => {
           const outOfStock = item.stock !== undefined && item.stock !== null && item.stock <= 0;
@@ -43,7 +44,7 @@ export function renderMenuContent(menuItems, categories, userId) {
           return `
           <div class="menu-item-card ${outOfStock ? 'out-of-stock' : ''}" data-id="${item.id}">
             <div class="menu-item-image">${item.emoji || '🍽️'}</div>
-            ${outOfStock ? '<span class="sold-out-badge">Tükendi</span>' : ''}
+            ${outOfStock ? `<span class="sold-out-badge">${t('customer').soldOut || 'Tükendi'}</span>` : ''}
             <div class="menu-item-body">
               <h4>${item.name}</h4>
               <p class="item-description">${item.description || ''}</p>
@@ -55,10 +56,10 @@ export function renderMenuContent(menuItems, categories, userId) {
               <div class="menu-item-footer">
                 <span class="menu-item-price">${formatCurrency(item.price || 0)}</span>
                 <div class="menu-item-actions">
-                  <button class="btn btn-ghost btn-icon btn-sm edit-item" data-id="${item.id}" title="Düzenle">
+                  <button class="btn btn-ghost btn-icon btn-sm edit-item" data-id="${item.id}" title="${t('edit', 'admin')}">
                     <span class="material-icons-round">edit</span>
                   </button>
-                  <button class="btn btn-ghost btn-icon btn-sm delete-item" data-id="${item.id}" title="Sil">
+                  <button class="btn btn-ghost btn-icon btn-sm delete-item" data-id="${item.id}" title="${t('del', 'admin')}">
                     <span class="material-icons-round" style="color:var(--danger);">delete</span>
                   </button>
                 </div>
