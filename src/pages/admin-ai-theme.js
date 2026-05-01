@@ -90,13 +90,27 @@ FONKSİYONEL GEREKSİNİMLER (bunları mutlaka ekle):
 - Sepete eklenince buton kısa süre ✓ göstersin
 - Kartlara tıklama ve hover animasyonları olsun
 
-JAVASCRIPT FONKSİYONLARI (bunları mutlaka tanımla):
+JAVASCRIPT FONKSİYONLARI (bu kodların İÇERİĞİNİ YAZ, sakın "..." bırakma, çalışan fonksiyonlar yaz):
 \`\`\`
 let cart=[];
-function ac(id,name,price){...} // sepete ekle
-function uc(){...} // sepet güncelle  
-function fc(btn,cat){...} // kategori filtrele
-function callWaiter(){...} // garson çağır
+// sepete ekle
+function ac(id,name,price){ 
+  const e=cart.find(i=>i.id===id); if(e)e.qty++; else cart.push({id,name,price:parseFloat(price),qty:1}); uc();
+} 
+// sepet güncelle
+function uc(){ 
+  const n=cart.reduce((s,i)=>s+i.qty,0), t=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const cn=document.getElementById('cn'), tp=document.getElementById('tp'), fc=document.getElementById('fc');
+  if(cn) cn.textContent=n; if(tp) tp.textContent='₺'+t.toFixed(2);
+  if(fc) { if(n>0) fc.style.display='flex'; else fc.style.display='none'; }
+} 
+// kategori filtrele
+function fc(btn,cat){ 
+  document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on')); btn.classList.add('on');
+  document.querySelectorAll('.card').forEach(x=>{x.style.display=(cat==='all'||x.dataset.c===cat)?'block':'none'});
+} 
+// garson çağır
+function callWaiter(){ alert('Garson çağrıldı!'); }
 \`\`\`
 
 ÖNEMLİ: Kullanıcının tarif ettiği tasarım konseptini %100 uygula. Animasyonlar, özel efektler, benzersiz layout - ne istenmişse hepsini yap. SIRADAN bir menü yapma, ÖZEL ve ETKİLEYİCİ bir deneyim yarat.`;
@@ -119,7 +133,7 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
       contents: [{ role: 'user', parts: [{ text: systemPrompt + '\n\n---\n\nKULLANICI İSTEĞİ:\n' + userPrompt }] }],
       generationConfig: {
         temperature: 0.9,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 8192,
         topP: 0.95
       }
     })
@@ -138,24 +152,30 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
   const data = await response.json();
   let html = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   
-  // Try to extract from ANY code block first
-  const blockMatch = html.match(/```(?:html|xml)?\s*([\s\S]*?)\s*```/i);
-  if (blockMatch) {
-    html = blockMatch[1];
-  } else {
-    // Fallback: Try to find from <html or <!DOCTYPE down to </html>
-    const rawMatch = html.match(/(?:<!DOCTYPE[^>]*>\s*)?(<html[\s\S]*<\/html>)/i);
-    if (rawMatch) html = rawMatch[1] || rawMatch[0];
+  let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  
+  // 1. Try to extract content inside code blocks using a robust regex
+  // This matches ``` followed by optional characters, then captures everything until next ``` or end of string.
+  const blockMatch = text.match(/```[a-z]*\s*([\s\S]*?)(?:```|$)/i);
+  if (blockMatch && blockMatch[1].trim().length > 0) {
+    text = blockMatch[1];
   }
   
-  html = html.trim();
+  // 2. Strip absolutely everything before the first HTML-like tag
+  // This ensures stray markdown like "İşte temanız:" or "```html" is deleted.
+  text = text.replace(/^[\s\S]*?(?=<\s*(?:html|!doctype|body|head|style|div|script|meta|link))/i, '');
   
-  // If it still doesn't look like HTML, throw
-  if (!html.includes('<html') && !html.includes('<body')) {
+  // 3. Strip everything after the closing </html> tag if it exists
+  text = text.replace(/(<\/html>)[\s\S]*$/i, '$1');
+  
+  text = text.trim();
+  
+  // 4. Validate
+  if (!text.includes('<html') && !text.includes('<body') && !text.includes('<style') && !text.includes('<div')) {
     throw new Error('INVALID_HTML');
   }
   
-  return html;
+  return text;
 }
 
 async function getWorkingModels(key) {
