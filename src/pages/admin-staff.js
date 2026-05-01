@@ -26,7 +26,7 @@ export function getStaff() { return staffList; }
 const ROLE_LABELS = { branch_manager: 'Şube Müdürü', waiter: 'Garson' };
 const ROLE_ICONS = { branch_manager: 'admin_panel_settings', waiter: 'person' };
 
-export function renderStaffContent() {
+export function renderStaffContent(userId) {
   const branches = getBranches();
   const branchMap = {};
   branches.forEach(b => { branchMap[b.id] = b.name; });
@@ -37,7 +37,13 @@ export function renderStaffContent() {
         <h3>Personel Yönetimi</h3>
         <p style="color:var(--text-muted);font-size:0.85rem;">${staffList.length} personel kayıtlı</p>
       </div>
-      <button class="btn btn-primary" id="add-staff-btn"><span class="material-icons-round">person_add</span> Yeni Personel Ekle</button>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div class="badge badge-primary" style="display:flex; align-items:center; gap:6px; padding:6px 12px; font-size:0.9rem;">
+          <span class="material-icons-round" style="font-size:1.1rem;">key</span>
+          <span>İşletme Kodu: <strong style="letter-spacing:1px; user-select:all;">${userId}</strong></span>
+        </div>
+        <button class="btn btn-primary" id="add-staff-btn"><span class="material-icons-round">person_add</span> Yeni Personel Ekle</button>
+      </div>
     </div>
     <div class="staff-grid">
       ${staffList.length === 0 ? `
@@ -81,35 +87,35 @@ function staffFormModal(staff = null) {
           <button class="btn btn-ghost btn-icon modal-close" data-close-modal><span class="material-icons-round">close</span></button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
+          <div class="input-group">
             <label>Kullanıcı Adı *</label>
-            <input type="text" id="staff-username" class="form-input" placeholder="kullanici.adi" value="${staff?.username || ''}" ${isEdit ? 'readonly style="opacity:0.6"' : ''}>
+            <input type="text" id="staff-username" class="input-field" placeholder="kullanici.adi" value="${staff?.username || ''}" ${isEdit ? 'readonly style="opacity:0.6"' : ''}>
           </div>
           ${isEdit ? `
-            <div class="form-group">
+            <div class="input-group">
               <label>Yeni Şifre (değiştirmek istiyorsanız)</label>
-              <input type="password" id="staff-password" class="form-input" placeholder="Boş bırakırsanız değişmez">
+              <input type="password" id="staff-password" class="input-field" placeholder="Boş bırakırsanız değişmez">
             </div>
           ` : `
-            <div class="form-group">
+            <div class="input-group">
               <label>Şifre *</label>
-              <input type="password" id="staff-password" class="form-input" placeholder="Şifre">
+              <input type="password" id="staff-password" class="input-field" placeholder="Şifre">
             </div>
-            <div class="form-group">
+            <div class="input-group">
               <label>Şifre Tekrar *</label>
-              <input type="password" id="staff-password2" class="form-input" placeholder="Şifre tekrar">
+              <input type="password" id="staff-password2" class="input-field" placeholder="Şifre tekrar">
             </div>
           `}
-          <div class="form-group">
+          <div class="input-group">
             <label>Rol *</label>
-            <select id="staff-role" class="form-input">
+            <select id="staff-role" class="input-field">
               <option value="branch_manager" ${staff?.role === 'branch_manager' ? 'selected' : ''}>Şube Müdürü</option>
               <option value="waiter" ${staff?.role === 'waiter' ? 'selected' : ''}>Garson</option>
             </select>
           </div>
-          <div class="form-group">
+          <div class="input-group">
             <label>Atanacak Şube *</label>
-            <select id="staff-branch" class="form-input">
+            <select id="staff-branch" class="input-field">
               <option value="">Şube seçin</option>
               ${branches.filter(b => b.isActive).map(b => `<option value="${b.id}" ${staff?.assignedBranchId === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}
             </select>
@@ -143,7 +149,7 @@ export function setupStaffHandlers(userId, content) {
         await deleteDoc(doc(db, 'users', userId, 'staff', btn.dataset.deleteStaff));
         showToast('Personel silindi', 'success');
         await loadStaff(userId);
-        document.getElementById('page-content').innerHTML = renderStaffContent();
+        document.getElementById('page-content').innerHTML = renderStaffContent(userId);
         setupStaffHandlers(userId, document.getElementById('page-content'));
       } catch (e) { showToast('Hata: ' + e.message, 'error'); }
     });
@@ -205,7 +211,7 @@ function bindStaffModalEvents(userId) {
       }
       modal.remove();
       await loadStaff(userId);
-      document.getElementById('page-content').innerHTML = renderStaffContent();
+      document.getElementById('page-content').innerHTML = renderStaffContent(userId);
       setupStaffHandlers(userId, document.getElementById('page-content'));
     } catch (e) { showToast('Hata: ' + e.message, 'error'); }
   });

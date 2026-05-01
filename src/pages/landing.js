@@ -19,6 +19,7 @@ export function renderLanding(container) {
           <a href="#how-it-works">${t('howItWorks', 'landing')}</a>
           <a href="#pricing">${t('pricing', 'landing')}</a>
           <a href="#/auth" class="btn btn-ghost">${t('login', 'landing')}</a>
+          <a href="#/personel-giris" class="btn btn-ghost" style="gap:4px;"><span class="material-icons-round" style="font-size:1rem;">badge</span>${t('staffLogin', 'landing')}</a>
           <a href="#/auth?mode=register" class="btn btn-primary">${t('freeTrial', 'landing')}</a>
           <select id="landing-lang-select" class="input-field" style="padding:4px 8px; font-size:0.85rem; border-radius:12px; width:auto; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary); margin-left:16px;">
             <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 TR</option>
@@ -40,7 +41,8 @@ export function renderLanding(container) {
       <a href="#how-it-works" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('howItWorks', 'landing')}</a>
       <a href="#pricing" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('pricing', 'landing')}</a>
       <a href="#/auth" class="btn btn-ghost btn-block">${t('login', 'landing')}</a>
-      <a href="#/auth?mode=register" class="btn btn-primary btn-block">${t('freeTrial', 'landing')}</a>
+          <a href="#/personel-giris" class="btn btn-ghost btn-block" style="gap:4px;"><span class="material-icons-round" style="font-size:1rem;">badge</span>${t('staffLogin', 'landing')}</a>
+          <a href="#/auth?mode=register" class="btn btn-primary btn-block">${t('freeTrial', 'landing')}</a>
       <div style="margin-top:16px;text-align:center;">
         <select id="mobile-lang-select" class="input-field" style="padding:8px 16px; font-size:1rem; border-radius:12px; width:100%; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
           <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
@@ -261,8 +263,8 @@ export function renderLanding(container) {
           <div class="footer-links">
             <a href="#features">${t('features', 'landing')}</a>
             <a href="#pricing">${t('pricing', 'landing')}</a>
-            <a href="#">Gizlilik</a>
-            <a href="#">İletişim</a>
+            <a href="#/personel-giris">${t('staffLogin', 'landing')}</a>
+            <a href="#/auth">${t('login', 'landing')}</a>
           </div>
           <div class="footer-copy">${t('footerCopy', 'landing')}</div>
         </div>

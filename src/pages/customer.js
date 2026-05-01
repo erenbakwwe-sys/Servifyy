@@ -181,7 +181,7 @@ function renderDefaultMenu(container) {
 
           return `
           <div class="product-card ${isOutOfStock ? 'out-of-stock' : ''}" data-category="${item.category || 'Genel'}" data-id="${item.id}">
-            <div class="product-image">${item.emoji || '🍽️'}</div>
+            <div class="product-image" style="${item.imageUrl ? `background-image:url('${item.imageUrl}');background-size:cover;background-position:center;color:transparent;` : ''}">${item.emoji || '🍽️'}</div>
             ${isOutOfStock ? `<span class="sold-out-badge">${outOfStockText}</span>` : ''}
             <div class="product-body">
               <div class="product-name">${displayName}</div>

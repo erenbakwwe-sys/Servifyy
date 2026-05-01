@@ -111,7 +111,8 @@ export const translations = {
       pf1: 'Sınırsız menü ürünü', pf2: 'QR kod oluşturma', pf3: 'Online sipariş alma', pf4: 'Garson çağırma', pf5: 'AI tema tasarımı', pf6: 'Gerçek zamanlı panel',
       pf7: 'Deneme paketindeki her şey', pf8: 'Sınırsız masa & QR kod', pf9: 'Gelişmiş analitikler', pf10: 'Öncelikli destek', pf11: 'Özel tema tasarımı', pf12: 'API erişimi',
       getQuote: 'Fiyat Teklifi Al',
-      popular: 'Popüler'
+      popular: 'Popüler',
+      staffLogin: 'Personel Girişi'
     },
     auth: {
       createAccount: 'Hesap Oluştur',
@@ -139,7 +140,7 @@ export const translations = {
       errorOccurred: 'Bir hata oluştu',
       accCreated: 'Hesap oluşturuldu! Hoş geldiniz 🎉',
       loginSuccess: 'Giriş başarılı!',
-      verifyEmailSent: 'Doğrulama bağlantısı e-posta adresinize gönderildi. Lütfen e-postanızı kontrol edin.',
+      verifyEmailSent: 'Doğrulama bağlantısı e-posta adresinize gönderildi. Lütfen e-postanızı (Gereksiz/Spam klasörü dahil) kontrol edin.',
       emailNotVerified: 'Lütfen giriş yapmadan önce e-posta adresinizi doğrulayın.'
     },
     onboarding: {
@@ -277,7 +278,8 @@ export const translations = {
       pf1: 'Unlimited menu items', pf2: 'QR code generation', pf3: 'Online ordering', pf4: 'Call waiter', pf5: 'AI theme design', pf6: 'Real-time panel',
       pf7: 'Everything in Trial', pf8: 'Unlimited tables & QR', pf9: 'Advanced analytics', pf10: 'Priority support', pf11: 'Custom theme design', pf12: 'API access',
       getQuote: 'Get Quote',
-      popular: 'Popular'
+      popular: 'Popular',
+      staffLogin: 'Staff Login'
     },
     auth: {
       createAccount: 'Create Account',
@@ -305,7 +307,7 @@ export const translations = {
       errorOccurred: 'An error occurred',
       accCreated: 'Account created! Welcome 🎉',
       loginSuccess: 'Login successful!',
-      verifyEmailSent: 'A verification link has been sent to your email. Please check your inbox.',
+      verifyEmailSent: 'A verification link has been sent to your email. Please check your inbox (and spam/junk folder).',
       emailNotVerified: 'Please verify your email address before logging in.'
     },
     onboarding: {
@@ -443,7 +445,8 @@ export const translations = {
       pf1: 'Unbegrenzte Menüpunkte', pf2: 'QR-Code-Erstellung', pf3: 'Online-Bestellungen', pf4: 'Kellner rufen', pf5: 'KI-Design', pf6: 'Echtzeit-Panel',
       pf7: 'Alles aus der Testversion', pf8: 'Unbegrenzte Tische & QR', pf9: 'Erweiterte Analysen', pf10: 'Prioritäts-Support', pf11: 'Benutzerdefiniertes Design', pf12: 'API-Zugang',
       getQuote: 'Angebot einholen',
-      popular: 'Beliebt'
+      popular: 'Beliebt',
+      staffLogin: 'Mitarbeiter-Login'
     },
     auth: {
       createAccount: 'Konto erstellen',
@@ -471,7 +474,7 @@ export const translations = {
       errorOccurred: 'Ein Fehler ist aufgetreten',
       accCreated: 'Konto erstellt! Willkommen 🎉',
       loginSuccess: 'Anmeldung erfolgreich!',
-      verifyEmailSent: 'Ein Bestätigungslink wurde an Ihre E-Mail gesendet. Bitte überprüfen Sie Ihren Posteingang.',
+      verifyEmailSent: 'Ein Bestätigungslink wurde an Ihre E-Mail gesendet. Bitte überprüfen Sie Ihren Posteingang (und Spam-Ordner).',
       emailNotVerified: 'Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.'
     },
     onboarding: {

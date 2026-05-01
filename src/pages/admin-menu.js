@@ -43,7 +43,7 @@ export function renderMenuContent(menuItems, categories, userId) {
           const allergenList = (item.allergens || []).map(a => ALLERGENS.find(x => x.id === a)?.emoji || '').join('');
           return `
           <div class="menu-item-card ${outOfStock ? 'out-of-stock' : ''}" data-id="${item.id}">
-            <div class="menu-item-image">${item.emoji || '🍽️'}</div>
+            <div class="menu-item-image" style="${item.imageUrl ? `background-image:url('${item.imageUrl}');background-size:cover;background-position:center;color:transparent;` : ''}">${item.emoji || '🍽️'}</div>
             ${outOfStock ? `<span class="sold-out-badge">${t('customer').soldOut || 'Tükendi'}</span>` : ''}
             <div class="menu-item-body">
               <h4>${item.name}</h4>
@@ -113,6 +113,16 @@ function itemFormHTML(categories, item = null) {
             </select>
           </div>
           <div class="input-group">
+            <label>Resim (URL veya Yükle)</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" class="input-field" id="item-image" placeholder="https:// veya yükle" value="${item?.imageUrl || ''}" style="flex:1;">
+              <button type="button" class="btn btn-secondary btn-sm" id="upload-img-btn" style="padding:6px 10px;" title="Cihazdan Yükle">
+                <span class="material-icons-round" style="font-size:1.2rem;">add_photo_alternate</span>
+              </button>
+              <input type="file" id="item-image-file" accept="image/jpeg, image/png, image/webp" style="display:none;">
+            </div>
+          </div>
+          <div class="input-group">
             <label>Emoji</label>
             <input type="text" class="input-field" id="item-emoji" placeholder="🍕" maxlength="4" value="${item?.emoji || ''}">
           </div>
@@ -164,6 +174,7 @@ function getFormData(overlay) {
     price: parseFloat(overlay.querySelector('#item-price').value) || 0,
     category: category || 'Genel',
     emoji: overlay.querySelector('#item-emoji').value.trim() || '🍽️',
+    imageUrl: overlay.querySelector('#item-image').value.trim() || null,
     calories: calorieVal ? parseInt(calorieVal) : null,
     stock: stockVal !== '' ? parseInt(stockVal) : null,
     allergens,
@@ -201,6 +212,37 @@ function setupFormEvents(overlay, userId, itemId, onComplete) {
   overlay.querySelectorAll('.allergen-chip').forEach(chip => {
     chip.addEventListener('click', () => chip.classList.toggle('selected'));
   });
+
+  const imgBtn = overlay.querySelector('#upload-img-btn');
+  const fileInput = overlay.querySelector('#item-image-file');
+  const urlInput = overlay.querySelector('#item-image');
+
+  if (imgBtn && fileInput && urlInput) {
+    imgBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          const max = 400; // compress to max 400x400
+          if (w > h) { if (w > max) { h *= max / w; w = max; } } 
+          else { if (h > max) { w *= max / h; h = max; } }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          urlInput.value = canvas.toDataURL('image/jpeg', 0.8);
+          showToast('Resim eklendi ✓', 'success');
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   overlay.querySelector('#close-modal').onclick = () => overlay.remove();
   overlay.querySelector('#cancel-modal').onclick = () => overlay.remove();

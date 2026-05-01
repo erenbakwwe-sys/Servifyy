@@ -10,41 +10,105 @@ async function hashPassword(password) {
 
 export function renderStaffLogin(container) {
   container.innerHTML = `
-    <div class="auth-wrapper">
-      <div class="auth-card">
-        <div class="auth-logo"><span class="material-icons-round" style="font-size:2.5rem;color:var(--primary);">badge</span></div>
-        <h2>Personel Girişi</h2>
-        <p style="color:var(--text-muted);margin-bottom:24px;">Restoran yöneticinizin size verdiği bilgilerle giriş yapın</p>
-        <div class="form-group">
-          <label>Restoran Kodu</label>
-          <input type="text" id="staff-org-code" class="form-input" placeholder="Restoran sahibinin kullanıcı ID'si">
-        </div>
-        <div class="form-group">
-          <label>Kullanıcı Adı</label>
-          <input type="text" id="staff-login-user" class="form-input" placeholder="Kullanıcı adınız">
-        </div>
-        <div class="form-group">
-          <label>Şifre</label>
-          <input type="password" id="staff-login-pass" class="form-input" placeholder="Şifreniz">
-        </div>
-        <button class="btn btn-primary btn-full" id="staff-login-btn" style="margin-top:8px;">
-          <span class="material-icons-round">login</span> Giriş Yap
-        </button>
-        <p style="text-align:center;margin-top:16px;font-size:0.8rem;">
-          <a href="#/" style="color:var(--primary-light);">← Ana Sayfaya Dön</a>
-        </p>
+    <div class="auth-page">
+      <div class="hero-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
       </div>
-    </div>`;
+      <div class="auth-card">
+        <div class="auth-logo">
+          <div class="logo-icon" style="background: linear-gradient(135deg, var(--primary), #6366f1);">
+            <span class="material-icons-round">badge</span>
+          </div>
+          <span class="gradient-text">QR Menü</span>
+        </div>
+        <h2 class="auth-title">Personel Girişi</h2>
+        <p class="auth-subtitle">Yöneticinizin size verdiği bilgilerle giriş yapın</p>
 
-  document.getElementById('staff-login-btn')?.addEventListener('click', handleLogin);
-  document.getElementById('staff-login-pass')?.addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
+        <form class="auth-form" id="staff-form">
+          <div class="input-group">
+            <label for="staff-org-code">
+              <span class="material-icons-round" style="font-size:1rem;vertical-align:middle;margin-right:4px;">store</span>
+              Restoran Kodu
+            </label>
+            <input
+              type="text"
+              id="staff-org-code"
+              class="input-field"
+              placeholder="Restoranın kullanıcı ID kodu"
+              autocomplete="off"
+              required
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="staff-login-user">
+              <span class="material-icons-round" style="font-size:1rem;vertical-align:middle;margin-right:4px;">person</span>
+              Kullanıcı Adı
+            </label>
+            <input
+              type="text"
+              id="staff-login-user"
+              class="input-field"
+              placeholder="Kullanıcı adınız"
+              autocomplete="username"
+              required
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="staff-login-pass">
+              <span class="material-icons-round" style="font-size:1rem;vertical-align:middle;margin-right:4px;">lock</span>
+              Şifre
+            </label>
+            <input
+              type="password"
+              id="staff-login-pass"
+              class="input-field"
+              placeholder="Şifreniz"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="staff-login-btn">
+            <span class="material-icons-round">login</span>
+            Giriş Yap
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          <a href="#/" style="color:var(--text-muted);font-size:0.85rem;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">
+            <span class="material-icons-round" style="font-size:1rem;">arrow_back</span>
+            Ana Sayfaya Dön
+          </a>
+        </div>
+
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);text-align:center;">
+          <a href="#/auth" style="color:var(--text-muted);font-size:0.8rem;text-decoration:none;">
+            Yönetici girişi için tıklayın
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const form = document.getElementById('staff-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await handleLogin();
+  });
+
+  document.getElementById('staff-login-pass')?.addEventListener('keypress', e => {
+    if (e.key === 'Enter') { e.preventDefault(); handleLogin(); }
+  });
 }
 
 async function handleLogin() {
-  const orgCode = document.getElementById('staff-org-code').value.trim();
-  const username = document.getElementById('staff-login-user').value.trim();
-  const password = document.getElementById('staff-login-pass').value;
-  const btn = document.getElementById('staff-login-btn');
+  const orgCode   = document.getElementById('staff-org-code').value.trim();
+  const username  = document.getElementById('staff-login-user').value.trim();
+  const password  = document.getElementById('staff-login-pass').value;
+  const btn       = document.getElementById('staff-login-btn');
 
   if (!orgCode || !username || !password) {
     showToast('Tüm alanları doldurun', 'warning');
@@ -52,16 +116,19 @@ async function handleLogin() {
   }
 
   btn.disabled = true;
-  btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> Giriş yapılıyor...';
+  btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> Giriş yapılıyor...';
 
   try {
-    const staffSnap = await getDocs(collection(db, 'users', orgCode, 'staff'));
+    // Query only this specific username — never download all staff
+    const staffSnap = await getDocs(
+      query(collection(db, 'users', orgCode, 'staff'), where('username', '==', username))
+    );
     const passHash = await hashPassword(password);
     let found = null;
 
     staffSnap.forEach(d => {
       const data = d.data();
-      if (data.username === username && data.passwordHash === passHash) {
+      if (data.passwordHash === passHash) {
         found = { staffId: d.id, ...data };
       }
     });
@@ -89,7 +156,7 @@ async function handleLogin() {
       orgId: orgCode
     }));
 
-    showToast(`Hoş geldiniz, ${found.username}!`, 'success');
+    showToast(`Hoş geldiniz, ${found.username}! 👋`, 'success');
     window.location.hash = '/staff-panel';
   } catch (e) {
     console.error('Staff login error:', e);

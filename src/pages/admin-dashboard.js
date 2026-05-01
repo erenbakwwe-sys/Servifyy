@@ -45,7 +45,7 @@ export function renderDashboardContent(userData, orders, calls) {
         </div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:24px;">
       <div class="card">
         <h3 style="margin-bottom:16px;font-size:1.1rem;">${t('recentOrders')}</h3>
         ${todayOrders.length === 0 ? `<p style="color:var(--text-muted);">${t('noOrders', 'admin')}</p>` :

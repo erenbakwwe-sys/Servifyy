@@ -138,17 +138,20 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
   const data = await response.json();
   let html = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   
-  const htmlMatch = html.match(/```html\s*([\s\S]*?)\s*```/i);
-  if (htmlMatch) {
-    html = htmlMatch[1];
+  // Try to extract from ANY code block first
+  const blockMatch = html.match(/```(?:html|xml)?\s*([\s\S]*?)\s*```/i);
+  if (blockMatch) {
+    html = blockMatch[1];
   } else {
-    const rawMatch = html.match(/(<!DOCTYPE[\s\S]*<\/html>)/i);
-    if (rawMatch) html = rawMatch[1];
+    // Fallback: Try to find from <html or <!DOCTYPE down to </html>
+    const rawMatch = html.match(/(?:<!DOCTYPE[^>]*>\s*)?(<html[\s\S]*<\/html>)/i);
+    if (rawMatch) html = rawMatch[1] || rawMatch[0];
   }
   
-  html = html.replace(/^```html?\s*/i, '').replace(/```\s*$/i, '').trim();
+  html = html.trim();
   
-  if (!html.includes('<!DOCTYPE') && !html.includes('<html')) {
+  // If it still doesn't look like HTML, throw
+  if (!html.includes('<html') && !html.includes('<body')) {
     throw new Error('INVALID_HTML');
   }
   

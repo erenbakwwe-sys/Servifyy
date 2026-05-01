@@ -61,6 +61,13 @@ async function loadAdminData(userId, container) {
 
 function renderAdminLayout(container, userId) {
   const trialDays = getTrialDaysLeft(userData?.trialStart);
+  const isTrialExpired = userData?.plan === 'trial' && trialDays <= 0;
+  
+  if (isTrialExpired) {
+    renderExpiredTrialScreen(container);
+    return;
+  }
+
   const restaurantName = userData?.restaurant?.name || 'Restoranım';
 
   container.innerHTML = `
@@ -230,7 +237,7 @@ function renderPage(userId) {
       setupBranchHandlers(userId, content);
       break;
     case 'staff':
-      content.innerHTML = renderStaffContent();
+      content.innerHTML = renderStaffContent(userId);
       setupStaffHandlers(userId, content);
       break;
   }
@@ -633,6 +640,41 @@ function cleanup() {
   if (unsubOrders) unsubOrders();
   if (unsubCalls) unsubCalls();
   if (unsubMenu) unsubMenu();
+}
+
+function renderExpiredTrialScreen(container) {
+  container.innerHTML = `
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg-primary); padding: 20px; text-align: center; font-family: 'Inter', sans-serif;">
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 24px; padding: 40px; max-width: 480px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <div style="width: 80px; height: 80px; background: rgba(255, 107, 107, 0.1); color: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 24px;">
+          <span class="material-icons-round" style="font-size:inherit;">timer_off</span>
+        </div>
+        <h2 style="font-size: 1.8rem; margin-bottom: 12px; color: var(--text-primary); font-weight: 700;">Deneme Süreniz Bitti</h2>
+        <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; font-size: 0.95rem;">
+          14 günlük ücretsiz deneme sürenizi tamamladınız. Sisteme ve menülerinize kesintisiz erişim sağlamak için planınızı yükseltin.
+        </p>
+        
+        <div style="background: var(--bg-primary); border: 1.5px solid var(--primary); border-radius: 16px; padding: 20px; margin-bottom: 30px; text-align: left;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);">
+            <span class="material-icons-round" style="color: var(--primary);">star</span> Pro / Kurumsal Plan
+          </h3>
+          <ul style="list-style: none; padding: 0; margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> Limitsiz QR Menü & Yönetim</li>
+            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> Sınırsız Personel ve Şube</li>
+            <li style="display: flex; align-items: center; gap: 10px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> Gelişmiş AI Temaları</li>
+          </ul>
+        </div>
+
+        <button onclick="window.open('https://tally.so/r/LZ5KYz', '_blank')" class="btn btn-primary btn-block" style="margin-bottom: 20px; padding: 14px; font-size: 1.05rem; justify-content: center;">
+          <span class="material-icons-round">rocket_launch</span> Teklif Al / Yükselt
+        </button>
+
+        <a href="javascript:void(0)" onclick="if(window.logoutAdmin) window.logoutAdmin();" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">
+          <span class="material-icons-round" style="font-size: 1rem;">logout</span> Çıkış Yap
+        </a>
+      </div>
+    </div>
+  `;
 }
 
 export { cleanup as cleanupAdmin };

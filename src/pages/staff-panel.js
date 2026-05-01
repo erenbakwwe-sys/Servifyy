@@ -3,7 +3,9 @@ import { showToast } from '../utils.js';
 import { getStaffSession, staffLogout } from './staff-login.js';
 
 let orders = [];
+let calls = [];
 let unsub = null;
+let unsubCalls = null;
 
 export function renderStaffPanel(container) {
   const session = getStaffSession();
@@ -26,6 +28,8 @@ export function renderStaffPanel(container) {
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">İşlemler</div>
             <div class="sidebar-nav-item active" data-sp="orders"><span class="material-icons-round">receipt_long</span>Siparişler</div>
+            <div class="sidebar-nav-item" data-sp="calls"><span class="material-icons-round">notifications_active</span>Çağrılar</div>
+            <div class="sidebar-nav-item" data-sp="history"><span class="material-icons-round">history</span>Geçmiş Siparişler</div>
             ${role === 'branch_manager' ? '<div class="sidebar-nav-item" data-sp="tables"><span class="material-icons-round">table_restaurant</span>Masalar</div>' : ''}
           </div>
         </nav>
@@ -51,13 +55,15 @@ export function renderStaffPanel(container) {
       document.querySelectorAll('[data-sp]').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
       const page = item.dataset.sp;
-      document.getElementById('sp-title').textContent = page === 'orders' ? 'Siparişler' : 'Masalar';
+      const titles = { orders: 'Siparişler', calls: 'Çağrılar', history: 'Geçmiş Siparişler', tables: 'Masalar' };
+      document.getElementById('sp-title').textContent = titles[page] || page;
       renderStaffPage(page, orgId, assignedBranchId);
     });
   });
 
-  // Listen to orders
+  // Listen to orders and calls
   listenOrders(orgId, assignedBranchId);
+  listenCalls(orgId, assignedBranchId);
 }
 
 function listenOrders(orgId, branchId) {
@@ -73,7 +79,26 @@ function listenOrders(orgId, branchId) {
           orders.push(data);
         }
       });
-      renderStaffPage('orders', orgId, branchId);
+      if (document.querySelector('.sidebar-nav-item.active').dataset.sp === 'orders' || document.querySelector('.sidebar-nav-item.active').dataset.sp === 'history') {
+        renderStaffPage(document.querySelector('.sidebar-nav-item.active').dataset.sp, orgId, branchId);
+      }
+    }
+  );
+}
+
+function listenCalls(orgId, branchId) {
+  if (unsubCalls) unsubCalls();
+  unsubCalls = onSnapshot(
+    query(collection(db, 'users', orgId, 'calls'), orderBy('createdAt', 'desc')),
+    (snap) => {
+      calls = [];
+      snap.forEach(d => {
+        const data = { id: d.id, ...d.data() };
+        if (!branchId || data.branchId === branchId || !data.branchId) calls.push(data);
+      });
+      if (document.querySelector('.sidebar-nav-item.active').dataset.sp === 'calls') {
+        renderStaffPage('calls', orgId, branchId);
+      }
     }
   );
 }
@@ -83,21 +108,21 @@ function renderStaffPage(page, orgId, branchId) {
   if (!content) return;
 
   if (page === 'orders') {
-    const pending = orders.filter(o => o.status === 'pending' || o.status === 'preparing');
+    const pending = orders.filter(o => o.status === 'new' || o.status === 'pending' || o.status === 'preparing');
     content.innerHTML = pending.length === 0
       ? '<div class="empty-state"><span class="material-icons-round" style="font-size:4rem;color:var(--text-muted);">receipt_long</span><h4>Aktif sipariş yok</h4></div>'
       : `<div class="orders-list">${pending.map(o => `
         <div class="order-card">
           <div class="order-header">
-            <span class="badge ${o.status === 'pending' ? 'badge-warning' : 'badge-primary'}">
-              ${o.status === 'pending' ? 'Bekliyor' : 'Hazırlanıyor'}
+            <span class="badge ${o.status === 'new' ? 'badge-primary' : o.status === 'pending' ? 'badge-warning' : 'badge-info'}">
+              ${o.status === 'new' ? 'Yeni' : o.status === 'pending' ? 'Bekliyor' : 'Hazırlanıyor'}
             </span>
             <span style="color:var(--text-muted);font-size:0.8rem;">Masa ${o.tableNo || '?'}</span>
           </div>
           <div class="order-items">${(o.items || []).map(i => `<div>${i.qty}x ${i.name} — ₺${(i.price * i.qty).toFixed(2)}</div>`).join('')}</div>
           <div class="order-footer">
             <strong>₺${(o.total || 0).toFixed(2)}</strong>
-            ${o.status === 'pending' ? `<button class="btn btn-primary btn-sm" data-accept="${o.id}">Onayla</button>` : ''}
+            ${o.status === 'new' || o.status === 'pending' ? `<button class="btn btn-primary btn-sm" data-accept="${o.id}">Onayla</button>` : ''}
             ${o.status === 'preparing' ? `<button class="btn btn-success btn-sm" data-complete="${o.id}">Tamamla</button>` : ''}
           </div>
         </div>
@@ -115,9 +140,46 @@ function renderStaffPage(page, orgId, branchId) {
         showToast('Sipariş tamamlandı ✓', 'success');
       });
     });
+  } else if (page === 'history') {
+    const completed = orders.filter(o => o.status === 'completed' || o.status === 'cancelled');
+    content.innerHTML = completed.length === 0
+      ? '<div class="empty-state"><span class="material-icons-round" style="font-size:4rem;color:var(--text-muted);">history</span><h4>Geçmiş sipariş yok</h4></div>'
+      : `<div class="orders-list">${completed.map(o => `
+        <div class="order-card" style="opacity:0.8;">
+          <div class="order-header">
+            <span class="badge ${o.status === 'completed' ? 'badge-success' : 'badge-danger'}">${o.status === 'completed' ? 'Tamamlandı' : 'İptal'}</span>
+            <span style="color:var(--text-muted);font-size:0.8rem;">Masa ${o.tableNo || '?'}</span>
+          </div>
+          <div class="order-items">${(o.items || []).map(i => `<div>${i.qty}x ${i.name}</div>`).join('')}</div>
+          <div class="order-footer"><strong>₺${(o.total || 0).toFixed(2)}</strong></div>
+        </div>
+      `).join('')}</div>`;
+  } else if (page === 'calls') {
+    const activeCalls = calls.filter(c => c.status !== 'resolved');
+    content.innerHTML = activeCalls.length === 0
+      ? '<div class="empty-state"><span class="material-icons-round" style="font-size:4rem;color:var(--text-muted);">notifications_none</span><h4>Aktif çağrı yok</h4></div>'
+      : `<div class="calls-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;padding:20px;">
+          ${activeCalls.map(c => `
+            <div class="call-card" style="background:var(--bg-secondary);padding:16px;border-radius:12px;border:1px solid var(--border);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <span class="badge badge-warning" style="display:flex;align-items:center;gap:4px;"><span class="material-icons-round" style="font-size:1rem;">notifications_active</span> Garson</span>
+                <span style="font-size:0.8rem;color:var(--text-muted);">Masa ${c.tableNo}</span>
+              </div>
+              <button class="btn btn-primary btn-block btn-sm" data-resolve="${c.id}">Tamamla</button>
+            </div>
+          `).join('')}
+         </div>`;
+
+    content.querySelectorAll('[data-resolve]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await updateDoc(doc(db, 'users', orgId, 'calls', btn.dataset.resolve), { status: 'resolved' });
+        showToast('Çağrı çözüldü', 'success');
+      });
+    });
   }
 }
 
 export function cleanupStaffPanel() {
   if (unsub) { unsub(); unsub = null; }
+  if (unsubCalls) { unsubCalls(); unsubCalls = null; }
 }

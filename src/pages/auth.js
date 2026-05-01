@@ -57,6 +57,12 @@ export function renderAuth(container, params = {}) {
             : `${t('dontHaveAcc', 'auth')} <a onclick="window.location.hash='/auth?mode=register'">${t('registerBtn', 'auth')}</a>`
           }
         </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
+          <a href="#/personel-giris" style="color:var(--text-muted);font-size:0.85rem;display:inline-flex;align-items:center;gap:6px;text-decoration:none;transition:color 0.2s;">
+            <span class="material-icons-round" style="font-size:1rem;">badge</span>
+            ${t('staffLogin', 'landing')}
+          </a>
+        </div>
       </div>
     </div>
   `;
@@ -84,8 +90,8 @@ export function renderAuth(container, params = {}) {
         }
 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await sendEmailVerification(userCredential.user);
-        
+
+        // Save user to Firestore
         await setDoc(doc(db, 'users', userCredential.user.uid), {
           name: name,
           email: email,
@@ -97,16 +103,13 @@ export function renderAuth(container, params = {}) {
           settings: {}
         });
 
+        // Send verification email then sign out → user must verify before login
+        await sendEmailVerification(userCredential.user);
         await signOut(auth);
         showToast(t('verifyEmailSent', 'auth'), 'success');
         window.location.hash = '/auth';
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        if (!userCredential.user.emailVerified) {
-          await signOut(auth);
-          showToast(t('emailNotVerified', 'auth'), 'error');
-          return;
-        }
         showToast(t('loginSuccess', 'auth'), 'success');
         // Will be redirected by auth state listener
       }

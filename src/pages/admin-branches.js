@@ -66,26 +66,26 @@ function branchFormModal(branch = null) {
           <button class="btn btn-ghost btn-icon modal-close" data-close-modal><span class="material-icons-round">close</span></button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
+          <div class="input-group">
             <label>Şube Adı *</label>
-            <input type="text" id="branch-name" class="form-input" placeholder="Merkez Şube" value="${branch?.name || ''}">
+            <input type="text" id="branch-name" class="input-field" placeholder="Merkez Şube" value="${branch?.name || ''}">
           </div>
-          <div class="form-group">
+          <div class="input-group">
             <label>Adres</label>
-            <input type="text" id="branch-address" class="form-input" placeholder="Şube adresi" value="${branch?.address || ''}">
+            <input type="text" id="branch-address" class="input-field" placeholder="Şube adresi" value="${branch?.address || ''}">
           </div>
-          <div class="form-group">
+          <div class="input-group">
             <label>Telefon</label>
-            <input type="text" id="branch-phone" class="form-input" placeholder="0555 000 00 00" value="${branch?.phone || ''}">
+            <input type="text" id="branch-phone" class="input-field" placeholder="0555 000 00 00" value="${branch?.phone || ''}">
           </div>
-          <div class="form-row">
-            <div class="form-group">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="input-group">
               <label>Açılış Saati</label>
-              <input type="time" id="branch-open" class="form-input" value="${branch?.workingHours?.open || '09:00'}">
+              <input type="time" id="branch-open" class="input-field" value="${branch?.workingHours?.open || '09:00'}">
             </div>
-            <div class="form-group">
+            <div class="input-group">
               <label>Kapanış Saati</label>
-              <input type="time" id="branch-close" class="form-input" value="${branch?.workingHours?.close || '23:00'}">
+              <input type="time" id="branch-close" class="input-field" value="${branch?.workingHours?.close || '23:00'}">
             </div>
           </div>
         </div>

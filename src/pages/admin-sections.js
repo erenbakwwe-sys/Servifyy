@@ -1,5 +1,4 @@
-import { generateQRCode } from '../utils.js';
-import { showToast, formatCurrency, formatDate, timeAgo } from '../utils.js';
+import { generateQRCode, showToast, formatCurrency, formatDate, timeAgo } from '../utils.js';
 import { db, doc, updateDoc, collection, query, where, orderBy, onSnapshot } from '../firebase.js';
 import { t } from '../i18n.js';
 
@@ -152,7 +151,7 @@ export function renderOrdersContent(orders) {
               <span class="order-total">${t('total')}: ${formatCurrency(o.total || 0)}</span>
               <div class="order-payment">
                 <span class="material-icons-round" style="font-size:1rem;">${o.paymentMethod==='cash'?'payments':'credit_card'}</span>
-                ${o.paymentMethod==='cash' ? (t('customer').cash||'Nakit') : (t('customer').creditCard||'Kredi Kartı')}
+                ${o.paymentMethod==='cash' ? t('cash', 'customer') : t('creditCard', 'customer')}
               </div>
               <div class="order-actions">
                 ${o.status === 'new' ? `<button class="btn btn-primary btn-sm update-order" data-id="${o.id}" data-status="preparing">${t('prepare', 'admin')}</button>` : ''}
@@ -191,7 +190,7 @@ export function renderHistoryContent(orders) {
                   <td>${t('tables', 'admin')} ${o.tableNo||'?'}</td>
                   <td>${(o.items||[]).map(i=>i.name).join(', ')}</td>
                   <td style="font-weight:600;">${formatCurrency(o.total||0)}</td>
-                  <td>${o.paymentMethod==='cash'?(t('customer').cash||'Nakit'):(t('customer').creditCard||'POS')}</td>
+                  <td>${o.paymentMethod==='cash' ? t('cash', 'customer') : t('creditCard', 'customer')}</td>
                   <td>${formatDate(o.createdAt)}</td>
                 </tr>
               `).join('')}
