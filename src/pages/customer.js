@@ -1,6 +1,7 @@
-import { db, doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, onSnapshot, where } from '../firebase.js';
+import { db, doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, onSnapshot, where, updateDoc } from '../firebase.js';
 import { showToast, formatCurrency } from '../utils.js';
 import { t, getLang, setLang } from '../i18n.js';
+import { validateCoupon, useCoupon } from './admin-coupons.js';
 
 let cart = [];
 let restaurantData = null;
@@ -84,43 +85,69 @@ function renderCustomTheme(container) {
   `;
 
   const iframe = document.getElementById('theme-iframe');
-  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-  iframeDoc.open();
-  iframeDoc.write(themeHtml);
-  iframeDoc.close();
+  
+  // Use srcdoc instead of document.write for reliable rendering
+  iframe.srcdoc = themeHtml;
+  
+  iframe.addEventListener('load', () => {
+    // Auto resize iframe
+    try {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      if (iframeDoc && iframeDoc.body) {
+        const resizeIframe = () => {
+          const h = iframeDoc.body?.scrollHeight || 800;
+          iframe.style.height = h + 'px';
+        };
+        resizeIframe();
+        setTimeout(resizeIframe, 500);
+        setTimeout(resizeIframe, 1500);
+      }
+    } catch(e) {
+      console.warn('Iframe resize error:', e);
+      iframe.style.height = '100vh';
+    }
 
-  // Auto resize iframe
-  const resizeIframe = () => {
-    const h = iframeDoc.body?.scrollHeight || 800;
-    iframe.style.height = h + 'px';
-  };
-  setTimeout(resizeIframe, 500);
-  setTimeout(resizeIframe, 1500);
+    // Listen for cart events from iframe via postMessage
+    try {
+      iframe.contentWindow.addEventListener('message', (e) => {
+        if (e.data.type === 'addToCart') {
+          addToCart(e.data.item);
+        }
+      });
+    } catch(e) {}
 
-  // Listen for cart events from iframe
-  iframe.contentWindow.addEventListener('message', (e) => {
-    if (e.data.type === 'addToCart') {
+    // Override iframe's addToCart function
+    try {
+      iframe.contentWindow.addToCart = (id, name, price) => {
+        addToCart({ id, name, price: parseFloat(price) });
+      };
+    } catch(e) {}
+
+    // Listen for AI theme openCart event
+    try {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      iframeDoc.addEventListener('openCart', () => {
+        openCartPanel();
+      });
+    } catch(e) {}
+  });
+
+  // Listen for postMessage events from iframe (works even with sandbox)
+  window.addEventListener('message', (e) => {
+    if (e.data?.type === 'addToCart' && e.data.item) {
       addToCart(e.data.item);
+    }
+    if (e.data?.type === 'openCart') {
+      openCartPanel();
+    }
+    if (e.data?.type === 'callWaiter') {
+      triggerWaiterCall();
     }
   });
 
-  // Override iframe's addToCart function
-  try {
-    iframe.contentWindow.addToCart = (id, name, price) => {
-      addToCart({ id, name, price: parseFloat(price) });
-    };
-  } catch(e) {}
-
-    // Waiter call
+  // Waiter call
   setupWaiterCall();
   updateFloatingCart(container);
-  
-  // Listen for AI theme openCart event
-  try {
-    iframeDoc.addEventListener('openCart', () => {
-      openCartPanel();
-    });
-  } catch(e) {}
   
   // Track active orders
   setupOrderTracking(container);
@@ -431,6 +458,31 @@ function openCartPanel() {
             <div style="font-size:0.95rem; color:var(--primary); margin-top:8px; font-weight:700;" id="split-amount">Kişi başı: ${formatCurrency(total / 2)}</div>
           </div>
         </div>
+        <div class="tip-section">
+          <div class="tip-title"><span class="material-icons-round">volunteer_activism</span> ${t('tipLeave', 'customer')}</div>
+          <div class="tip-options">
+            <div class="tip-option" data-tip-pct="0">${t('tipNone', 'customer')}</div>
+            <div class="tip-option" data-tip-pct="5">%5<span class="tip-pct">${formatCurrency(total * 0.05)}</span></div>
+            <div class="tip-option selected" data-tip-pct="10">%10<span class="tip-pct">${formatCurrency(total * 0.10)}</span></div>
+            <div class="tip-option" data-tip-pct="15">%15<span class="tip-pct">${formatCurrency(total * 0.15)}</span></div>
+            <div class="tip-option" data-tip-pct="custom">${t('tipCustom', 'customer')}</div>
+          </div>
+          <div class="tip-custom-input" id="tip-custom-area">
+            <input type="number" class="input-field" id="tip-custom-val" placeholder="${t('tip', 'customer')} (₺)" min="0" style="background:var(--bg-elevated);">
+          </div>
+          <div class="tip-total-row">
+            <span class="tip-total-label">${t('tipIncluded', 'customer')}</span>
+            <span class="tip-total-value" id="tip-grand-total">${formatCurrency(total * 1.10)}</span>
+          </div>
+        </div>
+        <div class="coupon-input-section">
+          <div class="tip-title"><span class="material-icons-round">confirmation_number</span> ${t('couponCode', 'customer')}</div>
+          <div class="coupon-input-row">
+            <input type="text" class="input-field" id="coupon-code-input" placeholder="KUPONKODU" style="background:var(--bg-elevated);">
+            <button class="btn btn-secondary btn-sm" id="apply-coupon-btn">${t('couponApply', 'customer')}</button>
+          </div>
+          <div class="coupon-result" id="coupon-result"></div>
+        </div>
         <button class="btn btn-primary btn-block btn-lg" id="place-order-btn">
           <span class="material-icons-round">send</span>
           ${t('sendOrder', 'customer')}
@@ -487,15 +539,74 @@ function openCartPanel() {
     });
   });
 
+  // Tip selection
+  let selectedTipPct = 10;
+  let customTipAmount = 0;
+  let couponDiscount = 0;
+  let appliedCouponId = null;
+
+  const updateGrandTotal = () => {
+    let tipAmount = selectedTipPct === 'custom' ? customTipAmount : total * (selectedTipPct / 100);
+    const grand = total + tipAmount - couponDiscount;
+    const grandEl = panel.querySelector('#tip-grand-total');
+    if (grandEl) grandEl.textContent = formatCurrency(Math.max(0, grand));
+  };
+
+  panel.querySelectorAll('.tip-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      panel.querySelectorAll('.tip-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      const pct = opt.dataset.tipPct;
+      if (pct === 'custom') {
+        selectedTipPct = 'custom';
+        panel.querySelector('#tip-custom-area').classList.add('show');
+      } else {
+        selectedTipPct = parseInt(pct);
+        panel.querySelector('#tip-custom-area').classList.remove('show');
+      }
+      updateGrandTotal();
+    });
+  });
+
+  panel.querySelector('#tip-custom-val')?.addEventListener('input', (e) => {
+    customTipAmount = parseFloat(e.target.value) || 0;
+    updateGrandTotal();
+  });
+
+  // Coupon
+  panel.querySelector('#apply-coupon-btn')?.addEventListener('click', async () => {
+    const code = panel.querySelector('#coupon-code-input')?.value?.trim();
+    const resultEl = panel.querySelector('#coupon-result');
+    if (!code) { showToast('Kupon kodu girin', 'warning'); return; }
+    
+    const result = await validateCoupon(currentUserId, code, total);
+    if (result.valid) {
+      couponDiscount = result.discount;
+      appliedCouponId = result.couponId;
+      resultEl.className = 'coupon-result success';
+      resultEl.textContent = `✓ ${result.type === 'percent' ? '%' + result.value : formatCurrency(result.value)} indirim uygulandı! (-${formatCurrency(couponDiscount)})`;
+    } else {
+      couponDiscount = 0;
+      appliedCouponId = null;
+      resultEl.className = 'coupon-result error';
+      resultEl.textContent = `✗ ${result.message}`;
+    }
+    updateGrandTotal();
+  });
+
   // Place order
-  panel.querySelector('#place-order-btn').addEventListener('click', () => placeOrder(panel));
+  panel.querySelector('#place-order-btn').addEventListener('click', () => {
+    const tipAmount = selectedTipPct === 'custom' ? customTipAmount : total * (selectedTipPct / 100);
+    placeOrder(panel, tipAmount, couponDiscount, appliedCouponId);
+  });
 }
 
-async function placeOrder(panel) {
+async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCouponId = null) {
   const paymentMethod = panel.querySelector('.payment-option.selected')?.dataset.method || 'cash';
   const orderNote = panel.querySelector('#order-note')?.value.trim() || '';
   const orderBtn = panel.querySelector('#place-order-btn');
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const grandTotal = Math.max(0, total + tipAmount - couponDiscount);
   
   const splitCountVal = paymentMethod === 'split' ? parseInt(panel.querySelector('#split-count').value) : null;
 
@@ -521,7 +632,10 @@ async function placeOrder(panel) {
     await addDoc(collection(db, 'users', currentUserId, 'orders'), {
       tableNo: currentTableNo,
       items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
-      total: total,
+      total: grandTotal,
+      subtotal: total,
+      tip: tipAmount,
+      couponDiscount: couponDiscount,
       paymentMethod: paymentMethod,
       splitCount: splitCountVal,
       note: orderNote,
@@ -530,11 +644,16 @@ async function placeOrder(panel) {
       createdAt: serverTimestamp()
     });
 
+    // Use coupon if applied
+    if (appliedCouponId) {
+      await useCoupon(currentUserId, appliedCouponId);
+    }
+
     panel.remove();
     cart = [];
     updateFloatingCart(document.getElementById('app'));
 
-    // Show confirmation
+    // Show confirmation with feedback
     showOrderConfirmation();
   } catch (e) {
     console.error('Order error:', e);
@@ -554,43 +673,136 @@ function showOrderConfirmation() {
       </div>
       <h3>${t('orderReceived', 'customer')}</h3>
       <p>${t('orderReceivedDesc', 'customer')}</p>
-      <button class="btn btn-primary btn-block" onclick="this.closest('.order-confirm').remove()">
+      <button class="btn btn-primary btn-block" id="confirm-ok-btn">
         ${t('ok', 'customer')}
+      </button>
+      <button class="btn btn-secondary btn-block" id="open-feedback-btn" style="margin-top:8px;">
+        <span class="material-icons-round">star</span> ${t('rateFeedback', 'customer')}
       </button>
     </div>
   `;
   document.body.appendChild(confirm);
 
+  confirm.querySelector('#confirm-ok-btn').addEventListener('click', () => confirm.remove());
+  confirm.querySelector('#open-feedback-btn').addEventListener('click', () => {
+    confirm.remove();
+    showFeedbackModal();
+  });
+
   setTimeout(() => {
     if (confirm.parentElement) confirm.remove();
-  }, 10000);
+  }, 15000);
+}
+
+function showFeedbackModal() {
+  let selectedRating = 0;
+  const selectedCats = new Set();
+  
+  const modal = document.createElement('div');
+  modal.className = 'feedback-modal';
+  modal.innerHTML = `
+    <div class="feedback-modal-card">
+      <h3>${t('feedbackRate', 'customer')} ⭐</h3>
+      <p>${t('feedbackDesc', 'customer')}</p>
+      <div class="star-rating">
+        ${[1,2,3,4,5].map(i => `<button class="star-btn" data-star="${i}">☆</button>`).join('')}
+      </div>
+      <div class="feedback-categories">
+        <span class="feedback-cat-chip" data-cat="${t('feedbackFood', 'customer')}">🍽️ ${t('feedbackFood', 'customer')}</span>
+        <span class="feedback-cat-chip" data-cat="${t('feedbackSpeed', 'customer')}">⚡ ${t('feedbackSpeed', 'customer')}</span>
+        <span class="feedback-cat-chip" data-cat="${t('feedbackService', 'customer')}">😊 ${t('feedbackService', 'customer')}</span>
+        <span class="feedback-cat-chip" data-cat="${t('feedbackClean', 'customer')}">✨ ${t('feedbackClean', 'customer')}</span>
+        <span class="feedback-cat-chip" data-cat="${t('feedbackPrice', 'customer')}">💰 ${t('feedbackPrice', 'customer')}</span>
+      </div>
+      <textarea class="input-field" id="feedback-comment" placeholder="${t('feedbackDesc', 'customer')}" rows="2" style="width:100%;margin-bottom:16px;"></textarea>
+      <button class="btn btn-primary btn-block" id="submit-feedback-btn">
+        <span class="material-icons-round">send</span> ${t('feedbackSend', 'customer')}
+      </button>
+      <button class="btn btn-ghost btn-block" id="skip-feedback-btn" style="margin-top:8px;">${t('feedbackSkip', 'customer')}</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Star rating
+  modal.querySelectorAll('.star-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedRating = parseInt(btn.dataset.star);
+      modal.querySelectorAll('.star-btn').forEach((b, idx) => {
+        b.textContent = idx < selectedRating ? '★' : '☆';
+        b.classList.toggle('active', idx < selectedRating);
+      });
+    });
+    btn.addEventListener('mouseenter', () => {
+      const hoverVal = parseInt(btn.dataset.star);
+      modal.querySelectorAll('.star-btn').forEach((b, idx) => {
+        b.textContent = idx < hoverVal ? '★' : '☆';
+      });
+    });
+  });
+
+  // Category chips
+  modal.querySelectorAll('.feedback-cat-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const cat = chip.dataset.cat;
+      if (selectedCats.has(cat)) { selectedCats.delete(cat); chip.classList.remove('selected'); }
+      else { selectedCats.add(cat); chip.classList.add('selected'); }
+    });
+  });
+
+  modal.querySelector('#skip-feedback-btn').addEventListener('click', () => modal.remove());
+
+  modal.querySelector('#submit-feedback-btn').addEventListener('click', async () => {
+    if (selectedRating === 0) { showToast('Lütfen bir puan seçin', 'warning'); return; }
+    try {
+      await addDoc(collection(db, 'users', currentUserId, 'feedback'), {
+        rating: selectedRating,
+        categories: [...selectedCats],
+        comment: modal.querySelector('#feedback-comment')?.value?.trim() || '',
+        tableNo: currentTableNo,
+        createdAt: serverTimestamp()
+      });
+      showToast(t('feedbackThanks', 'customer'), 'success');
+      modal.remove();
+    } catch(e) {
+      showToast('Gönderilemedi: ' + e.message, 'error');
+    }
+  });
 }
 
 function setupWaiterCall() {
   const btn = document.getElementById('waiter-call-btn');
   if (!btn) return;
 
-  btn.addEventListener('click', async () => {
-    try {
+  btn.addEventListener('click', () => triggerWaiterCall());
+}
+
+async function triggerWaiterCall() {
+  const btn = document.getElementById('waiter-call-btn');
+  try {
+    if (btn) {
       btn.classList.add('called');
       btn.innerHTML = `<span class="material-icons-round">check_circle</span> ${t('called', 'customer')}`;
+    }
 
-      await addDoc(collection(db, 'users', currentUserId, 'calls'), {
-        tableNo: currentTableNo,
-        status: 'active',
-        createdAt: serverTimestamp()
-      });
+    await addDoc(collection(db, 'users', currentUserId, 'calls'), {
+      tableNo: currentTableNo,
+      status: 'active',
+      createdAt: serverTimestamp()
+    });
 
-      showToast('Garson çağrıldı! Birazdan gelecek.', 'success');
+    showToast('Garson çağrıldı! Birazdan gelecek.', 'success');
 
-      setTimeout(() => {
+    setTimeout(() => {
+      if (btn) {
         btn.classList.remove('called');
         btn.innerHTML = `<span class="material-icons-round">room_service</span> ${t('callWaiter', 'customer')}`;
-      }, 5000);
-    } catch (e) {
-      showToast('Çağrı gönderilemedi', 'error');
+      }
+    }, 5000);
+  } catch (e) {
+    showToast('Çağrı gönderilemedi', 'error');
+    if (btn) {
       btn.classList.remove('called');
       btn.innerHTML = `<span class="material-icons-round">room_service</span> ${t('callWaiter', 'customer')}`;
     }
-  });
+  }
 }

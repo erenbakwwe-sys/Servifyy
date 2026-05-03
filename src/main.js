@@ -14,6 +14,7 @@ import { renderAdmin, cleanupAdmin } from './pages/admin.js';
 import { renderCustomerMenu } from './pages/customer.js';
 import { renderStaffLogin, getStaffSession } from './pages/staff-login.js';
 import { renderStaffPanel, cleanupStaffPanel } from './pages/staff-panel.js';
+import { renderKitchen, cleanupKitchen } from './pages/kitchen.js';
 
 const app = document.getElementById('app');
 const router = new Router();
@@ -93,6 +94,9 @@ router
     const session = getStaffSession();
     if (!session) { router.navigate('/personel-giris'); return; }
     renderStaffPanel(app);
+  })
+  .on('/kitchen/:userId', (params) => {
+    renderKitchen(app, params);
   })
   .on('*', () => {
     router.navigate('/');

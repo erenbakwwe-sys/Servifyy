@@ -1,4 +1,4 @@
-import { auth, db, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, signOut } from '../firebase.js';
+import { auth, db, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, signOut, getDocs } from '../firebase.js';
 import { showToast, getTrialDaysLeft, playNotificationSound } from '../utils.js';
 import { renderDashboardContent } from './admin-dashboard.js';
 import { renderMenuContent, showAddItemModal, showEditItemModal, showAddCategoryModal, deleteMenuItem } from './admin-menu.js';
@@ -7,6 +7,8 @@ import { renderAIThemeContent, generateThemeWithAI, setStatusCallback } from './
 import { buildThemeHTML } from './theme-templates.js';
 import { renderBranchesContent, setupBranchHandlers, loadBranches } from './admin-branches.js';
 import { renderStaffContent, setupStaffHandlers, loadStaff } from './admin-staff.js';
+import { renderAnalyticsContent } from './admin-analytics.js';
+import { renderCouponsContent, setupCouponHandlers } from './admin-coupons.js';
 import { startTutorialTour } from './tutorial.js';
 import { t, getAdminLang, setAdminLang } from '../i18n.js';
 
@@ -100,9 +102,19 @@ function renderAdminLayout(container, userId) {
             <div class="sidebar-nav-item" data-page="ai-theme"><span class="material-icons-round">auto_awesome</span>${t('aiTheme')}</div>
           </div>
           <div class="sidebar-nav-group">
+            <div class="sidebar-nav-label">${t('marketing')}</div>
+            <div class="sidebar-nav-item" data-page="coupons"><span class="material-icons-round">confirmation_number</span>${t('coupons')}</div>
+          </div>
+          <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('reports')}</div>
+            <div class="sidebar-nav-item" data-page="analytics"><span class="material-icons-round">insights</span>${t('analytics')}</div>
             <div class="sidebar-nav-item" data-page="history"><span class="material-icons-round">history</span>${t('history')}</div>
             <div class="sidebar-nav-item" data-page="finance"><span class="material-icons-round">account_balance</span>${t('finance')}</div>
+            <div class="sidebar-nav-item" data-page="feedback"><span class="material-icons-round">rate_review</span>${t('feedback')}</div>
+          </div>
+          <div class="sidebar-nav-group">
+            <div class="sidebar-nav-label">${t('kitchenLabel')}</div>
+            <div class="sidebar-nav-item" id="open-kitchen-btn" data-page="_kitchen"><span class="material-icons-round">soup_kitchen</span>${t('kitchen')} ↗</div>
           </div>
         </nav>
         <div class="sidebar-footer">
@@ -197,7 +209,8 @@ function renderPage(userId) {
     dashboard: t('dashboard'), orders: t('orders'), menu: t('menu'),
     qr: t('qr'), calls: t('calls'), 'ai-theme': t('aiTheme'),
     branches: t('branches'), staff: t('staff'),
-    history: t('history'), finance: t('finance')
+    history: t('history'), finance: t('finance'),
+    analytics: t('analytics'), coupons: t('coupons'), feedback: t('feedback')
   };
   if (title) title.textContent = titles[currentPage] || t('dashboard');
 
@@ -239,6 +252,22 @@ function renderPage(userId) {
     case 'staff':
       content.innerHTML = renderStaffContent(userId);
       setupStaffHandlers(userId, content);
+      break;
+    case 'analytics':
+      content.innerHTML = renderAnalyticsContent(orders, menuItems);
+      break;
+    case 'coupons':
+      content.innerHTML = renderCouponsContent(userId);
+      setupCouponHandlers(userId, content);
+      break;
+    case 'feedback':
+      renderFeedbackPage(content, userId);
+      break;
+    case '_kitchen':
+      // Opens kitchen in new tab, revert to dashboard
+      window.open(`#/kitchen/${userId}`, '_blank');
+      currentPage = 'dashboard';
+      renderPage(userId);
       break;
   }
 }
@@ -564,25 +593,45 @@ function setupAIHandlers(userId, content) {
     }
 
     try {
-      // Show in iframe
+      // Show in iframe using srcdoc for reliable rendering
       const iframe = document.createElement('iframe');
       iframe.style.width = '100%';
       iframe.style.minHeight = '600px';
       iframe.style.border = 'none';
       iframe.style.borderRadius = '0 0 16px 16px';
+      iframe.style.background = '#fff';
+      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+      
+      // Use srcdoc instead of document.write - much more reliable
+      iframe.srcdoc = html;
+      
       previewContent.innerHTML = '';
       previewContent.appendChild(iframe);
       
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      iframeDoc.open();
-      iframeDoc.write(html);
-      iframeDoc.close();
-
-      // Auto-resize iframe
+      // Auto-resize iframe after content loads
+      iframe.addEventListener('load', () => {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (iframeDoc && iframeDoc.body) {
+            const h = iframeDoc.body.scrollHeight;
+            iframe.style.height = Math.max(600, h) + 'px';
+          }
+        } catch(resizeErr) {
+          console.warn('Iframe resize error:', resizeErr);
+          iframe.style.height = '800px';
+        }
+      });
+      
+      // Fallback resize in case load event doesn't fire
       setTimeout(() => {
-        const h = iframeDoc.body.scrollHeight;
-        iframe.style.height = Math.max(600, h) + 'px';
-      }, 500);
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (iframeDoc && iframeDoc.body) {
+            const h = iframeDoc.body.scrollHeight;
+            iframe.style.height = Math.max(600, h) + 'px';
+          }
+        } catch(e) { iframe.style.height = '800px'; }
+      }, 1500);
 
       // Save theme
       await setDoc(doc(db, 'users', userId), {
@@ -631,15 +680,19 @@ function setupAIHandlers(userId, content) {
     iframe.style.width = '100%';
     iframe.style.minHeight = '600px';
     iframe.style.border = 'none';
+    iframe.style.background = '#fff';
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+    iframe.srcdoc = userData.themeHtml;
     previewContent.innerHTML = '';
     previewContent.appendChild(iframe);
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-    iframeDoc.open();
-    iframeDoc.write(userData.themeHtml);
-    iframeDoc.close();
-    setTimeout(() => {
-      iframe.style.height = Math.max(600, iframeDoc.body.scrollHeight) + 'px';
-    }, 500);
+    iframe.addEventListener('load', () => {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (iframeDoc && iframeDoc.body) {
+          iframe.style.height = Math.max(600, iframeDoc.body.scrollHeight) + 'px';
+        }
+      } catch(e) { iframe.style.height = '800px'; }
+    });
   }
 }
 
@@ -685,3 +738,79 @@ function renderExpiredTrialScreen(container) {
 }
 
 export { cleanup as cleanupAdmin };
+
+// Feedback page
+async function renderFeedbackPage(content, userId) {
+  content.innerHTML = `<div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto 16px;"></div> ${t('feedbackLoading', 'admin')}</div>`;
+  
+  try {
+    const snap = await getDocs(query(collection(db, 'users', userId, 'feedback'), orderBy('createdAt', 'desc')));
+    const feedbacks = [];
+    snap.forEach(d => feedbacks.push({ id: d.id, ...d.data() }));
+
+    const avgRating = feedbacks.length > 0 ? (feedbacks.reduce((s, f) => s + (f.rating || 0), 0) / feedbacks.length).toFixed(1) : '–';
+    const totalCount = feedbacks.length;
+    const ratingDist = [0,0,0,0,0];
+    feedbacks.forEach(f => { if (f.rating >= 1 && f.rating <= 5) ratingDist[f.rating - 1]++; });
+
+    content.innerHTML = `
+      <div class="feedback-page">
+        <div class="section-header">
+          <div>
+            <h3 style="display:flex;align-items:center;gap:8px;">
+              <span class="material-icons-round" style="color:#FFD700;">star</span>
+              ${t('customerFeedback', 'admin')}
+            </h3>
+            <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px;">${t('feedbackSub', 'admin')}</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+          <div class="analytics-card acard-gold">
+            <div class="acard-icon"><span class="material-icons-round">star</span></div>
+            <div class="acard-info">
+              <span class="acard-label">${t('avgRating', 'admin')}</span>
+              <span class="acard-value">${avgRating} / 5</span>
+              <span class="acard-sub">${totalCount} ${t('ratings', 'admin')}</span>
+            </div>
+          </div>
+          ${[5,4,3,2,1].map(star => {
+            const count = ratingDist[star-1];
+            const pct = totalCount > 0 ? ((count/totalCount)*100).toFixed(0) : 0;
+            return `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.2rem;">⭐</span>
+              <span style="font-weight:700;">${star}</span>
+              <div style="flex:1;height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;">
+                <div style="height:100%;width:${pct}%;background:#FFD700;border-radius:3px;"></div>
+              </div>
+              <span style="font-size:0.8rem;color:var(--text-muted);">${count}</span>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="feedback-panel">
+          ${feedbacks.length === 0 ? `
+            <div class="empty-state">
+              <span class="material-icons-round" style="font-size:3rem;color:var(--text-muted);">rate_review</span>
+              <h4>${t('noFeedbackYet', 'admin')}</h4>
+              <p>${t('noFeedbackSub', 'admin')}</p>
+            </div>
+          ` : feedbacks.map(f => `
+            <div class="feedback-card">
+              <div class="feedback-stars">${'★'.repeat(f.rating || 0)}${'☆'.repeat(5 - (f.rating || 0))}</div>
+              ${f.comment ? `<div class="feedback-comment">"${f.comment}"</div>` : ''}
+              <div class="feedback-meta">
+                <span>${t('tableLabel', 'admin')} ${f.tableNo || '?'}</span>
+                <span>${f.createdAt?.toDate ? f.createdAt.toDate().toLocaleDateString() : ''}</span>
+              </div>
+              ${f.categories && f.categories.length > 0 ? `<div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap;">${f.categories.map(c => `<span class="badge badge-info" style="font-size:0.7rem;">${c}</span>`).join('')}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    console.error('Feedback load error:', e);
+    content.innerHTML = `<div style="text-align:center;padding:40px;color:var(--danger);">${t('feedbackLoadError', 'admin')}</div>`;
+  }
+}

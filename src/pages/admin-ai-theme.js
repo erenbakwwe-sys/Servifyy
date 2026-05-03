@@ -74,9 +74,10 @@ HAYATİ KURALLAR (BUNLARA UYMAZSAN SİSTEM ÇÖKER):
 1. SADECE HTML kodu yazacaksın. Açıklama, "İşte kodunuz" gibi metinler ASLA YAZMA.
 2. <!DOCTYPE html> ile başla ve </html> ile bitir.
 3. ÇOK ÖNEMLİ: Menü öğelerini (ürünleri) JAVASCRIPT İLE RENDER ETMEYE ÇALIŞMA! JSON'u parse edip ekrana basmak siyah ekrana sebep oluyor. Bütün ürünleri DOĞRUDAN HTML İÇİNE statik kartlar (<div class="card"> vb.) olarak tek tek YAZACAKSIN.
-4. CSS'leri <style>, JS'leri <script> içine yaz. Harici JS kütüphanesi (React, Vue, jQuery vb) KULLANMA. Sadece saf (vanilla) JS ve CSS kullan.
-5. Menü arayüzündeki tüm butonları (Sepete Ekle, Garson Çağır, Tümü vb.) kesinlikle şu dilde yazmalısın: ${lang === 'en' ? 'İngilizce (English)' : lang === 'de' ? 'Almanca (Deutsch)' : 'Türkçe (Turkish)'}.
-6. Google Fonts ve Material Icons (<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">) kullan.
+7. ASLA öğeleri başlangıçta görünmez yapmak için 'opacity: 0' veya 'visibility: hidden' KULLANMA! Scroll veya JS tabanlı reveal animasyonları YAPMA (JS hata verirse sayfa beyaz kalıyor). Animasyonları SADECE CSS @keyframes (örneğin 'animation: fadeIn 1s forwards') ile otomatik başlayacak şekilde yaz.
+8. CSS'leri <style>, JS'leri <script> içine yaz. Harici JS kütüphanesi (React, Vue, jQuery vb) KULLANMA. Sadece saf (vanilla) JS ve CSS kullan.
+9. Menü arayüzündeki tüm butonları (Sepete Ekle, Garson Çağır, Tümü vb.) kesinlikle şu dilde yazmalısın: ${lang === 'en' ? 'İngilizce (English)' : lang === 'de' ? 'Almanca (Deutsch)' : 'Türkçe (Turkish)'}.
+10. Google Fonts ve Material Icons (<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">) kullan.
 
 RESTORAN: ${restaurantName || 'Restoran'}
 KATEGORİLER: ${cats.join(', ')}
@@ -95,7 +96,8 @@ ZORUNLU JAVASCRIPT KODLARI (Aşağıdaki script'i doğrudan kullan, içindeki ma
 let cart=[];
 function ac(id,name,price){ 
   const e=cart.find(i=>i.id===id); if(e)e.qty++; else cart.push({id,name,price:parseFloat(price),qty:1}); uc();
-  // Butona tıklandığında görsel efekt (örn: renk değişimi) yapabilirsin.
+  try{ window.parent.postMessage({type:'addToCart',item:{id,name,price:parseFloat(price)}},'*'); }catch(e){}
+  try{ window.addToCart(id,name,price); }catch(e){}
 } 
 function uc(){ 
   const n=cart.reduce((s,i)=>s+i.qty,0), t=cart.reduce((s,i)=>s+i.price*i.qty,0);
@@ -107,11 +109,20 @@ function fc_cat(btn,cat){
   document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
   document.querySelectorAll('.product-card').forEach(x=>{ x.style.display = (cat==='all'||x.dataset.category===cat) ? 'block' : 'none'; });
 } 
-function callWaiter(){ alert('Garson çağrıldı!'); }
+function callWaiter(){ 
+  try{ window.parent.postMessage({type:'callWaiter'},'*'); }catch(e){}
+  const btn=document.querySelector('.waiter-btn,.call-waiter-btn,[onclick*="callWaiter"]');
+  if(btn){btn.textContent='Çağrıldı ✓';btn.style.background='#00B894';setTimeout(()=>{btn.textContent='Garson Çağır';btn.style.background='';},3000);}
+}
+function openCartPanel(){
+  document.dispatchEvent(new Event('openCart'));
+  try{ window.parent.postMessage({type:'openCart'},'*'); }catch(e){}
+}
 \`\`\`
 
 DİKKAT: Ürün kartlarına 'product-card' class'ı ver ve 'data-category' attribute'una kategorisini yaz ki filtreleme çalışsın.
-Sepeti görüntüleme butonuna 'id="fc"' ver ve tıklandığında 'document.dispatchEvent(new Event("openCart"))' kodunu çalıştır ki ana sistem sepeti açabilsin.`;
+Sepeti görüntüleme butonuna id="fc" ver ve onclick="openCartPanel()" ekle.
+Garson çağır butonuna onclick="callWaiter()" ekle.`;
 }
 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
@@ -148,7 +159,6 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
   }
 
   const data = await response.json();
-  let html = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   
   let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   
@@ -159,12 +169,24 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
     text = blockMatch[1];
   }
   
-  // 2. Strip absolutely everything before the first HTML-like tag
-  // This ensures stray markdown like "İşte temanız:" or "```html" is deleted.
-  text = text.replace(/^[\s\S]*?(?=<\s*(?:html|!doctype|body|head|style|div|script|meta|link))/i, '');
+  // 2. Extract HTML safely
+  // Ensure we start from <html or <!DOCTYPE
+  const htmlStart = text.search(/<\s*(?:html|!doctype)/i);
+  if (htmlStart !== -1) {
+    text = text.substring(htmlStart);
+  } else {
+    // If no html tag, at least start from first <style or <div
+    const fallbackStart = text.search(/<\s*(?:style|div|body|head)/i);
+    if (fallbackStart !== -1) {
+      text = text.substring(fallbackStart);
+    }
+  }
   
   // 3. Strip everything after the closing </html> tag if it exists
-  text = text.replace(/(<\/html>)[\s\S]*$/i, '$1');
+  const htmlEnd = text.search(/<\/html>/i);
+  if (htmlEnd !== -1) {
+    text = text.substring(0, htmlEnd + 7);
+  }
   
   text = text.trim();
   
@@ -172,6 +194,13 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
   if (!text.includes('<html') && !text.includes('<body') && !text.includes('<style') && !text.includes('<div')) {
     throw new Error('INVALID_HTML');
   }
+  
+  // 5. Post-process: Remove dangerous CSS patterns that cause white/blank screens
+  // Remove opacity:0 and visibility:hidden on body/html level elements
+  text = text.replace(/opacity\s*:\s*0\s*;?/gi, '');
+  text = text.replace(/visibility\s*:\s*hidden\s*;?/gi, '');
+  // Remove IntersectionObserver-based reveal scripts that hide elements
+  text = text.replace(/IntersectionObserver/g, '/* IntersectionObserver disabled */');
   
   return text;
 }
@@ -258,7 +287,7 @@ export async function generateThemeWithAI(prompt, menuItems, restaurantName, lan
            await wait(1000);
            return generateThemeHTML(prompt, menuItems, restaurantName);
         }
-        break;
+        continue;
       }
     }
   }

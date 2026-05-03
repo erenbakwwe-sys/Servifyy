@@ -600,3 +600,61 @@
   z-index: 10;
   box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4);
 }
+
+/* ============================================
+   TIP SELECTION
+   ============================================ */
+.tip-section { margin-top:16px; }
+.tip-title { font-size:0.9rem; font-weight:600; color:var(--text-secondary); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.tip-options { display:flex; gap:8px; flex-wrap:wrap; }
+.tip-option { padding:10px 18px; background:var(--bg-card); border:2px solid var(--border); border-radius:var(--radius-md); text-align:center; cursor:pointer; transition:all 0.2s; font-weight:600; font-size:0.9rem; min-width:60px; }
+.tip-option:hover { border-color:var(--primary); }
+.tip-option.selected { border-color:var(--success); background:rgba(0,184,148,0.1); color:var(--success); box-shadow:0 0 12px rgba(0,184,148,0.2); }
+.tip-option .tip-pct { font-size:0.75rem; display:block; color:var(--text-muted); margin-top:2px; }
+.tip-custom-input { margin-top:8px; display:none; }
+.tip-custom-input.show { display:block; }
+.tip-total-row { display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding:10px 14px; background:var(--bg-elevated); border-radius:var(--radius-md); }
+.tip-total-label { font-size:0.85rem; color:var(--text-secondary); }
+.tip-total-value { font-weight:800; font-size:1.1rem; color:var(--success); }
+
+/* ============================================
+   COUPON INPUT
+   ============================================ */
+.coupon-input-section { margin-top:16px; }
+.coupon-input-row { display:flex; gap:8px; }
+.coupon-input-row input { flex:1; text-transform:uppercase; font-weight:600; letter-spacing:1px; }
+.coupon-result { margin-top:8px; padding:8px 12px; border-radius:var(--radius-md); font-size:0.85rem; font-weight:600; display:none; }
+.coupon-result.success { display:block; background:rgba(0,184,148,0.1); color:var(--success); border:1px solid rgba(0,184,148,0.3); }
+.coupon-result.error { display:block; background:rgba(239,68,68,0.1); color:var(--danger); border:1px solid rgba(239,68,68,0.3); }
+
+/* ============================================
+   FEEDBACK / RATING
+   ============================================ */
+.feedback-modal { position:fixed; inset:0; z-index:500; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); backdrop-filter:blur(10px); padding:20px; animation:fadeIn 0.3s ease-out; }
+.feedback-modal-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-xl); padding:32px; text-align:center; max-width:400px; width:100%; animation:bounceIn 0.5s ease-out; }
+.feedback-modal-card h3 { font-size:1.2rem; font-weight:700; margin-bottom:8px; }
+.feedback-modal-card p { color:var(--text-muted); font-size:0.85rem; margin-bottom:20px; }
+.star-rating { display:flex; justify-content:center; gap:8px; margin-bottom:20px; }
+.star-btn { background:none; border:none; font-size:2.2rem; cursor:pointer; transition:all 0.2s; color:var(--border); }
+.star-btn.active, .star-btn:hover { color:#FFD700; transform:scale(1.2); }
+.feedback-categories { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+.feedback-cat-chip { padding:6px 14px; border:1px solid var(--border); border-radius:var(--radius-full); font-size:0.8rem; cursor:pointer; transition:all 0.2s; background:var(--bg-elevated); }
+.feedback-cat-chip.selected { border-color:var(--primary); background:rgba(108,92,231,0.1); color:var(--primary-light); }
+
+/* ============================================
+   RECOMMENDED / UPSELL
+   ============================================ */
+.upsell-section { padding:16px 20px; }
+.upsell-title { font-size:0.95rem; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.upsell-title .material-icons-round { color:var(--warning); font-size:1.1rem; }
+.upsell-scroll { display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; scrollbar-width:none; }
+.upsell-scroll::-webkit-scrollbar { display:none; }
+.upsell-card { min-width:140px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; flex-shrink:0; cursor:pointer; transition:all 0.3s; }
+.upsell-card:hover { transform:translateY(-2px); border-color:var(--primary); }
+.upsell-card .upsell-img { height:80px; display:flex; align-items:center; justify-content:center; font-size:2rem; background:var(--bg-elevated); }
+.upsell-card .upsell-body { padding:10px; }
+.upsell-card .upsell-name { font-size:0.8rem; font-weight:600; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.upsell-card .upsell-price { font-size:0.85rem; font-weight:700; color:var(--primary-light); }
+
+/* Popular badge */
+.popular-badge { position:absolute; top:8px; right:8px; background:linear-gradient(135deg, #FFD700, #FFA500); color:#fff; padding:3px 8px; border-radius:var(--radius-full); font-size:0.65rem; font-weight:700; z-index:5; box-shadow:0 2px 8px rgba(255,165,0,0.3); }
