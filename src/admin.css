@@ -863,15 +863,21 @@
 }
 
 .ai-preview-content {
-  padding: 0;
+  padding: 24px;
   min-height: 480px;
-  background: white;
+  background: var(--bg-secondary);
 }
 
 .ai-preview-content iframe {
   width: 100%;
-  min-height: 480px;
-  border: none;
+  max-width: 414px; /* Simulate mobile device width */
+  min-height: 736px; /* Simulate mobile device height */
+  margin: 0 auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  background: white;
 }
 
 .ai-loading {

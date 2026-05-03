@@ -79,17 +79,31 @@ HAYATİ KURALLAR (BUNLARA UYMAZSAN SİSTEM ÇÖKER):
 9. Menü arayüzündeki tüm butonları (Sepete Ekle, Garson Çağır, Tümü vb.) kesinlikle şu dilde yazmalısın: ${lang === 'en' ? 'İngilizce (English)' : lang === 'de' ? 'Almanca (Deutsch)' : 'Türkçe (Turkish)'}.
 10. Google Fonts ve Material Icons (<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">) kullan.
 
+MOBİL UYUMLULUK (EN KRİTİK KURAL - BUNA UYMAK ZORUNLUDUR):
+- <head> içine MUTLAKA şunu ekle: <meta name="viewport" content="width=device-width, initial-scale=1.0">
+- Tasarımı MOBİL-FIRST yap. 375px genişlikli telefon ekranı için optimize et.
+- Sabit piksel genişliği (width: 800px, width: 1200px vb.) ASLA KULLANMA! Sadece yüzde (%100, %50 vb.) veya max-width kullan.
+- Ürün kartları için CSS Grid kullan: 'display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;' bu şekilde mobilde 2 sütun, tablette 3, masaüstünde 4 otomatik olur.
+- Yazı boyutlarını rem veya clamp() ile yaz. 'clamp(0.8rem, 2vw, 1.1rem)' gibi.
+- Tüm padding ve margin değerlerini mobilde 8-16px arasında tut.
+- Garson Çağır butonu: position:fixed; top:10px; right:10px; z-index:999; padding: 8px 14px; border-radius: 20px; font-size: 0.8rem;
+- Sepet barı: position:fixed; bottom:0; left:0; right:0; z-index:999; padding: 12px 16px;
+- Kategori butonları: overflow-x: auto; white-space: nowrap; yatay scroll yapılabilir olsun.
+- Görseller: width:100%; height:auto; object-fit:cover;
+- ASLA yatay taşma (overflow-x) olmasın: body { overflow-x: hidden; }
+- @media (min-width: 768px) ile SADECE tablet/desktop için ek stil ekle (margin, padding büyütme vb).
+
 RESTORAN: ${restaurantName || 'Restoran'}
 KATEGORİLER: ${cats.join(', ')}
 MENÜ ÖĞELERİ (BUNLARI DOĞRUDAN HTML KARTLARI OLARAK KODUN İÇİNE GÖM):
-${sampleItems.map(i => `- [${i.category}] ${i.name} (${i.price} ₺) ${i.emoji} : ${i.description || ''}`).join('\n')}
+${sampleItems.map(i => `- [${i.category}] ${i.name} (${i.price} ₺) ${i.emoji} : ${i.description || ''}`).join('\\n')}
 
 GEREKSİNİMLER:
 - Görsellik MUAZZAM olmalı. Kullanıcının konseptini %100 yansıt. (Örn: Cyberpunk ise neonlar, Minimal ise bol boşluk ve blur).
 - Hover animasyonları ve şık gölgeler kullan.
 - Kategorilere tıklayınca o kategoriye ait ürünler kalsın (bunu JS ile display:none yaparak sağla).
 - Sepete ekleme butonu (her üründe) ve sabit (fixed) bir "Sepeti Görüntüle" barı (ekranın altında) olsun.
-- Garson çağır butonu (sağ üstte).
+- Garson çağır butonu (sağ üstte, küçük, mobil uyumlu).
 
 ZORUNLU JAVASCRIPT KODLARI (Aşağıdaki script'i doğrudan kullan, içindeki mantığı bozma):
 \`\`\`javascript
@@ -124,6 +138,7 @@ DİKKAT: Ürün kartlarına 'product-card' class'ı ver ve 'data-category' attri
 Sepeti görüntüleme butonuna id="fc" ver ve onclick="openCartPanel()" ekle.
 Garson çağır butonuna onclick="callWaiter()" ekle.`;
 }
+
 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
@@ -201,6 +216,74 @@ async function tryGeminiRequest(model, key, systemPrompt, userPrompt) {
   text = text.replace(/visibility\s*:\s*hidden\s*;?/gi, '');
   // Remove IntersectionObserver-based reveal scripts that hide elements
   text = text.replace(/IntersectionObserver/g, '/* IntersectionObserver disabled */');
+  
+  // 6. MOBILE RESPONSIVE GUARANTEE: Inject viewport meta and responsive CSS
+  // Ensure viewport meta exists
+  if (!text.includes('viewport')) {
+    text = text.replace(/(<head[^>]*>)/i, '$1\n<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+    // If no <head> tag, inject before first <style> or <body>
+    if (!text.includes('viewport')) {
+      text = text.replace(/(<(?:style|body)[^>]*>)/i, '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">\n$1');
+    }
+  }
+  
+  // Inject mobile-responsive CSS overrides right before </style> or </head>
+  const mobileCSS = `
+  /* === MOBILE RESPONSIVE OVERRIDES (auto-injected) === */
+  *, *::before, *::after { box-sizing: border-box !important; }
+  html, body { 
+    width: 100% !important; 
+    max-width: 100vw !important; 
+    overflow-x: hidden !important; 
+    -webkit-text-size-adjust: 100% !important;
+  }
+  img, video, iframe, canvas { max-width: 100% !important; height: auto !important; }
+  .product-card, .card, .menu-item, .item-card, [class*="card"] {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+  @media (max-width: 480px) {
+    body { font-size: 14px !important; padding: 0 !important; margin: 0 !important; }
+    h1 { font-size: clamp(1.2rem, 5vw, 2rem) !important; }
+    h2, h3 { font-size: clamp(1rem, 4vw, 1.5rem) !important; }
+    .product-card, .card, .menu-item, .item-card, [class*="card"] {
+      width: 100% !important;
+    }
+    [style*="width: 800"], [style*="width:800"], 
+    [style*="width: 1000"], [style*="width:1000"],
+    [style*="width: 1200"], [style*="width:1200"],
+    [style*="min-width: 800"], [style*="min-width:800"] {
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+  }
+  /* === END MOBILE OVERRIDES === */\n`;
+  
+  // Try to inject before the last </style> tag
+  const lastStyleClose = text.lastIndexOf('</style>');
+  if (lastStyleClose !== -1) {
+    text = text.substring(0, lastStyleClose) + mobileCSS + text.substring(lastStyleClose);
+  } else {
+    // No </style> found, inject as a new <style> block before </head> or <body>
+    const headClose = text.indexOf('</head>');
+    if (headClose !== -1) {
+      text = text.substring(0, headClose) + '<style>' + mobileCSS + '</style>' + text.substring(headClose);
+    } else {
+      // Last resort: prepend
+      text = '<style>' + mobileCSS + '</style>' + text;
+    }
+  }
+  
+  // 7. Fix fixed-width inline styles that break mobile
+  text = text.replace(/width\s*:\s*(\d{4,})px/gi, (match, px) => {
+    return `width: 100%; max-width: ${px}px`;
+  });
+  text = text.replace(/min-width\s*:\s*(\d{3,})px/gi, (match, px) => {
+    const num = parseInt(px);
+    if (num > 400) return `min-width: 0`;
+    return match;
+  });
   
   return text;
 }
