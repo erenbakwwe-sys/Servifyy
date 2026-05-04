@@ -86,8 +86,11 @@ function renderCustomTheme(container) {
 
   const iframe = document.getElementById('theme-iframe');
   
+  // Inject menu data so AI theme can render it dynamically
+  const menuDataScript = '<script>window.menuData = ' + JSON.stringify(menuItemsData) + '; window.restaurantData = ' + JSON.stringify(restaurantData) + ';</script>';
+
   // Use srcdoc instead of document.write for reliable rendering
-  iframe.srcdoc = themeHtml;
+  iframe.srcdoc = menuDataScript + themeHtml;
   
   iframe.addEventListener('load', () => {
     // Auto resize iframe

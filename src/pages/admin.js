@@ -3,7 +3,7 @@ import { showToast, getTrialDaysLeft, playNotificationSound } from '../utils.js'
 import { renderDashboardContent } from './admin-dashboard.js';
 import { renderMenuContent, showAddItemModal, showEditItemModal, showAddCategoryModal, deleteMenuItem } from './admin-menu.js';
 import { renderQRContent, generateAllQR, renderCallsContent, renderOrdersContent, renderHistoryContent, renderFinanceContent } from './admin-sections.js';
-import { renderAIThemeContent, generateThemeWithAI, setStatusCallback } from './admin-ai-theme.js';
+import { renderAIThemeContent, generateThemeWithAI, setStatusCallback, generateThemeHTML } from './admin-ai-theme.js';
 import { buildThemeHTML } from './theme-templates.js';
 import { renderBranchesContent, setupBranchHandlers, loadBranches } from './admin-branches.js';
 import { renderStaffContent, setupStaffHandlers, loadStaff } from './admin-staff.js';
@@ -546,119 +546,225 @@ function setupAIHandlers(userId, content) {
     }
   });
 
-  // Generate theme
+  // Handle pre-made template selection
+  content.querySelectorAll('.template-card').forEach(card => {
+    card.addEventListener('click', async () => {
+      const presetId = card.getAttribute('data-preset'); // 'luxury', 'minimal', 'dark', 'default'
+      
+      // Map the presetId to a keyword that generateThemeHTML will recognize
+      let keyword = '';
+      if (presetId === 'luxury') keyword = 'luxury';
+      else if (presetId === 'dark') keyword = 'dark';
+      else if (presetId === 'minimal') keyword = 'minimal';
+      else if (presetId === 'organic') keyword = 'organic';
+      else if (presetId === 'sunset') keyword = 'sunset';
+      else if (presetId === 'glass') keyword = 'glass';
+      else keyword = 'default';
+      
+      const previewContent = content.querySelector('#ai-preview-content');
+      if (!previewContent) return;
+      
+      previewContent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span>Şablon Uygulanıyor...</span></div>';
+      
+      try {
+        const lang = content.querySelector('#ai-lang')?.value || 'tr';
+        const html = generateThemeHTML(keyword, menuItems, userData?.restaurant?.name, lang);
+        
+        // Render preview
+        previewContent.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        iframe.style.cssText = 'width:100%;min-height:700px;border:none;border-radius:12px;background:#fff;';
+        previewContent.appendChild(iframe);
+        
+        const menuDataScript = '<script>window.menuData = ' + JSON.stringify(menuItems) + ';</script>';
+        
+        try {
+          const idoc = iframe.contentDocument || iframe.contentWindow.document;
+          idoc.open();
+          idoc.write(menuDataScript + html);
+          idoc.close();
+        } catch(e) {
+          iframe.srcdoc = menuDataScript + html;
+        }
+        
+        setTimeout(() => {
+          try {
+            const idoc = iframe.contentDocument || iframe.contentWindow.document;
+            if (idoc?.body) iframe.style.height = Math.max(700, idoc.body.scrollHeight) + 'px';
+          } catch(e) {}
+        }, 1000);
+        
+        // Save to DB
+        await setDoc(doc(db, 'users', userId), { themeHtml: html, lastPrompt: 'Hazır Şablon: ' + presetId }, { merge: true });
+        if (userData) { userData.themeHtml = html; userData.lastPrompt = 'Hazır Şablon: ' + presetId; }
+        
+        const badge = content.querySelector('.ai-preview-header .badge');
+        if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
+        
+        showToast('Şablon başarıyla uygulandı ✓', 'success');
+        
+        // Scroll to preview
+        iframe.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+      } catch(err) {
+        previewContent.innerHTML = '<div style="padding:30px;color:var(--danger);">Hata: ' + err.message + '</div>';
+      }
+    });
+  });
+
+  // Handle manual customization
+  content.querySelector('#apply-custom-btn')?.addEventListener('click', async () => {
+    const previewContent = content.querySelector('#ai-preview-content');
+    if (!previewContent) return;
+    
+    // Aktif şablonu bul (veya default)
+    let presetId = 'default';
+    if (userData?.lastPrompt && userData.lastPrompt.startsWith('Hazır Şablon: ')) {
+      presetId = userData.lastPrompt.replace('Hazır Şablon: ', '').trim();
+    }
+    
+    let keyword = presetId;
+    if (presetId === 'luxury') keyword = 'luxury';
+    else if (presetId === 'dark') keyword = 'dark';
+    else if (presetId === 'minimal') keyword = 'minimal';
+    else if (presetId === 'organic') keyword = 'organic';
+    else if (presetId === 'sunset') keyword = 'sunset';
+    else if (presetId === 'glass') keyword = 'glass';
+    else keyword = 'default';
+
+    const customStyles = {
+      primaryColor: content.querySelector('#custom-primary')?.value,
+      bgColor: content.querySelector('#custom-bg')?.value,
+      font: content.querySelector('#custom-font')?.value
+    };
+    
+    if (!customStyles.font) delete customStyles.font;
+
+    previewContent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span>Özelleştirme Uygulanıyor...</span></div>';
+    
+    try {
+      const lang = content.querySelector('#ai-lang')?.value || 'tr';
+      const html = generateThemeHTML(keyword, menuItems, userData?.restaurant?.name, lang, customStyles);
+      
+      // Render preview
+      previewContent.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = 'width:100%;min-height:700px;border:none;border-radius:12px;background:#fff;';
+      previewContent.appendChild(iframe);
+      
+      const menuDataScript = '<script>window.menuData = ' + JSON.stringify(menuItems) + ';</script>';
+      
+      try {
+        const idoc = iframe.contentDocument || iframe.contentWindow.document;
+        idoc.open();
+        idoc.write(menuDataScript + html);
+        idoc.close();
+      } catch(e) {
+        iframe.srcdoc = menuDataScript + html;
+      }
+      
+      setTimeout(() => {
+        try {
+          const idoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (idoc?.body) iframe.style.height = Math.max(700, idoc.body.scrollHeight) + 'px';
+        } catch(e) {}
+      }, 1000);
+      
+      // Save to DB
+      await setDoc(doc(db, 'users', userId), { themeHtml: html }, { merge: true });
+      if (userData) { userData.themeHtml = html; }
+      
+      const badge = content.querySelector('.ai-preview-header .badge');
+      if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
+      
+      showToast('Özel ayarlar uygulandı ✓', 'success');
+      
+    } catch(err) {
+      previewContent.innerHTML = '<div style="padding:30px;color:var(--danger);">Hata: ' + err.message + '</div>';
+    }
+  });
+
+
+  // Generate theme - BULLETPROOF VERSION
   content.querySelector('#generate-theme-btn')?.addEventListener('click', async () => {
     const prompt = content.querySelector('#ai-prompt')?.value?.trim();
     if (!prompt) { showToast('Lütfen bir konsept açıklaması girin', 'warning'); return; }
 
     const previewContent = content.querySelector('#ai-preview-content');
+    if (!previewContent) { alert('HATA: preview container yok'); return; }
+    
     const btn = content.querySelector('#generate-theme-btn');
     btn.disabled = true;
     btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> AI Üretiyor...';
-    
-    previewContent.innerHTML = `<div class="ai-loading">
-      <div class="ai-spinner"></div>
-      <p style="color:var(--text-muted);text-align:center;max-width:300px;">
-        <strong>Gemini AI temanızı oluşturuyor...</strong><br>
-        <span id="ai-status-text" style="font-size:0.8rem;opacity:0.7;">Bağlantı kuruluyor...</span>
-      </p>
-    </div>`;
+    previewContent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span id="ai-status-text">Oluşturuluyor...</span></div>';
 
-    // Set up live status updates
-    setStatusCallback((status) => {
-      const el = document.getElementById('ai-status-text');
-      if (el) el.textContent = status;
-    });
+    setStatusCallback((s) => { const el = document.getElementById('ai-status-text'); if(el) el.textContent = s; });
 
-    let html = null;
-    
-    // Try Gemini API first
+    let html = '';
     try {
-      const themeLang = content.querySelector('#ai-lang')?.value || 'tr';
-      html = await generateThemeWithAI(prompt, menuItems, userData?.restaurant?.name, themeLang);
-      showToast('AI tema başarıyla oluşturuldu! ✨', 'success');
-    } catch (apiErr) {
-      console.warn('Gemini API failed:', apiErr.message);
-      
-      showToast('Gemini API Hatası', 'error');
+      const lang = content.querySelector('#ai-lang')?.value || 'tr';
+      html = await generateThemeWithAI(prompt, menuItems, userData?.restaurant?.name, lang);
+    } catch(err) {
       btn.disabled = false;
       btn.innerHTML = '<span class="material-icons-round">auto_awesome</span> AI ile Tema Oluştur';
-      previewContent.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;background:var(--bg-secondary);gap:16px;padding:30px;">
-        <span class="material-icons-round" style="font-size:3rem;color:var(--danger);">error</span>
-        <h4 style="color:var(--text-primary);">API Bağlantı Hatası</h4>
-        <p style="color:var(--text-muted);text-align:center;max-width:500px;font-size:0.85rem;white-space:pre-wrap;word-break:break-word;">${apiErr.message}</p>
-        <p style="color:var(--text-secondary);font-size:0.75rem;margin-top:10px;">Lütfen hatayı asistana iletin.</p>
-      </div>`;
+      previewContent.innerHTML = '<div style="padding:30px;text-align:center;color:var(--danger);"><b>API Hatası:</b><br>' + String(err.message||err).replace(/</g,'&lt;') + '</div>';
       return;
     }
 
-    try {
-      // Show in iframe using srcdoc for reliable rendering
-      const iframe = document.createElement('iframe');
-      iframe.style.width = '100%';
-      iframe.style.minHeight = '600px';
-      iframe.style.border = 'none';
-      iframe.style.borderRadius = '0 0 16px 16px';
-      iframe.style.background = '#fff';
-      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
-      
-      // Use srcdoc instead of document.write - much more reliable
-      iframe.srcdoc = html;
-      
-      previewContent.innerHTML = '';
-      previewContent.appendChild(iframe);
-      
-      // Auto-resize iframe after content loads
-      iframe.addEventListener('load', () => {
-        try {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-          if (iframeDoc && iframeDoc.body) {
-            const h = iframeDoc.body.scrollHeight;
-            iframe.style.height = Math.max(600, h) + 'px';
-          }
-        } catch(resizeErr) {
-          console.warn('Iframe resize error:', resizeErr);
-          iframe.style.height = '800px';
-        }
-      });
-      
-      // Fallback resize in case load event doesn't fire
-      setTimeout(() => {
-        try {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-          if (iframeDoc && iframeDoc.body) {
-            const h = iframeDoc.body.scrollHeight;
-            iframe.style.height = Math.max(600, h) + 'px';
-          }
-        } catch(e) { iframe.style.height = '800px'; }
-      }, 1500);
-
-      // Save theme
-      await setDoc(doc(db, 'users', userId), {
-        themeHtml: html,
-        lastPrompt: prompt
-      }, { merge: true });
-
-      // Update local cache so it persists when switching tabs
-      if (userData) {
-        userData.themeHtml = html;
-        userData.lastPrompt = prompt;
-      }
-
-      // Update preview header
-      const previewHeader = content.querySelector('.ai-preview-header');
-      if (previewHeader) {
-        const badge = previewHeader.querySelector('.badge');
-        if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
-      }
-    } catch(e) {
-      console.error('Theme render error:', e);
-      showToast('Tema oluşturulurken hata: ' + e.message, 'error');
-      previewContent.innerHTML = '<div style="padding:40px;text-align:center;color:var(--danger);">Tema oluşturulurken bir hata oluştu</div>';
-    } finally {
+    if (!html || html.length < 50) {
       btn.disabled = false;
       btn.innerHTML = '<span class="material-icons-round">auto_awesome</span> AI ile Tema Oluştur';
+      previewContent.innerHTML = '<div style="padding:30px;text-align:center;color:var(--warning);">AI boş yanıt döndü, tekrar deneyin.</div>';
+      return;
     }
+
+    // Ensure complete HTML doc
+    if (!html.includes('<html') && !html.includes('<!DOCTYPE')) {
+      html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body>' + html + '</body></html>';
+    }
+
+    // Render in iframe with fallback chain
+    previewContent.innerHTML = '';
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'width:100%;min-height:700px;border:none;border-radius:12px;background:#fff;';
+    previewContent.appendChild(iframe);
+
+    // Inject menu data for dynamic rendering in preview
+    const menuDataScript = '<script>window.menuData = ' + JSON.stringify(menuItems) + ';</script>';
+
+    try {
+      const idoc = iframe.contentDocument || iframe.contentWindow.document;
+      idoc.open();
+      idoc.write(menuDataScript + html);
+      idoc.close();
+    } catch(e) {
+      try { iframe.srcdoc = menuDataScript + html; } catch(e2) {
+        const b = new Blob([menuDataScript + html],{type:'text/html'});
+        iframe.src = URL.createObjectURL(b);
+      }
+    }
+
+    // Resize after load
+    setTimeout(() => {
+      try {
+        const idoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (idoc?.body) iframe.style.height = Math.max(700, idoc.body.scrollHeight) + 'px';
+      } catch(e) {}
+    }, 1000);
+
+    // Save
+    try {
+      await setDoc(doc(db, 'users', userId), { themeHtml: html, lastPrompt: prompt }, { merge: true });
+      if (userData) { userData.themeHtml = html; userData.lastPrompt = prompt; }
+      const badge = content.querySelector('.ai-preview-header .badge');
+      if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
+      showToast('Tema oluşturuldu ✨', 'success');
+    } catch(saveErr) {
+      showToast('Tema gösteriliyor ama kayıt başarısız: ' + saveErr.message, 'warning');
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-icons-round">auto_awesome</span> AI ile Tema Oluştur';
   });
 
   // Clear theme
@@ -678,21 +784,22 @@ function setupAIHandlers(userId, content) {
     const previewContent = content.querySelector('#ai-preview-content');
     const iframe = document.createElement('iframe');
     iframe.style.width = '100%';
-    iframe.style.minHeight = '600px';
+    iframe.style.minHeight = '700px';
     iframe.style.border = 'none';
+    iframe.style.borderRadius = '12px';
     iframe.style.background = '#fff';
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
-    iframe.srcdoc = userData.themeHtml;
     previewContent.innerHTML = '';
     previewContent.appendChild(iframe);
-    iframe.addEventListener('load', () => {
+    const savedDoc = iframe.contentDocument || iframe.contentWindow.document;
+    const menuDataScript = '<script>window.menuData = ' + JSON.stringify(menuItems) + ';</script>';
+    savedDoc.open();
+    savedDoc.write(menuDataScript + userData.themeHtml);
+    savedDoc.close();
+    setTimeout(() => {
       try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        if (iframeDoc && iframeDoc.body) {
-          iframe.style.height = Math.max(600, iframeDoc.body.scrollHeight) + 'px';
-        }
+        iframe.style.height = Math.max(700, savedDoc.body.scrollHeight) + 'px';
       } catch(e) { iframe.style.height = '800px'; }
-    });
+    }, 500);
   }
 }
 
