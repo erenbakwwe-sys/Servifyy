@@ -194,8 +194,6 @@ MOBİL UYUMLULUK (EN KRİTİK KURAL - BUNA UYMAK ZORUNLUDUR):
 - Ürün kartları için CSS Grid kullan: 'display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;' bu şekilde mobilde 2 sütun, tablette 3, masaüstünde 4 otomatik olur.
 - Yazı boyutlarını rem veya clamp() ile yaz. 'clamp(0.8rem, 2vw, 1.1rem)' gibi.
 - Tüm padding ve margin değerlerini mobilde 8-16px arasında tut.
-- Garson Çağır butonu: position:fixed; top:10px; right:10px; z-index:999; padding: 8px 14px; border-radius: 20px; font-size: 0.8rem;
-- Sepet barı: position:fixed; bottom:0; left:0; right:0; z-index:999; padding: 12px 16px;
 - Kategori butonları: overflow-x: auto; white-space: nowrap; yatay scroll yapılabilir olsun.
 - Görseller: width:100%; height:auto; object-fit:cover;
 - ASLA yatay taşma (overflow-x) olmasın: body { overflow-x: hidden; }
@@ -210,34 +208,21 @@ GEREKSİNİMLER:
 - Görsellik MUAZZAM olmalı. Kullanıcının konseptini %100 yansıt. (Örn: Cyberpunk ise neonlar, Minimal ise bol boşluk ve blur).
 - Hover animasyonları ve şık gölgeler kullan.
 - Kategorilere tıklayınca o kategoriye ait ürünler kalsın (bunu JS ile display:none yaparak sağla).
-- Sepete ekleme butonu (her üründe) ve sabit (fixed) bir "Sepeti Görüntüle" barı (ekranın altında) olsun.
-- Garson çağır butonu (sağ üstte, küçük, mobil uyumlu).
+- Sepete ekleme butonu her ürün kartında bulunsun (+ ikonu veya Ekle yazısı). Sepet durumu ve Garson Çağırma butonunu EKLENEBİLİR SANMA, sistem bunları otomatik ekliyor!
+
 
 ZORUNLU JAVASCRIPT KODLARI (Asagidaki scripti dogrudan kullan, icindeki mantigi bozma - script etiketlerini aynen koy):
 <script>
-let cart=[];
 function ac(id,name,price){ 
-  const e=cart.find(i=>i.id===id); if(e)e.qty++; else cart.push({id,name,price:parseFloat(price),qty:1}); uc();
   try{ window.parent.postMessage({type:'addToCart',item:{id,name,price:parseFloat(price)}},'*'); }catch(e){}
-} 
-function uc(){ 
-  const n=cart.reduce((s,i)=>s+i.qty,0), t=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  const cn=document.getElementById('cn'); if(cn) cn.textContent=n;
-  const tp=document.getElementById('tp'); if(tp) tp.textContent=t.toFixed(2)+'₺';
-  const fc=document.getElementById('fc'); if(fc) fc.style.display = n>0 ? 'flex' : 'none';
+  const b=event.target; if(b){b.textContent='✓';b.style.transform='scale(0.9)';setTimeout(()=>{b.textContent='+';b.style.transform='scale(1)'},600);}
 } 
 function fc_cat(btn,cat){ 
   document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
   renderMenu(window.menuData, cat);
 } 
-function callWaiter(){ 
-  try{ window.parent.postMessage({type:'callWaiter'},'*'); }catch(e){}
-  const btn=document.querySelector('.waiter-btn,.call-waiter-btn,[onclick*="callWaiter"]');
-  if(btn){btn.textContent='Çağrıldı ✓';btn.style.background='#00B894';setTimeout(()=>{btn.textContent='Garson Çağır';btn.style.background='';},3000);}
-}
-function openCartPanel(){
-  try{ window.parent.postMessage({type:'openCart'},'*'); }catch(e){}
-}
+
+
 
 // DINAMIK MENU RENDER FONKSIYONU
 function renderMenu(items, category = 'all') {
@@ -561,44 +546,54 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
   const configs = {
     default: {
       bg: 'linear-gradient(135deg, #FFF5F5, #FFE3E3)', headerBg: 'rgba(255, 255, 255, 0.7)',
-      primary: '#FF6B6B', accent: '#FECFEF', card: 'rgba(255, 255, 255, 0.85)', border: 'rgba(255, 107, 107, 0.15)',
-      text: '#2D3436', font: 'Poppins', sub: 'Lezzet Dünyası', extraCss: 'backdrop-filter: blur(12px); border-radius: 24px;',
-      addBtn: 'background: linear-gradient(135deg, #FF6B6B, #FF8E8B); box-shadow: 0 4px 15px rgba(255,107,107,0.4); border-radius: 50%; color: #FFF;',
-      fcart: 'background: linear-gradient(135deg, #FF6B6B, #FF8E8B); box-shadow: 0 10px 25px rgba(255,107,107,0.4); color: #FFF; border: none;',
+      primary: '#FF6B6B', accent: '#FECFEF', card: 'rgba(255, 255, 255, 0.9)', border: 'rgba(255, 107, 107, 0.1)',
+      text: '#2D3436', font: 'Poppins', sub: 'Lezzet Dünyası', extraCss: 'backdrop-filter: blur(12px); border-radius: 28px; box-shadow: 0 8px 32px rgba(255,107,107,0.05);',
+      addBtn: 'background: linear-gradient(135deg, #FF6B6B, #FF8E8B); box-shadow: 0 4px 12px rgba(255,107,107,0.3); border-radius: 50%; color: #FFF;',
       headerText: '#2D3436', catRadius: '50px'
     },
     dark: {
-      bg: '#09090B', headerBg: 'rgba(9, 9, 11, 0.8)',
-      primary: '#00F0FF', accent: '#FF003C', card: 'rgba(24, 24, 27, 0.6)', border: 'rgba(0, 240, 255, 0.2)',
-      text: '#FFFFFF', font: 'Space Grotesk', sub: 'Cyber Menu', extraCss: 'backdrop-filter: blur(12px); border-radius: 12px; box-shadow: 0 4px 30px rgba(0, 240, 255, 0.05);',
-      addBtn: 'background: transparent; border: 1px solid #00F0FF; color: #00F0FF; box-shadow: 0 0 10px rgba(0,240,255,0.2); border-radius: 8px;',
-      fcart: 'background: rgba(9, 9, 11, 0.85); border: 1px solid #00F0FF; backdrop-filter: blur(12px); box-shadow: 0 0 20px rgba(0,240,255,0.3); color: #FFF;',
-      headerText: '#00F0FF', catRadius: '8px'
+      bg: '#09090B', headerBg: 'rgba(9, 9, 11, 0.85)',
+      primary: '#00F0FF', accent: '#FF003C', card: 'rgba(24, 24, 27, 0.8)', border: 'rgba(0, 240, 255, 0.15)',
+      text: '#FFFFFF', font: 'Space Grotesk', sub: 'Cyber Menu', extraCss: 'backdrop-filter: blur(16px); border-radius: 16px; border: 1px solid rgba(0, 240, 255, 0.2); box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);',
+      addBtn: 'background: transparent; border: 1.5px solid #00F0FF; color: #00F0FF; text-shadow: 0 0 5px #00F0FF; box-shadow: 0 0 10px rgba(0,240,255,0.2); border-radius: 8px;',
+      headerText: '#00F0FF', catRadius: '12px'
     },
     luxury: {
-      bg: '#0F172A', headerBg: 'linear-gradient(180deg, #0F172A, transparent)',
-      primary: '#D4AF37', accent: '#F1E5AC', card: 'rgba(30, 41, 59, 0.5)', border: 'rgba(212, 175, 55, 0.2)',
-      text: '#F8FAFC', font: 'Playfair Display', sub: 'Fine Dining', extraCss: 'backdrop-filter: blur(8px); border-radius: 0px;',
-      addBtn: 'background: transparent; border: 1px solid #D4AF37; color: #D4AF37; border-radius: 0px;',
-      fcart: 'background: #0F172A; border-top: 1px solid #D4AF37; border-radius: 0px; color: #D4AF37;',
+      bg: '#0F172A', headerBg: 'rgba(15, 23, 42, 0.9)',
+      primary: '#D4AF37', accent: '#F1E5AC', card: 'rgba(30, 41, 59, 0.7)', border: 'rgba(212, 175, 55, 0.25)',
+      text: '#F8FAFC', font: 'Playfair Display', sub: 'Premium Experience', extraCss: 'backdrop-filter: blur(10px); border-radius: 0px; border-bottom: 2px solid #D4AF37;',
+      addBtn: 'background: #D4AF37; color: #0F172A; border-radius: 0px; font-weight: 700;',
       headerText: '#D4AF37', catRadius: '0px'
     },
     minimal: {
-      bg: '#F5F5F7', headerBg: 'rgba(245, 245, 247, 0.8)',
-      primary: '#000000', accent: '#86868B', card: '#FFFFFF', border: 'rgba(0, 0, 0, 0.05)',
-      text: '#1D1D1F', font: 'Inter', sub: lang === 'en' ? 'Menu' : lang === 'de' ? 'Speisekarte' : 'Menü', extraCss: 'border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: none;',
-      addBtn: 'background: #F5F5F7; color: #1D1D1F; border: none; border-radius: 50%; box-shadow: none;',
-      fcart: 'background: rgba(255,255,255,0.85); backdrop-filter: saturate(180%) blur(20px); color: #1D1D1F; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);',
-      headerText: '#1D1D1F', catRadius: '20px'
+      bg: '#F5F5F7', headerBg: 'rgba(245, 245, 247, 0.9)',
+      primary: '#000000', accent: '#86868B', card: '#FFFFFF', border: 'rgba(0, 0, 0, 0.04)',
+      text: '#1D1D1F', font: 'Inter', sub: lang === 'en' ? 'Curated Selection' : lang === 'de' ? 'Auswahl' : 'Seçkin Menü', extraCss: 'border-radius: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.03); border: none;',
+      addBtn: 'background: #F5F5F7; color: #1D1D1F; border: none; border-radius: 50%;',
+      headerText: '#1D1D1F', catRadius: '50px'
     },
     organic: {
-      bg: '#F4F9F4', headerBg: 'rgba(244, 249, 244, 0.85)',
-      primary: '#2E7D32', accent: '#81C784', card: '#FFFFFF', border: 'rgba(46, 125, 50, 0.15)',
-      text: '#1B5E20', font: 'Quicksand', sub: lang === 'en' ? 'Fresh & Natural' : lang === 'de' ? 'Frisch & Natürlich' : 'Doğal & Taze', extraCss: 'border-radius: 24px; box-shadow: 0 8px 25px rgba(46,125,50,0.06);',
-      addBtn: 'background: #E8F5E9; color: #2E7D32; border: 1px solid rgba(46,125,50,0.2); border-radius: 12px;',
-      fcart: 'background: #2E7D32; color: #FFF; border-radius: 30px; box-shadow: 0 10px 20px rgba(46,125,50,0.3);',
-      headerText: '#2E7D32', catRadius: '12px'
+      bg: '#F4F9F4', headerBg: 'rgba(244, 249, 244, 0.9)',
+      primary: '#2E7D32', accent: '#81C784', card: '#FFFFFF', border: 'rgba(46, 125, 50, 0.1)',
+      text: '#1B5E20', font: 'Quicksand', sub: lang === 'en' ? 'Fresh & Natural' : lang === 'de' ? 'Frisch & Natürlich' : 'Doğal & Taze', extraCss: 'border-radius: 30px; box-shadow: 0 10px 30px rgba(46,125,50,0.05);',
+      addBtn: 'background: #E8F5E9; color: #2E7D32; border-radius: 14px; font-weight: 700;',
+      headerText: '#2E7D32', catRadius: '15px'
     },
+    sunset: {
+      bg: 'linear-gradient(135deg, #FF9A9E 0%, #FAD0C4 100%)', headerBg: 'rgba(255, 255, 255, 0.2)',
+      primary: '#FF4E50', accent: '#FC913A', card: 'rgba(255, 255, 255, 0.85)', border: 'rgba(255, 78, 80, 0.1)',
+      text: '#4A4A4A', font: 'Nunito', sub: 'Sweet Moments', extraCss: 'backdrop-filter: blur(10px); border-radius: 24px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);',
+      addBtn: 'background: linear-gradient(135deg, #FF4E50, #FC913A); color: #FFF; border-radius: 50%; box-shadow: 0 4px 12px rgba(255,78,80,0.3);',
+      headerText: '#FFF', catRadius: '50px'
+    },
+    glass: {
+      bg: 'linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%)', headerBg: 'rgba(255, 255, 255, 0.3)',
+      primary: '#000', accent: '#FFF', card: 'rgba(255, 255, 255, 0.4)', border: 'rgba(255, 255, 255, 0.5)',
+      text: '#1a1a1a', font: 'Poppins', sub: 'Glass Collection', extraCss: 'backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); border-radius: 24px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);',
+      addBtn: 'background: rgba(0,0,0,0.8); color: #FFF; border-radius: 50%; backdrop-filter: blur(4px);',
+      headerText: '#000', catRadius: '50px'
+    }
+,
     sunset: {
       bg: 'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%)', headerBg: 'rgba(255, 255, 255, 0.4)',
       primary: '#FF6B6B', accent: '#FF8E8B', card: 'rgba(255, 255, 255, 0.9)', border: 'rgba(255, 255, 255, 0.5)',
@@ -626,41 +621,42 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
 <link href="https://fonts.googleapis.com/css2?family=${cfg.font.replace(/ /g,'+')}:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text};min-height:100vh}
-.header{background:${cfg.headerBg};padding:30px 20px 25px;text-align:center;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
-.header h1{font-size:1.8rem;font-weight:800;color:${cfg.headerText};letter-spacing:-0.5px}
-.header .sub{font-size:0.9rem;opacity:0.75;letter-spacing:1px;margin-top:4px}
-.cats{display:flex;gap:10px;padding:16px 20px;overflow-x:auto;scrollbar-width:none}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;overflow-x:hidden;scroll-behavior:smooth}
+body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text};min-height:100vh;padding-bottom:60px}
+.header{background:${cfg.headerBg};padding:30px 20px;text-align:center;position:relative;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-bottom:1px solid ${cfg.border}}
+.header h1{font-size:1.8rem;font-weight:800;color:${cfg.headerText};letter-spacing:-1px}
+.header .sub{font-size:0.85rem;opacity:0.7;margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+.cats-wrapper{position:sticky;top:0;z-index:100;background:${cfg.bg};padding:12px 0}
+.cats{display:flex;gap:10px;padding:4px 20px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .cats::-webkit-scrollbar{display:none}
-.cat{padding:10px 24px;border-radius:${cfg.catRadius};font-size:0.9rem;font-weight:600;background:${cfg.card};border:1px solid ${cfg.border};color:${cfg.text};cursor:pointer;transition:all 0.3s;white-space:nowrap;font-family:inherit;${cfg.extraCss}}
-.cat:hover,.cat.on{background:${preset==='minimal'?'#1D1D1F':cfg.primary};border-color:${preset==='minimal'?'#1D1D1F':cfg.primary};color:${preset==='minimal'?'#fff':(preset==='luxury'?'#0F172A':'#fff')};${preset==='dark'?'box-shadow:0 0 15px '+cfg.primary+';':''}}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px;padding:10px 20px 120px}
-.card{background:${cfg.card};border:1px solid ${cfg.border};overflow:hidden;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);cursor:pointer;${cfg.extraCss}}
-.card:hover{transform:translateY(-8px);${preset==='dark'?'box-shadow:0 0 20px '+cfg.border+';':'box-shadow:0 15px 30px rgba(0,0,0,0.08);'}}
-.card .img{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:linear-gradient(135deg, ${cfg.primary}15, transparent)}
-.card .body{padding:16px}
-.card .name{font-size:1.05rem;font-weight:700;margin-bottom:6px;line-height:1.2}
-.card .desc{font-size:0.8rem;opacity:0.6;margin-bottom:14px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card .foot{display:flex;align-items:center;justify-content:space-between}
-.card .price{font-size:1.15rem;font-weight:800;color:${cfg.primary}}
-.add{width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.4rem;transition:all 0.2s;${cfg.addBtn}}
-.add:active{transform:scale(0.9)}
-.waiter-btn{position:fixed;top:16px;right:16px;z-index:200;display:flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:50px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;transition:all 0.3s}
-.fcart{position:fixed;bottom:24px;left:20px;right:20px;z-index:200;display:none;align-items:center;justify-content:space-between;padding:18px 26px;border-radius:24px;width:calc(100% - 40px);max-width:450px;margin:0 auto;font-family:inherit;cursor:pointer;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);${cfg.fcart}}
-.fcart.show{display:flex;animation:slideUp 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards}
-.cc{width:32px;height:32px;background:${preset==='minimal'?'#1D1D1F':'rgba(255,255,255,0.25)'};color:${preset==='minimal'?'#FFF':'inherit'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fi{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
-.card{animation:fi 0.6s cubic-bezier(0.175,0.885,0.32,1.275) backwards}
+.cat{padding:10px 20px;border-radius:${cfg.catRadius};font-size:0.85rem;font-weight:700;background:${cfg.card};border:1px solid ${cfg.border};color:${cfg.text};cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:inherit;${cfg.extraCss}}
+.cat.on{background:${preset==='minimal'?'#1D1D1F':cfg.primary};border-color:${preset==='minimal'?'#1D1D1F':cfg.primary};color:#fff}
+.grid{display:grid;grid-template-columns:repeat(1,1fr);gap:16px;padding:16px}
+@media(min-width:380px){.grid{grid-template-columns:repeat(2,1fr);gap:12px}}
+@media(min-width:768px){.grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;padding:24px 40px}}
+.card{background:${cfg.card};border:1px solid ${cfg.border};border-radius:20px;overflow:hidden;transition:all 0.3s;cursor:pointer;display:flex;flex-direction:column;height:100%;${cfg.extraCss}}
+.card .img-box{width:100%;aspect-ratio:1/1;position:relative;background:linear-gradient(135deg, ${cfg.primary}10, transparent)}
+.card .img-box img{width:100%;height:100%;object-fit:cover}
+.card .emoji{font-size:3rem;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.card .body{padding:14px;flex:1;display:flex;flex-direction:column}
+.card .name{font-size:0.95rem;font-weight:700;margin-bottom:4px;line-height:1.2}
+.card .desc{font-size:0.75rem;opacity:0.6;margin-bottom:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.card .price{font-size:1.1rem;font-weight:800;color:${cfg.primary}}
+.add{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;transition:all 0.2s;${cfg.addBtn}}
+.add:active{transform:scale(0.8)}
+@keyframes fi{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fi 0.5s ease-out backwards}
 </style></head><body>
 <div class="header"><h1>${restaurantName||'Restoran'}</h1><p class="sub">${cfg.sub}</p></div>
-<button class="waiter-btn" onclick="callWaiter()"><span class="material-icons-round">room_service</span> ${tWaiter}</button>
-<div class="cats"><button class="cat on" onclick="fc(this,'all')">${tAll}</button>${cats.map(c=>`<button class="cat" onclick="fc(this,'${c}')">${c}</button>`).join('')}</div>
+<div class="cats-wrapper"><div class="cats"><button class="cat on" onclick="fc(this,'all')">${tAll}</button>${cats.map(c=>`<button class="cat" onclick="fc(this,'${c}')">${c}</button>`).join('')}</div></div>
 <div class="grid" id="g">${menuItems.map((item,i)=>{
   const mediaHtml = item.imageUrl 
-    ? `<img src="${item.imageUrl}" alt="${item.name}" style="width:100%; height:140px; object-fit:cover;">`
-    : `<div class="img" style="font-size:3rem;">${item.emoji||'🍽️'}</div>`;
+    ? `<div class="img-box"><img src="${item.imageUrl}" alt="${item.name}"></div>`
+    : `<div class="img-box"><div class="emoji">${item.emoji||'🍽️'}</div></div>`;
+
+
   return `<div class="card" data-c="${item.category||'Genel'}" style="animation-delay:${i*0.05}s">
     ${mediaHtml}
     <div class="body">
@@ -673,12 +669,13 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
     </div>
   </div>`;
 }).join('')}</div>
-<button class="fcart" id="fc" onclick="document.dispatchEvent(new Event('openCart'))"><div style="display:flex;align-items:center;gap:12px"><div class="cc" id="cn">0</div><span style="font-weight:600">${tCart}</span></div><span style="font-weight:800;font-size:1.15rem" id="tp">₺0.00</span></button>
 <` + `script>
-let cart=[];
-function ac(id,name,price){const e=cart.find(i=>i.id===id);if(e)e.qty++;else cart.push({id,name,price:parseFloat(price),qty:1});uc();const b=event.target;b.textContent='✓';b.style.transform='scale(0.9)';setTimeout(()=>{b.textContent='+';b.style.transform='scale(1)'},600)}
-function uc(){const n=cart.reduce((s,i)=>s+i.qty,0),t=cart.reduce((s,i)=>s+i.price*i.qty,0);document.getElementById('cn').textContent=n;document.getElementById('tp').textContent='₺'+t.toFixed(2);const f=document.getElementById('fc');if(n>0)f.classList.add('show');else f.classList.remove('show')}
+function ac(id,name,price){
+  try{ window.parent.postMessage({type:'addToCart',item:{id,name,price:parseFloat(price)}},'*'); }catch(e){}
+  const b=event.target;b.textContent='✓';b.style.transform='scale(0.9)';
+  setTimeout(()=>{b.textContent='+';b.style.transform='scale(1)'},600);
+}
 function fc(b,c){document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.card').forEach(x=>{x.style.display=(c==='all'||x.dataset.c===c)?'block':'none'})}
-function callWaiter(){const b=document.querySelector('.waiter-btn');b.innerHTML='<span class="material-icons-round">check_circle</span> Çağrıldı';b.style.background='rgba(0,184,148,0.8)';setTimeout(()=>{b.innerHTML='<span class="material-icons-round">room_service</span> Garson Çağır';b.style.background='rgba(0,0,0,0.4)'},4000)}
+
 <` + `/script></body></html>`;
 }

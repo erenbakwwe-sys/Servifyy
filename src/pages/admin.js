@@ -568,7 +568,7 @@ function setupAIHandlers(userId, content) {
       
       try {
         const lang = content.querySelector('#ai-lang')?.value || 'tr';
-        const html = generateThemeHTML(keyword, menuItems, userData?.restaurant?.name, lang);
+        const html = generateThemeHTML(userData?.restaurant?.name, menuItems, keyword, lang);
         
         // Render preview
         previewContent.innerHTML = '';

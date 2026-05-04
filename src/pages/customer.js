@@ -77,7 +77,7 @@ function renderCustomTheme(container) {
     <div class="custom-theme-container" id="custom-theme-container">
       <iframe id="theme-iframe" style="width:100%;min-height:100vh;border:none;display:block;" sandbox="allow-scripts allow-same-origin"></iframe>
     </div>
-    <button class="waiter-call-btn" id="waiter-call-btn" style="position:fixed;top:12px;right:12px;z-index:9999;">
+    <button class="waiter-call-btn" id="waiter-call-btn" style="position:fixed;top:12px;right:12px;z-index:9999;display:none;">
       <span class="material-icons-round">room_service</span>
       ${t('callWaiter', 'customer')}
     </button>
@@ -86,37 +86,51 @@ function renderCustomTheme(container) {
 
   const iframe = document.getElementById('theme-iframe');
   
-  // Inject menu data so AI theme can render it dynamically
-  const menuDataScript = '<script>window.menuData = ' + JSON.stringify(menuItemsData) + '; window.restaurantData = ' + JSON.stringify(restaurantData) + ';</script>';
+  // Inject menu data safely
+  const menuDataScript = `
+    <script>
+      window.menuData = ${JSON.stringify(menuItemsData)};
+      window.restaurantData = ${JSON.stringify(restaurantData)};
+    <\/script>
+  `;
 
-  // Use srcdoc instead of document.write for reliable rendering
-  iframe.srcdoc = menuDataScript + themeHtml;
+  // Inject the script into the theme HTML properly
+  const finalHtml = themeHtml.includes('<head>') 
+    ? themeHtml.replace('<head>', '<head>' + menuDataScript)
+    : menuDataScript + themeHtml;
+
+  iframe.srcdoc = finalHtml;
   
   iframe.addEventListener('load', () => {
-    // Auto resize iframe
+    const resizeIframe = () => {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (iframeDoc && iframeDoc.body) {
+          const h = iframeDoc.documentElement.scrollHeight || iframeDoc.body.scrollHeight;
+          iframe.style.height = (h + 50) + 'px';
+        }
+      } catch(e) {}
+    };
+    
+    resizeIframe();
+    // Multiple checks to ensure height is correct after images/fonts load
+    const timer = setInterval(resizeIframe, 1000);
+    setTimeout(() => clearInterval(timer), 5000);
+
+    // Cleanup AI metadata junk if present
     try {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
       if (iframeDoc && iframeDoc.body) {
-        const resizeIframe = () => {
-          const h = iframeDoc.body?.scrollHeight || 800;
-          iframe.style.height = h + 'px';
+        const junk = ['Created At:', 'Completed At:', 'ArtifactType:', 'Summary:', 'TargetFile:'];
+        const walk = (node) => {
+          if (node.nodeType === 3) {
+            if (junk.some(j => node.textContent.includes(j))) node.textContent = '';
+          } else if (node.childNodes) {
+            for (let n of node.childNodes) walk(n);
+          }
         };
-        resizeIframe();
-        setTimeout(resizeIframe, 500);
-        setTimeout(resizeIframe, 1500);
+        walk(iframeDoc.body);
       }
-    } catch(e) {
-      console.warn('Iframe resize error:', e);
-      iframe.style.height = '100vh';
-    }
-
-    // Listen for cart events from iframe via postMessage
-    try {
-      iframe.contentWindow.addEventListener('message', (e) => {
-        if (e.data.type === 'addToCart') {
-          addToCart(e.data.item);
-        }
-      });
     } catch(e) {}
 
     // Override iframe's addToCart function
@@ -124,14 +138,6 @@ function renderCustomTheme(container) {
       iframe.contentWindow.addToCart = (id, name, price) => {
         addToCart({ id, name, price: parseFloat(price) });
       };
-    } catch(e) {}
-
-    // Listen for AI theme openCart event
-    try {
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      iframeDoc.addEventListener('openCart', () => {
-        openCartPanel();
-      });
     } catch(e) {}
   });
 
@@ -370,6 +376,7 @@ function addToCart(item) {
   }
   showToast(`${item.name} sepete eklendi`, 'success');
   updateFloatingCart(document.getElementById('app'));
+  openCartPanel();
 }
 
 function updateFloatingCart(container) {
