@@ -139,7 +139,9 @@ export const translations = {
       scanCard: 'Kartı Tara',
       amountAll: 'Tamamı',
       amountEqual: 'Eşit Bölüş',
-      amountCustom: 'Özel Tutar'
+      amountCustom: 'Özel Tutar',
+      physicalPos: 'Fiziksel POS',
+      cartItems: 'SEPETTEKİ ÜRÜNLER'
     },
     landing: {
       features: 'Özellikler',
@@ -377,7 +379,9 @@ export const translations = {
       scanCard: 'Scan Card',
       amountAll: 'All',
       amountEqual: 'Split Equally',
-      amountCustom: 'Custom Amount'
+      amountCustom: 'Custom Amount',
+      physicalPos: 'Physical POS',
+      cartItems: 'CART ITEMS'
     },
     landing: {
       features: 'Features',
@@ -615,7 +619,9 @@ export const translations = {
       scanCard: 'Karte scannen',
       amountAll: 'Alles',
       amountEqual: 'Gleichmäßig teilen',
-      amountCustom: 'Eigener Betrag'
+      amountCustom: 'Eigener Betrag',
+      physicalPos: 'Physisches POS',
+      cartItems: 'ARTIKEL IM WARENKORB'
     },
     landing: {
       features: 'Funktionen',

@@ -86,11 +86,15 @@ function renderCustomTheme(container) {
 
   const iframe = document.getElementById('theme-iframe');
   
-  // Inject menu data safely
+  // Inject menu data safely (only clean fields, no raw Firestore timestamps)
+  const safeRestaurantData = {
+    restaurant: restaurantData?.restaurant || {},
+    plan: restaurantData?.plan || 'trial'
+  };
   const menuDataScript = `
     <script>
       window.menuData = ${JSON.stringify(menuItemsData)};
-      window.restaurantData = ${JSON.stringify(restaurantData)};
+      window.restaurantData = ${JSON.stringify(safeRestaurantData)};
     <\/script>
   `;
 
@@ -438,9 +442,29 @@ function openCartPanel() {
 
         <div class="checkout-section-title">${t('paymentType', 'customer')}</div>
         <div class="amount-selection">
-          <div class="amount-btn selected">${t('amountAll', 'customer')}</div>
-          <div class="amount-btn">${t('amountEqual', 'customer')}</div>
-          <div class="amount-btn">${t('amountCustom', 'customer')}</div>
+          <div class="amount-btn selected" data-type="all">${t('amountAll', 'customer')}</div>
+          <div class="amount-btn" data-type="equal">${t('amountEqual', 'customer')}</div>
+          <div class="amount-btn" data-type="custom">${t('amountCustom', 'customer')}</div>
+        </div>
+        
+        <div id="split-equal-area" style="display:none; margin-bottom: 20px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-secondary); padding:12px; border-radius:12px;">
+            <span>Kişi Sayısı:</span>
+            <input type="number" id="split-count" class="input-field" value="2" min="2" max="20" style="width:80px; text-align:center;">
+          </div>
+          <div style="text-align:right; margin-top:8px; font-size:0.9rem; color:var(--text-secondary);" id="split-amount-display">
+            Kişi başı: ${formatCurrency(total / 2)}
+          </div>
+        </div>
+
+        <div id="split-custom-area" style="display:none; margin-bottom: 20px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-secondary); padding:12px; border-radius:12px;">
+            <span>Ödenecek Tutar:</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="number" id="custom-pay-amount" class="input-field" value="" placeholder="0.00" style="width:100px; text-align:right;">
+              <span style="font-weight:600;">₺</span>
+            </div>
+          </div>
         </div>
 
         <div class="checkout-section-title">${t('paymentMethod', 'customer')}</div>
@@ -455,7 +479,7 @@ function openCartPanel() {
           </div>
           <div class="payment-option" data-method="online">
             <div class="payment-icon">📲</div>
-            <div class="payment-label">Fiziksel POS</div>
+            <div class="payment-label">${t('physicalPos', 'customer')}</div>
           </div>
         </div>
 
@@ -478,7 +502,7 @@ function openCartPanel() {
         </button>
 
         <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.05);">
-          <div style="font-size:0.8rem; color:#71717a; margin-bottom:12px;">SEPETTEKİ ÜRÜNLER</div>
+          <div style="font-size:0.8rem; color:#71717a; margin-bottom:12px;">${t('cartItems', 'customer')}</div>
           ${cart.map((item, index) => `
             <div class="cart-item" style="border:none; padding:8px 0;">
               <div class="cart-item-info">
@@ -523,27 +547,67 @@ function openCartPanel() {
     });
   });
 
-  // Payment method selection
-  const splitSection = panel.querySelector('#split-bill-section');
-  const splitCount = panel.querySelector('#split-count');
-  const splitAmt = panel.querySelector('#split-amount');
+  // Amount type selection
+  const equalArea = panel.querySelector('#split-equal-area');
+  const customArea = panel.querySelector('#split-custom-area');
+  const splitCountInput = panel.querySelector('#split-count');
+  const splitDisplay = panel.querySelector('#split-amount-display');
+  const payBtn = panel.querySelector('#place-order-btn');
 
-  if (splitCount) {
-    splitCount.addEventListener('input', () => {
-      const count = Math.max(1, parseInt(splitCount.value) || 1);
-      if (splitAmt) splitAmt.textContent = 'Kişi başı: ' + formatCurrency(total / count);
+  const updatePayButton = () => {
+    let payAmount = total;
+    const activeBtn = panel.querySelector('.amount-btn.selected');
+    if (activeBtn) {
+      if (activeBtn.dataset.type === 'equal') {
+        const count = Math.max(2, parseInt(splitCountInput.value) || 2);
+        payAmount = total / count;
+      } else if (activeBtn.dataset.type === 'custom') {
+        const customInput = panel.querySelector('#custom-pay-amount');
+        payAmount = Math.min(total, Math.max(0, parseFloat(customInput.value) || 0));
+      }
+    }
+    // Update the button text with the correct amount
+    payBtn.innerHTML = `<span class="material-icons-round">check_circle</span> ${formatCurrency(payAmount)} ${t('pay', 'customer')}`;
+  };
+
+  if (splitCountInput) {
+    splitCountInput.addEventListener('input', () => {
+      const count = Math.max(2, parseInt(splitCountInput.value) || 2);
+      if (splitDisplay) splitDisplay.textContent = 'Kişi başı: ' + formatCurrency(total / count);
+      updatePayButton();
     });
   }
+  
+  const customPayInput = panel.querySelector('#custom-pay-amount');
+  if (customPayInput) {
+    customPayInput.addEventListener('input', () => updatePayButton());
+  }
 
+  panel.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      panel.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      
+      const type = btn.dataset.type;
+      if (type === 'equal') {
+        if (equalArea) equalArea.style.display = 'block';
+        if (customArea) customArea.style.display = 'none';
+      } else if (type === 'custom') {
+        if (equalArea) equalArea.style.display = 'none';
+        if (customArea) customArea.style.display = 'block';
+      } else {
+        if (equalArea) equalArea.style.display = 'none';
+        if (customArea) customArea.style.display = 'none';
+      }
+      updatePayButton();
+    });
+  });
+
+  // Payment method selection
   panel.querySelectorAll('.payment-option').forEach(opt => {
     opt.addEventListener('click', () => {
       panel.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
-      if (opt.dataset.method === 'split') {
-        if (splitSection) splitSection.style.display = 'block';
-      } else {
-        if (splitSection) splitSection.style.display = 'none';
-      }
     });
   });
 

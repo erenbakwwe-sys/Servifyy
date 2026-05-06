@@ -583,7 +583,8 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
   
   const p = (prompt || '').toLowerCase();
   let preset = 'default';
-  if (p.includes('lüks') || p.includes('fine dining') || p.includes('gold') || p.includes('zarif') || p === 'luxury') preset = 'luxury';
+  if (p === 'modern-dark' || p.includes('ciğerci') || p.includes('premium')) preset = 'modern-dark';
+  else if (p.includes('lüks') || p.includes('fine dining') || p.includes('gold') || p.includes('zarif') || p === 'luxury') preset = 'luxury';
   else if (p.includes('dark') || p.includes('siyah') || p.includes('cyber') || p.includes('karanlık') || p.includes('neon') || p === 'dark') preset = 'dark';
   else if (p.includes('apple') || p.includes('ios') || p.includes('minimal') || p.includes('beyaz') || p.includes('aydınlık') || p === 'minimal') preset = 'minimal';
   else if (p === 'organic') preset = 'organic';
@@ -703,7 +704,7 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
     <h1>${restaurantName||'Restoran'}</h1>
     <p class="sub">${cfg.sub}</p>
   </div>
-  ${preset==='modern-dark'?`<button onclick="try{window.parent.postMessage({type:'callWaiter'},'*')}catch(e){}" style="background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:8px 16px;border-radius:12px;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:6px;"><span class="material-icons-round" style="font-size:1.1rem;color:#EAB308">notifications</span> Garson</button>`:''}
+  ${preset==='modern-dark'?`<button onclick="try{window.parent.postMessage({type:'callWaiter'},'*')}catch(e){}" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.12);padding:10px 20px;border-radius:14px;font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:8px;font-family:inherit;cursor:pointer;transition:all 0.2s;backdrop-filter:blur(8px);"><span class="material-icons-round" style="font-size:1.1rem;color:#EAB308">notifications</span> ${tWaiter}</button>`:''}
 </div>
 <div class="cats-wrapper"><div class="cats"><button class="cat on" onclick="fc(this,'all')">${tAll}</button>${cats.map(c=>`<button class="cat" onclick="fc(this,'${c}')">${c}</button>`).join('')}</div></div>
 <div class="grid" id="g">${menuItems.map((item,i)=>{
@@ -718,7 +719,7 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
       <div class="desc">${item.description||''}</div>
       <div class="foot">
         <span class="price">₺${(item.price||0).toFixed(2)}</span>
-        <button class="add" onclick="ac(event, '${item.id}','${(item.name||'').replace(/'/g,"\\'")}',${item.price||0})">${preset==='modern-dark'?'<span class="material-icons-round" style="font-size:1.2rem">add</span> Ekle':'+'}</button>
+        <button class="add" onclick="ac(event, '${item.id}','${(item.name||'').replace(/'/g,"\\'")}',${item.price||0})">${preset==='modern-dark'?`<span class="material-icons-round" style="font-size:1.2rem">add</span> ${lang==='en'?'Add':lang==='de'?'Hinzu':'Ekle'}`:'+' }</button>
       </div>
     </div>
   </div>`;
@@ -737,7 +738,7 @@ function ac(e, id, name, price){
   const b = e.currentTarget || e.target;
   if(b){
     const old = b.innerHTML;
-    b.innerHTML = preset === 'modern-dark' ? 'Eklendi' : '✓';
+    b.innerHTML = preset === 'modern-dark' ? '${lang==='en'?'Added':lang==='de'?'Hinzu':'Eklendi'}' : '✓';
     b.style.transform = 'scale(0.9)';
     setTimeout(() => {
       b.innerHTML = old;
