@@ -128,7 +128,18 @@ export const translations = {
       feedbackSpeed: 'Hız',
       feedbackService: 'Hizmet',
       feedbackClean: 'Temizlik',
-      feedbackPrice: 'Fiyat'
+      feedbackPrice: 'Fiyat',
+      totalBill: 'Toplam Hesap',
+      remainingAmount: 'Kalan Tutar',
+      paymentType: 'Ödeme Şekli',
+      paymentMethod: 'Ödeme Yöntemi',
+      cardDetails: 'Kart Bilgileri',
+      cardNumber: 'Kart Numarası',
+      pay: 'Öde',
+      scanCard: 'Kartı Tara',
+      amountAll: 'Tamamı',
+      amountEqual: 'Eşit Bölüş',
+      amountCustom: 'Özel Tutar'
     },
     landing: {
       features: 'Özellikler',
@@ -355,7 +366,18 @@ export const translations = {
       feedbackSpeed: 'Speed',
       feedbackService: 'Service',
       feedbackClean: 'Cleanliness',
-      feedbackPrice: 'Price'
+      feedbackPrice: 'Price',
+      totalBill: 'Total Bill',
+      remainingAmount: 'Remaining Amount',
+      paymentType: 'Payment Type',
+      paymentMethod: 'Payment Method',
+      cardDetails: 'Card Details',
+      cardNumber: 'Card Number',
+      pay: 'Pay',
+      scanCard: 'Scan Card',
+      amountAll: 'All',
+      amountEqual: 'Split Equally',
+      amountCustom: 'Custom Amount'
     },
     landing: {
       features: 'Features',
@@ -582,7 +604,18 @@ export const translations = {
       feedbackSpeed: 'Geschwindigkeit',
       feedbackService: 'Service',
       feedbackClean: 'Sauberkeit',
-      feedbackPrice: 'Preis'
+      feedbackPrice: 'Preis',
+      totalBill: 'Gesamtbetrag',
+      remainingAmount: 'Restbetrag',
+      paymentType: 'Zahlungsart',
+      paymentMethod: 'Zahlungsmethode',
+      cardDetails: 'Kartendetails',
+      cardNumber: 'Kartennummer',
+      pay: 'Bezahlen',
+      scanCard: 'Karte scannen',
+      amountAll: 'Alles',
+      amountEqual: 'Gleichmäßig teilen',
+      amountCustom: 'Eigener Betrag'
     },
     landing: {
       features: 'Funktionen',

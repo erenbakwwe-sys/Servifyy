@@ -375,6 +375,13 @@ function addToCart(item) {
     cart.push({ ...item, qty: 1 });
   }
   showToast(`${item.name} sepete eklendi`, 'success');
+  
+  // Sync with iframe if exists
+  const iframe = document.getElementById('theme-iframe');
+  if (iframe && iframe.contentWindow) {
+    iframe.contentWindow.postMessage({ type: 'cartUpdated' }, '*');
+  }
+
   updateFloatingCart(document.getElementById('app'));
   openCartPanel();
 }
@@ -420,83 +427,67 @@ function openCartPanel() {
         </button>
       </div>
       <div class="cart-panel-body">
-        ${cart.map((item, index) => `
-          <div class="cart-item">
-            <div class="cart-item-info">
-              <div class="cart-item-name">${item.name}</div>
-              <div class="cart-item-price">${formatCurrency(item.price)}</div>
-            </div>
-            <div class="cart-item-qty">
-              <button class="cart-qty-btn" data-action="decrease" data-index="${index}">−</button>
-              <span>${item.qty}</span>
-              <button class="cart-qty-btn" data-action="increase" data-index="${index}">+</button>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-      <div class="cart-panel-footer">
-        <div class="cart-summary">
-          <span class="total-label">${t('totalAmount', 'customer')}</span>
+        <div class="cart-summary total">
+          <span class="total-label">${t('totalBill', 'customer')}</span>
           <span class="total-amount">${formatCurrency(total)}</span>
         </div>
-        <div class="cart-summary" style="margin-top:16px;">
-          <textarea class="input-field" id="order-note" placeholder="${t('orderNote', 'customer')}" rows="2" style="background:var(--bg-elevated);"></textarea>
+        <div class="cart-summary remaining">
+          <span class="total-label">${t('remainingAmount', 'customer')}</span>
+          <span class="total-amount">${formatCurrency(total)}</span>
         </div>
-        <div class="payment-methods" style="margin-top:16px;">
-          <div class="payment-method-title">${t('selectPayment', 'customer')}</div>
-          <div class="payment-options">
-            <div class="payment-option selected" data-method="cash">
-              <div class="payment-icon">💵</div>
-              <div class="payment-label">${t('cash', 'customer')}</div>
-            </div>
-            <div class="payment-option" data-method="pos">
-              <div class="payment-icon">📲</div>
-              <div class="payment-label">${t('creditCard', 'customer')}</div>
-            </div>
-            <div class="payment-option" data-method="online">
-              <div class="payment-icon">💳</div>
-              <div class="payment-label">${t('onlinePos', 'customer') || 'Online POS'}</div>
-            </div>
-            <div class="payment-option" data-method="split">
-              <div class="payment-icon">✂️</div>
-              <div class="payment-label">${t('splitBill', 'customer') || 'Hesap Bölüşme'}</div>
-            </div>
+
+        <div class="checkout-section-title">${t('paymentType', 'customer')}</div>
+        <div class="amount-selection">
+          <div class="amount-btn selected">${t('amountAll', 'customer')}</div>
+          <div class="amount-btn">${t('amountEqual', 'customer')}</div>
+          <div class="amount-btn">${t('amountCustom', 'customer')}</div>
+        </div>
+
+        <div class="checkout-section-title">${t('paymentMethod', 'customer')}</div>
+        <div class="payment-options">
+          <div class="payment-option selected" data-method="pos">
+            <div class="payment-icon">💳</div>
+            <div class="payment-label">${t('creditCard', 'customer')}</div>
           </div>
-          <div id="split-bill-section" style="display:none; margin-top:12px; background:var(--bg-elevated); padding:16px; border-radius:12px;">
-            <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">Kaç kişiye bölünecek?</label>
-            <input type="number" id="split-count" class="input-field" min="2" max="20" value="2" style="background:var(--bg-primary); border:1px solid var(--border);">
-            <div style="font-size:0.95rem; color:var(--primary); margin-top:8px; font-weight:700;" id="split-amount">Kişi başı: ${formatCurrency(total / 2)}</div>
+          <div class="payment-option" data-method="cash">
+            <div class="payment-icon">💵</div>
+            <div class="payment-label">${t('cash', 'customer')}</div>
+          </div>
+          <div class="payment-option" data-method="online">
+            <div class="payment-icon">📲</div>
+            <div class="payment-label">Fiziksel POS</div>
           </div>
         </div>
-        <div class="tip-section">
-          <div class="tip-title"><span class="material-icons-round">volunteer_activism</span> ${t('tipLeave', 'customer')}</div>
-          <div class="tip-options">
-            <div class="tip-option" data-tip-pct="0">${t('tipNone', 'customer')}</div>
-            <div class="tip-option" data-tip-pct="5">%5<span class="tip-pct">${formatCurrency(total * 0.05)}</span></div>
-            <div class="tip-option selected" data-tip-pct="10">%10<span class="tip-pct">${formatCurrency(total * 0.10)}</span></div>
-            <div class="tip-option" data-tip-pct="15">%15<span class="tip-pct">${formatCurrency(total * 0.15)}</span></div>
-            <div class="tip-option" data-tip-pct="custom">${t('tipCustom', 'customer')}</div>
+
+        <div class="checkout-section-title">${t('cardDetails', 'customer')}</div>
+        <div class="card-info-area">
+          <div class="card-header">
+            <span style="font-size:0.8rem;font-weight:600;color:#fff;">${t('cardDetails', 'customer')}</span>
+            <button class="scan-btn"><span class="material-icons-round" style="font-size:1rem;">qr_code_scanner</span> ${t('scanCard', 'customer')}</button>
           </div>
-          <div class="tip-custom-input" id="tip-custom-area">
-            <input type="number" class="input-field" id="tip-custom-val" placeholder="${t('tip', 'customer')} (₺)" min="0" style="background:var(--bg-elevated);">
-          </div>
-          <div class="tip-total-row">
-            <span class="tip-total-label">${t('tipIncluded', 'customer')}</span>
-            <span class="tip-total-value" id="tip-grand-total">${formatCurrency(total * 1.10)}</span>
+          <input type="text" class="card-input" placeholder="${t('cardNumber', 'customer')}">
+          <div class="card-row">
+            <input type="text" class="card-input" placeholder="AA/YY">
+            <input type="text" class="card-input" placeholder="CVV">
           </div>
         </div>
-        <div class="coupon-input-section">
-          <div class="tip-title"><span class="material-icons-round">confirmation_number</span> ${t('couponCode', 'customer')}</div>
-          <div class="coupon-input-row">
-            <input type="text" class="input-field" id="coupon-code-input" placeholder="KUPONKODU" style="background:var(--bg-elevated);">
-            <button class="btn btn-secondary btn-sm" id="apply-coupon-btn">${t('couponApply', 'customer')}</button>
-          </div>
-          <div class="coupon-result" id="coupon-result"></div>
-        </div>
-        <button class="btn btn-primary btn-block btn-lg" id="place-order-btn">
-          <span class="material-icons-round">send</span>
-          ${t('sendOrder', 'customer')}
+
+        <button class="btn btn-primary btn-block btn-lg pay-button" id="place-order-btn">
+          <span class="material-icons-round">check_circle</span>
+          ${formatCurrency(total)} ${t('pay', 'customer')}
         </button>
+
+        <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.05);">
+          <div style="font-size:0.8rem; color:#71717a; margin-bottom:12px;">SEPETTEKİ ÜRÜNLER</div>
+          ${cart.map((item, index) => `
+            <div class="cart-item" style="border:none; padding:8px 0;">
+              <div class="cart-item-info">
+                <div class="cart-item-name" style="font-size:0.85rem;">${item.qty} x ${item.name}</div>
+              </div>
+              <div class="cart-item-price" style="font-size:0.85rem;">${formatCurrency(item.price * item.qty)}</div>
+            </div>
+          `).join('')}
+        </div>
       </div>
     </div>
   `;
@@ -521,6 +512,13 @@ function openCartPanel() {
       if (cart.length > 0) {
         openCartPanel();
       }
+      
+      // Sync with iframe
+      const iframe = document.getElementById('theme-iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'cartUpdated' }, '*');
+      }
+
       updateFloatingCart(document.getElementById('app'));
     });
   });
@@ -533,7 +531,7 @@ function openCartPanel() {
   if (splitCount) {
     splitCount.addEventListener('input', () => {
       const count = Math.max(1, parseInt(splitCount.value) || 1);
-      splitAmt.textContent = 'Kişi başı: ' + formatCurrency(total / count);
+      if (splitAmt) splitAmt.textContent = 'Kişi başı: ' + formatCurrency(total / count);
     });
   }
 
@@ -542,9 +540,9 @@ function openCartPanel() {
       panel.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
       if (opt.dataset.method === 'split') {
-        splitSection.style.display = 'block';
+        if (splitSection) splitSection.style.display = 'block';
       } else {
-        splitSection.style.display = 'none';
+        if (splitSection) splitSection.style.display = 'none';
       }
     });
   });

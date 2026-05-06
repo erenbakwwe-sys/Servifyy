@@ -14,6 +14,7 @@ export function renderAIThemeContent(userData, userId) {
   const hasKey = !!getGeminiKey();
   const isTr = getAdminLang() === 'tr';
   const isDe = getAdminLang() === 'de';
+  const activePreset = (userData?.lastPrompt || '').startsWith('Hazır Şablon: ') ? userData.lastPrompt.replace('Hazır Şablon: ', '').trim() : '';
 
   const texts = {
     title: isTr ? 'AI Menü Tema Tasarımcısı' : isDe ? 'KI Menü-Design' : 'AI Menu Theme Designer',
@@ -91,59 +92,120 @@ export function renderAIThemeContent(userData, userId) {
         <div class="ai-prompt-area">
           <h3><span class="material-icons-round" style="color:var(--primary);">style</span> ${texts.premadeTitle}</h3>
           <p>${texts.premadeDesc}</p>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:16px;margin-top:16px;">
-            
-            <div class="template-card" data-preset="luxury" style="background:#0F172A; border:1px solid #D4AF37; border-radius:12px; padding:20px; cursor:pointer; text-align:center; transition:all 0.3s;">
-              <span class="material-icons-round" style="color:#D4AF37; font-size:2.5rem; margin-bottom:8px;">restaurant_menu</span>
-              <h4 style="color:#F8FAFC; margin-bottom:4px;">Fine Dining</h4>
+          <div class="tpl-grid">
+
+            <div class="tpl-card ${activePreset === 'modern-dark' ? 'tpl-active' : ''}" data-preset="modern-dark">
+              <div class="tpl-preview" style="background:#09090B;">
+                <div class="tpl-preview-bar"><span style="background:#EAB308"></span><span style="background:#EF4444"></span><span style="background:#18181B"></span></div>
+                <div class="tpl-preview-icon" style="color:#EAB308;">stars</div>
+              </div>
+              <div class="tpl-info">
+                <h4>Ciğerci Premium</h4>
+                <p>Koyu arka plan, altın vurgular</p>
+              </div>
+              <div class="tpl-check"><span class="material-icons-round">check_circle</span></div>
             </div>
-            
-            <div class="template-card" data-preset="minimal" style="background:#F5F5F7; border:1px solid #E5E5EA; border-radius:12px; padding:20px; cursor:pointer; text-align:center; transition:all 0.3s;">
-              <span class="material-icons-round" style="color:#1D1D1F; font-size:2.5rem; margin-bottom:8px;">phone_iphone</span>
-              <h4 style="color:#1D1D1F; margin-bottom:4px;">iOS Minimal</h4>
+
+            <div class="tpl-card ${activePreset === 'luxury' ? 'tpl-active' : ''}" data-preset="luxury">
+              <div class="tpl-preview" style="background:#0F172A;">
+                <div class="tpl-preview-bar"><span style="background:#D4AF37"></span><span style="background:#F1E5AC"></span><span style="background:#1E293B"></span></div>
+                <div class="tpl-preview-icon" style="color:#D4AF37;">restaurant_menu</div>
+              </div>
+              <div class="tpl-info">
+                <h4>Fine Dining</h4>
+                <p>Zarif altın detaylar, lüks his</p>
+              </div>
+              <div class="tpl-check"><span class="material-icons-round">check_circle</span></div>
             </div>
-            
-            <div class="template-card" data-preset="dark" style="background:#09090B; border:1px solid #00F0FF; border-radius:12px; padding:20px; cursor:pointer; text-align:center; transition:all 0.3s;">
-              <span class="material-icons-round" style="color:#00F0FF; font-size:2.5rem; margin-bottom:8px;">sports_esports</span>
-              <h4 style="color:#FFFFFF; margin-bottom:4px;">Cyberpunk</h4>
+
+            <div class="tpl-card ${activePreset === 'minimal' ? 'tpl-active' : ''}" data-preset="minimal">
+              <div class="tpl-preview" style="background:#F5F5F7;">
+                <div class="tpl-preview-bar"><span style="background:#1D1D1F"></span><span style="background:#86868B"></span><span style="background:#E5E5EA"></span></div>
+                <div class="tpl-preview-icon" style="color:#1D1D1F;">phone_iphone</div>
+              </div>
+              <div class="tpl-info">
+                <h4>iOS Minimal</h4>
+                <p>Temiz, modern, Apple tarzı</p>
+              </div>
+              <div class="tpl-check"><span class="material-icons-round">check_circle</span></div>
             </div>
-            
-            <div class="template-card" data-preset="organic" style="background:#F4F9F4; border:1px solid #2E7D32; border-radius:12px; padding:20px; cursor:pointer; text-align:center; transition:all 0.3s;">
-              <span class="material-icons-round" style="color:#2E7D32; font-size:2.5rem; margin-bottom:8px;">eco</span>
-              <h4 style="color:#1B5E20; margin-bottom:4px;">Organic</h4>
+
+            <div class="tpl-card ${activePreset === 'dark' ? 'tpl-active' : ''}" data-preset="dark">
+              <div class="tpl-preview" style="background:#09090B;">
+                <div class="tpl-preview-bar"><span style="background:#00F0FF"></span><span style="background:#FF003C"></span><span style="background:#18181B"></span></div>
+                <div class="tpl-preview-icon" style="color:#00F0FF;">sports_esports</div>
+              </div>
+              <div class="tpl-info">
+                <h4>Cyberpunk</h4>
+                <p>Neon ışıklar, fütüristik UI</p>
+              </div>
+              <div class="tpl-check"><span class="material-icons-round">check_circle</span></div>
             </div>
-            
-            <div class="template-card" data-preset="sunset" style="background:linear-gradient(135deg, #FF9A9E, #FECFEF); border:1px solid #FF6B6B; border-radius:12px; padding:20px; cursor:pointer; text-align:center; transition:all 0.3s;">
-              <span class="material-icons-round" style="color:#FFF; font-size:2.5rem; margin-bottom:8px;">wb_twilight</span>
-              <h4 style="color:#4A4A4A; margin-bottom:4px;">Sunset</h4>
+
+            <div class="tpl-card ${activePreset === 'organic' ? 'tpl-active' : ''}" data-preset="organic">
+              <div class="tpl-preview" style="background:#F4F9F4;">
+                <div class="tpl-preview-bar"><span style="background:#2E7D32"></span><span style="background:#81C784"></span><span style="background:#E8F5E9"></span></div>
+                <div class="tpl-preview-icon" style="color:#2E7D32;">eco</div>
+              </div>
+              <div class="tpl-info">
+                <h4>Organic</h4>
+                <p>Doğal tonlar, yeşil tema</p>
+              </div>
+              <div class="tpl-check"><span class="material-icons-round">check_circle</span></div>
             </div>
-            
-            <div class="template-card" data-preset="glass" style="background:linear-gradient(135deg, #e0c3fc, #8ec5fc); border:1px solid rgba(255,255,255,0.6); border-radius:12px; padding:20px; cursor:pointer; text-align:center; transition:all 0.3s;">
-              <span class="material-icons-round" style="color:#FFF; font-size:2.5rem; margin-bottom:8px;">blur_on</span>
-              <h4 style="color:#FFF; margin-bottom:4px;">Glassmorphism</h4>
+
+            <div class="tpl-card ${activePreset === 'sunset' ? 'tpl-active' : ''}" data-preset="sunset">
+              <div class="tpl-preview" style="background:linear-gradient(135deg,#FF9A9E,#FECFEF);">
+                <div class="tpl-preview-bar"><span style="background:#FF4E50"></span><span style="background:#FC913A"></span><span style="background:#fff"></span></div>
+                <div class="tpl-preview-icon" style="color:#fff;">wb_twilight</div>
+              </div>
+              <div class="tpl-info">
+                <h4>Sunset</h4>
+                <p>Sıcak gradient, pembe tonlar</p>
+              </div>
+              <div class="tpl-check"><span class="material-icons-round">check_circle</span></div>
             </div>
-            
-            <div class="template-card" data-preset="default" style="background:linear-gradient(135deg, #FFF5F5, #FFE3E3); border:1px solid #FF6B6B; border-radius:12px; padding:20px; cursor:pointer; text-align:center; transition:all 0.3s;">
-              <span class="material-icons-round" style="color:#FF6B6B; font-size:2.5rem; margin-bottom:8px;">favorite</span>
-              <h4 style="color:#2D3436; margin-bottom:4px;">Modern</h4>
+
+            <div class="tpl-card ${activePreset === 'glass' ? 'tpl-active' : ''}" data-preset="glass">
+              <div class="tpl-preview" style="background:linear-gradient(135deg,#e0c3fc,#8ec5fc);">
+                <div class="tpl-preview-bar"><span style="background:rgba(255,255,255,0.8)"></span><span style="background:rgba(255,255,255,0.5)"></span><span style="background:rgba(255,255,255,0.3)"></span></div>
+                <div class="tpl-preview-icon" style="color:#fff;">blur_on</div>
+              </div>
+              <div class="tpl-info">
+                <h4>Glassmorphism</h4>
+                <p>Cam efekti, bulanık arka plan</p>
+              </div>
+              <div class="tpl-check"><span class="material-icons-round">check_circle</span></div>
             </div>
-            
+
+            <div class="tpl-card ${activePreset === 'default' ? 'tpl-active' : ''}" data-preset="default">
+              <div class="tpl-preview" style="background:linear-gradient(135deg,#FFF5F5,#FFE3E3);">
+                <div class="tpl-preview-bar"><span style="background:#FF6B6B"></span><span style="background:#FECFEF"></span><span style="background:#fff"></span></div>
+                <div class="tpl-preview-icon" style="color:#FF6B6B;">favorite</div>
+              </div>
+              <div class="tpl-info">
+                <h4>Modern</h4>
+                <p>Klasik kırmızı, şık tasarım</p>
+              </div>
+              <div class="tpl-check"><span class="material-icons-round">check_circle</span></div>
+            </div>
+
           </div>
           
-          <div style="margin-top:24px; padding:16px; background:var(--bg-primary); border-radius:12px; border:1px solid var(--border);">
-            <h4 style="margin-bottom:12px; font-size:0.95rem; display:flex; align-items:center; gap:6px;"><span class="material-icons-round" style="font-size:1.2rem; color:var(--primary);">tune</span> ${texts.tuneTitle}</h4>
-            <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end;">
-              <div>
-                <label style="display:block; font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">${texts.pColor}</label>
-                <input type="color" id="custom-primary" value="#FF6B6B" style="width:60px; height:40px; padding:2px; border-radius:8px; border:1px solid var(--border); cursor:pointer;">
+          <div class="tpl-customize-box">
+            <h4><span class="material-icons-round">tune</span> ${texts.tuneTitle}</h4>
+            <div class="tpl-customize-controls">
+              <div class="tpl-color-pick">
+                <label>${texts.pColor}</label>
+                <input type="color" id="custom-primary" value="#FF6B6B">
               </div>
-              <div>
-                <label style="display:block; font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">${texts.bgColor}</label>
-                <input type="color" id="custom-bg" value="#FFFFFF" style="width:60px; height:40px; padding:2px; border-radius:8px; border:1px solid var(--border); cursor:pointer;">
+              <div class="tpl-color-pick">
+                <label>${texts.bgColor}</label>
+                <input type="color" id="custom-bg" value="#FFFFFF">
               </div>
-              <div style="flex:1; min-width:150px;">
-                <label style="display:block; font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">${texts.menuFont}</label>
-                <select id="custom-font" class="input-field" style="width:100%; padding:10px;">
+              <div class="tpl-font-pick">
+                <label>${texts.menuFont}</label>
+                <select id="custom-font" class="input-field">
                   <option value="">(Şablona Göre / Auto)</option>
                   <option value="Poppins">Poppins (Modern)</option>
                   <option value="Inter">Inter (Sade)</option>
@@ -153,19 +215,15 @@ export function renderAIThemeContent(userData, userId) {
                   <option value="Nunito">Nunito (Tatlı)</option>
                 </select>
               </div>
-              <button class="btn btn-primary" id="apply-custom-btn" style="height:40px; padding:0 20px;"><span class="material-icons-round">palette</span> ${texts.applyBtn}</button>
+              <button class="btn btn-primary" id="apply-custom-btn"><span class="material-icons-round">palette</span> ${texts.applyBtn}</button>
             </div>
-            <p style="font-size:0.7rem; color:var(--text-muted); margin-top:10px;">${texts.tuneNote}</p>
+            <p class="tpl-customize-note">${texts.tuneNote}</p>
           </div>
           
         </div>
       </div>
       
     </div>
-    <style>
-      .template-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-      .template-card:active { transform: scale(0.95); }
-    </style>
     `;
 }
 
@@ -222,8 +280,6 @@ function fc_cat(btn,cat){
   renderMenu(window.menuData, cat);
 } 
 
-
-
 // DINAMIK MENU RENDER FONKSIYONU
 function renderMenu(items, category = 'all') {
   const container = document.getElementById('menu-grid');
@@ -259,14 +315,11 @@ function initMenu() {
   let container = document.getElementById('menu-grid');
   if (!container) {
     if (!document.body) return; // Henüz body yüklenmediyse bekle
-    // Failsafe: Eğer AI id="menu-grid" koymayı unutursa
     container = document.createElement('div');
     container.id = 'menu-grid';
     container.style.cssText = 'display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; padding: 20px; padding-bottom: 100px;';
     document.body.appendChild(container);
   }
-  
-  // Önce içeriği temizle ki çift render olmasın (setTimeout yüzünden)
   container.innerHTML = ''; 
   renderMenu(window.menuData);
 }
@@ -276,9 +329,7 @@ if (document.readyState === 'loading') {
 } else {
   initMenu();
 }
-// Garanti olsun diye kısa bir süre sonra tekrar dene
 setTimeout(initMenu, 500);
-
 </script>
 
 DİKKAT: Ürün kartlarını ASLA HTML içine statik olarak yazma. SADECE \`renderMenu\` fonksiyonu içinde \`window.menuData\` kullanarak oluştur. 
@@ -592,23 +643,13 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
       text: '#1a1a1a', font: 'Poppins', sub: 'Glass Collection', extraCss: 'backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); border-radius: 24px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);',
       addBtn: 'background: rgba(0,0,0,0.8); color: #FFF; border-radius: 50%; backdrop-filter: blur(4px);',
       headerText: '#000', catRadius: '50px'
-    }
-,
-    sunset: {
-      bg: 'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%)', headerBg: 'rgba(255, 255, 255, 0.4)',
-      primary: '#FF6B6B', accent: '#FF8E8B', card: 'rgba(255, 255, 255, 0.9)', border: 'rgba(255, 255, 255, 0.5)',
-      text: '#4A4A4A', font: 'Nunito', sub: lang === 'en' ? 'Vibrant Taste' : lang === 'de' ? 'Lebendiger Geschmack' : 'Canlı Lezzetler', extraCss: 'border-radius: 16px; box-shadow: 0 8px 32px rgba(255, 107, 107, 0.15); backdrop-filter: blur(4px);',
-      addBtn: 'background: linear-gradient(135deg, #FF9A9E, #FF6B6B); color: #FFF; border-radius: 8px; border: none; box-shadow: 0 4px 10px rgba(255,107,107,0.3);',
-      fcart: 'background: linear-gradient(135deg, #FF9A9E, #FF6B6B); color: #FFF; border-radius: 16px; box-shadow: 0 10px 25px rgba(255,107,107,0.4); border: 2px solid rgba(255,255,255,0.4);',
-      headerText: '#FFFFFF', catRadius: '8px'
     },
-    glass: {
-      bg: 'url("https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1000&auto=format&fit=crop") center/cover fixed', headerBg: 'rgba(255, 255, 255, 0.15)',
-      primary: '#FFFFFF', accent: '#E0E0E0', card: 'rgba(255, 255, 255, 0.25)', border: 'rgba(255, 255, 255, 0.3)',
-      text: '#FFFFFF', font: 'Outfit', sub: lang === 'en' ? 'Modern Glass' : lang === 'de' ? 'Modernes Glas' : 'Modern Glassmorphism', extraCss: 'backdrop-filter: blur(16px); border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); text-shadow: 0 1px 2px rgba(0,0,0,0.2);',
-      addBtn: 'background: rgba(255,255,255,0.2); color: #FFF; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; backdrop-filter: blur(4px);',
-      fcart: 'background: rgba(255,255,255,0.3); backdrop-filter: blur(20px); color: #FFF; border-radius: 24px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.3);',
-      headerText: '#FFFFFF', catRadius: '24px'
+    'modern-dark': {
+      bg: '#000000', headerBg: '#000000',
+      primary: '#EAB308', accent: '#EF4444', card: '#18181B', border: 'rgba(255,255,255,0.05)',
+      text: '#FFFFFF', font: 'Inter', sub: 'Premium Experience', extraCss: 'border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5);',
+      addBtn: 'background: #B91C1C; color: #FFF; border-radius: 12px; font-weight: 700; padding: 0 16px; width: auto; min-width: 80px;',
+      headerText: '#FFFFFF', catRadius: '50px'
     }
   };
 
@@ -623,39 +664,52 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;overflow-x:hidden;scroll-behavior:smooth}
-body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text};min-height:100vh;padding-bottom:60px}
+body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text};min-height:100vh;padding-bottom:100px}
 .header{background:${cfg.headerBg};padding:30px 20px;text-align:center;position:relative;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-bottom:1px solid ${cfg.border}}
 .header h1{font-size:1.8rem;font-weight:800;color:${cfg.headerText};letter-spacing:-1px}
 .header .sub{font-size:0.85rem;opacity:0.7;margin-top:6px;text-transform:uppercase;letter-spacing:1px}
-.cats-wrapper{position:sticky;top:0;z-index:100;background:${cfg.bg};padding:12px 0}
-.cats{display:flex;gap:10px;padding:4px 20px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+
+.cats-wrapper{position:sticky;top:0;z-index:90;background:${cfg.headerBg};overflow:hidden;padding:10px 0;backdrop-filter:blur(10px);border-bottom:1px solid ${cfg.border}}
+.cats{display:flex;gap:8px;padding:4px 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
-.cat{padding:10px 20px;border-radius:${cfg.catRadius};font-size:0.85rem;font-weight:700;background:${cfg.card};border:1px solid ${cfg.border};color:${cfg.text};cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:inherit;${cfg.extraCss}}
-.cat.on{background:${preset==='minimal'?'#1D1D1F':cfg.primary};border-color:${preset==='minimal'?'#1D1D1F':cfg.primary};color:#fff}
-.grid{display:grid;grid-template-columns:repeat(1,1fr);gap:16px;padding:16px}
-@media(min-width:380px){.grid{grid-template-columns:repeat(2,1fr);gap:12px}}
-@media(min-width:768px){.grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;padding:24px 40px}}
-.card{background:${cfg.card};border:1px solid ${cfg.border};border-radius:20px;overflow:hidden;transition:all 0.3s;cursor:pointer;display:flex;flex-direction:column;height:100%;${cfg.extraCss}}
-.card .img-box{width:100%;aspect-ratio:1/1;position:relative;background:linear-gradient(135deg, ${cfg.primary}10, transparent)}
+.cat{padding:10px 22px;border-radius:${cfg.catRadius};font-size:0.85rem;font-weight:600;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.05);color:#fff;cursor:pointer;transition:all 0.3s;white-space:nowrap}
+.cat.on{background:${cfg.primary};border-color:${cfg.primary};color:${preset==='luxury'||preset==='modern-dark'?'#000':'#fff'};box-shadow:0 4px 15px ${cfg.primary}44}
+
+.grid{display:grid;grid-template-columns:repeat(1,1fr);gap:20px;padding:20px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;padding:40px}}
+.card{background:${cfg.card};border:1px solid ${cfg.border};border-radius:24px;overflow:hidden;transition:all 0.3s;cursor:pointer;display:flex;flex-direction:column;height:100%;${cfg.extraCss}}
+.card:active{transform:scale(0.98)}
+.card .img-box{width:100%;aspect-ratio:16/9;position:relative;background:#27272a}
 .card .img-box img{width:100%;height:100%;object-fit:cover}
-.card .emoji{font-size:3rem;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.card .body{padding:14px;flex:1;display:flex;flex-direction:column}
-.card .name{font-size:0.95rem;font-weight:700;margin-bottom:4px;line-height:1.2}
-.card .desc{font-size:0.75rem;opacity:0.6;margin-bottom:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);color:#fff;padding:4px 12px;border-radius:10px;font-size:0.7rem;font-weight:700;z-index:1}
+.card .body{padding:20px;flex:1;display:flex;flex-direction:column}
+.card .name{font-size:1.2rem;font-weight:800;margin-bottom:8px;line-height:1.2;color:#fff}
+.card .desc{font-size:0.85rem;opacity:0.6;margin-bottom:20px;line-height:1.5;color:#a1a1aa}
 .card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
-.card .price{font-size:1.1rem;font-weight:800;color:${cfg.primary}}
-.add{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;transition:all 0.2s;${cfg.addBtn}}
-.add:active{transform:scale(0.8)}
-@keyframes fi{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-.card{animation:fi 0.5s ease-out backwards}
+.card .price{font-size:1.4rem;font-weight:800;color:${cfg.primary}}
+.add{height:42px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:0.95rem;transition:all 0.2s;${cfg.addBtn}}
+.add:active{transform:scale(0.9)}
+@keyframes fi{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fi 0.5s cubic-bezier(0.2,0.8,0.2,1) backwards}
+
+.emoji{font-size:3rem;text-align:center;padding:20px}
+
+.fcart{position:fixed;bottom:20px;left:20px;right:20px;z-index:200;display:none;align-items:center;justify-content:space-between;padding:16px 24px;background:#B91C1C;border-radius:16px;color:#fff;box-shadow:0 8px 32px rgba(185,28,28,0.4);border:none;width:calc(100% - 40px);max-width:500px;margin:0 auto;font-family:inherit;cursor:pointer;transition:all 0.3s}
+.fcart.show{display:flex;animation:fi 0.4s ease-out}
+.fcart .cc{width:28px;height:28px;background:rgba(255,255,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem}
 </style></head><body>
-<div class="header"><h1>${restaurantName||'Restoran'}</h1><p class="sub">${cfg.sub}</p></div>
+<div class="header" style="${preset==='modern-dark'?'text-align:left;display:flex;justify-content:space-between;align-items:center;':''}">
+  <div>
+    <h1>${restaurantName||'Restoran'}</h1>
+    <p class="sub">${cfg.sub}</p>
+  </div>
+  ${preset==='modern-dark'?`<button onclick="try{window.parent.postMessage({type:'callWaiter'},'*')}catch(e){}" style="background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:8px 16px;border-radius:12px;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:6px;"><span class="material-icons-round" style="font-size:1.1rem;color:#EAB308">notifications</span> Garson</button>`:''}
+</div>
 <div class="cats-wrapper"><div class="cats"><button class="cat on" onclick="fc(this,'all')">${tAll}</button>${cats.map(c=>`<button class="cat" onclick="fc(this,'${c}')">${c}</button>`).join('')}</div></div>
 <div class="grid" id="g">${menuItems.map((item,i)=>{
   const mediaHtml = item.imageUrl 
-    ? `<div class="img-box"><img src="${item.imageUrl}" alt="${item.name}"></div>`
-    : `<div class="img-box"><div class="emoji">${item.emoji||'🍽️'}</div></div>`;
-
+    ? `<div class="img-box"><span class="badge">${item.category||'Genel'}</span><img src="${item.imageUrl}" alt="${item.name}"></div>`
+    : `<div class="img-box"><span class="badge">${item.category||'Genel'}</span><div class="emoji">${item.emoji||'🍽️'}</div></div>`;
 
   return `<div class="card" data-c="${item.category||'Genel'}" style="animation-delay:${i*0.05}s">
     ${mediaHtml}
@@ -664,18 +718,58 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
       <div class="desc">${item.description||''}</div>
       <div class="foot">
         <span class="price">₺${(item.price||0).toFixed(2)}</span>
-        <button class="add" onclick="ac('${item.id}','${(item.name||'').replace(/'/g,"\\'")}',${item.price||0})">+</button>
+        <button class="add" onclick="ac(event, '${item.id}','${(item.name||'').replace(/'/g,"\\'")}',${item.price||0})">${preset==='modern-dark'?'<span class="material-icons-round" style="font-size:1.2rem">add</span> Ekle':'+'}</button>
       </div>
     </div>
   </div>`;
 }).join('')}</div>
+<button class="fcart" id="fc" onclick="try{window.parent.postMessage({type:'openCart'},'*')}catch(e){}">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="cc" id="cn">0</div>
+    <span style="font-weight:600;font-size:0.9rem">${tCart}</span>
+  </div>
+  <span style="font-weight:800;font-size:1.1rem" id="tp">₺0.00</span>
+</button>
 <` + `script>
-function ac(id,name,price){
-  try{ window.parent.postMessage({type:'addToCart',item:{id,name,price:parseFloat(price)}},'*'); }catch(e){}
-  const b=event.target;b.textContent='✓';b.style.transform='scale(0.9)';
-  setTimeout(()=>{b.textContent='+';b.style.transform='scale(1)'},600);
+const preset = '${preset}';
+function ac(e, id, name, price){
+  try{ window.parent.postMessage({type:'addToCart',item:{id,name,price:parseFloat(price)}},'*'); }catch(err){}
+  const b = e.currentTarget || e.target;
+  if(b){
+    const old = b.innerHTML;
+    b.innerHTML = preset === 'modern-dark' ? 'Eklendi' : '✓';
+    b.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+      b.innerHTML = old;
+      b.style.transform = 'scale(1)';
+    }, 800);
+  }
 }
-function fc(b,c){document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.card').forEach(x=>{x.style.display=(c==='all'||x.dataset.c===c)?'block':'none'})}
-
+function uc(){
+  try {
+    const items = JSON.parse(localStorage.getItem('cart') || '[]');
+    const n = items.reduce((s,i) => s + i.qty, 0);
+    const t = items.reduce((s,i) => s + (i.price * i.qty), 0);
+    const f = document.getElementById('fc');
+    if(f){
+      if(n > 0){
+        f.classList.add('show');
+        document.getElementById('cn').textContent = n;
+        document.getElementById('tp').textContent = '₺' + t.toFixed(2);
+      } else {
+        f.classList.remove('show');
+      }
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', uc);
+window.addEventListener('message', (e) => { if(e.data?.type === 'cartUpdated') uc(); });
+function fc(b,c){
+  document.querySelectorAll('.cat').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  document.querySelectorAll('.card').forEach(x => {
+    x.style.display = (c === 'all' || x.dataset.c === c) ? 'flex' : 'none';
+  });
+}
 <` + `/script></body></html>`;
 }

@@ -547,19 +547,15 @@ function setupAIHandlers(userId, content) {
   });
 
   // Handle pre-made template selection
-  content.querySelectorAll('.template-card').forEach(card => {
+  content.querySelectorAll('.tpl-card').forEach(card => {
     card.addEventListener('click', async () => {
-      const presetId = card.getAttribute('data-preset'); // 'luxury', 'minimal', 'dark', 'default'
+      const presetId = card.getAttribute('data-preset');
+      let keyword = presetId || 'default';
+      if (!['luxury','dark','minimal','organic','sunset','glass','modern-dark','default'].includes(keyword)) keyword = 'default';
       
-      // Map the presetId to a keyword that generateThemeHTML will recognize
-      let keyword = '';
-      if (presetId === 'luxury') keyword = 'luxury';
-      else if (presetId === 'dark') keyword = 'dark';
-      else if (presetId === 'minimal') keyword = 'minimal';
-      else if (presetId === 'organic') keyword = 'organic';
-      else if (presetId === 'sunset') keyword = 'sunset';
-      else if (presetId === 'glass') keyword = 'glass';
-      else keyword = 'default';
+      // Visual active state
+      content.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('tpl-active'));
+      card.classList.add('tpl-active');
       
       const previewContent = content.querySelector('#ai-preview-content');
       if (!previewContent) return;
@@ -568,15 +564,14 @@ function setupAIHandlers(userId, content) {
       
       try {
         const lang = content.querySelector('#ai-lang')?.value || 'tr';
-        const html = generateThemeHTML(userData?.restaurant?.name, menuItems, keyword, lang);
+        const html = generateThemeHTML(keyword, menuItems, userData?.restaurant?.name, lang);
         
-        // Render preview
         previewContent.innerHTML = '';
         const iframe = document.createElement('iframe');
         iframe.style.cssText = 'width:100%;min-height:700px;border:none;border-radius:12px;background:#fff;';
         previewContent.appendChild(iframe);
         
-        const menuDataScript = '<script>window.menuData = ' + JSON.stringify(menuItems) + ';</script>';
+        const menuDataScript = '<scr' + 'ipt>window.menuData = ' + JSON.stringify(menuItems) + ';<\/scr' + 'ipt>';
         
         try {
           const idoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -594,7 +589,6 @@ function setupAIHandlers(userId, content) {
           } catch(e) {}
         }, 1000);
         
-        // Save to DB
         await setDoc(doc(db, 'users', userId), { themeHtml: html, lastPrompt: 'Hazır Şablon: ' + presetId }, { merge: true });
         if (userData) { userData.themeHtml = html; userData.lastPrompt = 'Hazır Şablon: ' + presetId; }
         
@@ -602,8 +596,6 @@ function setupAIHandlers(userId, content) {
         if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
         
         showToast('Şablon başarıyla uygulandı ✓', 'success');
-        
-        // Scroll to preview
         iframe.scrollIntoView({ behavior: 'smooth', block: 'start' });
         
       } catch(err) {
