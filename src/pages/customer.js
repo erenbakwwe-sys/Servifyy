@@ -483,7 +483,7 @@ function openCartPanel() {
           </div>
         </div>
 
-        <div class="checkout-section-title">${t('cardDetails', 'customer')}</div>
+        <div class="checkout-section-title" id="card-details-title">${t('cardDetails', 'customer')}</div>
         <div class="card-info-area">
           <div class="card-header">
             <span style="font-size:0.8rem;font-weight:600;color:#fff;">${t('cardDetails', 'customer')}</span>
@@ -604,10 +604,23 @@ function openCartPanel() {
   });
 
   // Payment method selection
+  const cardInfoArea = panel.querySelector('.card-info-area');
+  const cardSectionTitle = panel.querySelector('#card-details-title');
+  
   panel.querySelectorAll('.payment-option').forEach(opt => {
     opt.addEventListener('click', () => {
       panel.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
+      
+      const method = opt.dataset.method;
+      // Show card details ONLY if 'pos' (Credit Card) is selected. Hide for cash or physical POS.
+      if (method === 'pos') {
+        if (cardInfoArea) cardInfoArea.style.display = 'block';
+        if (cardSectionTitle) cardSectionTitle.style.display = 'block';
+      } else {
+        if (cardInfoArea) cardInfoArea.style.display = 'none';
+        if (cardSectionTitle) cardSectionTitle.style.display = 'none';
+      }
     });
   });
 

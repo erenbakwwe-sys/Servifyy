@@ -583,7 +583,8 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
   
   const p = (prompt || '').toLowerCase();
   let preset = 'default';
-  if (p === 'modern-dark' || p.includes('ciğerci') || p.includes('premium')) preset = 'modern-dark';
+  if (p === 'izmir' || p.includes('izmir') || p.includes('light-premium')) preset = 'izmir';
+  else if (p === 'modern-dark' || p.includes('ciğerci') || p.includes('premium')) preset = 'modern-dark';
   else if (p.includes('lüks') || p.includes('fine dining') || p.includes('gold') || p.includes('zarif') || p === 'luxury') preset = 'luxury';
   else if (p.includes('dark') || p.includes('siyah') || p.includes('cyber') || p.includes('karanlık') || p.includes('neon') || p === 'dark') preset = 'dark';
   else if (p.includes('apple') || p.includes('ios') || p.includes('minimal') || p.includes('beyaz') || p.includes('aydınlık') || p === 'minimal') preset = 'minimal';
@@ -651,6 +652,13 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
       text: '#FFFFFF', font: 'Inter', sub: 'Premium Experience', extraCss: 'border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5);',
       addBtn: 'background: #B91C1C; color: #FFF; border-radius: 12px; font-weight: 700; padding: 0 16px; width: auto; min-width: 80px;',
       headerText: '#FFFFFF', catRadius: '50px'
+    },
+    izmir: {
+      bg: '#F9FAFB', headerBg: '#FFFFFF',
+      primary: '#2563EB', accent: '#3B82F6', card: '#FFFFFF', border: 'rgba(0,0,0,0.04)',
+      text: '#111827', font: 'Inter', sub: '', extraCss: 'border-radius: 24px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.04);',
+      addBtn: 'background: #0F172A; color: #FFF; border-radius: 24px; font-weight: 600; padding: 0 16px; width: 100%; height: 48px; margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 8px;',
+      headerText: '#111827', catRadius: '50px'
     }
   };
 
@@ -673,21 +681,22 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
 .cats-wrapper{position:sticky;top:0;z-index:90;background:${cfg.headerBg};overflow:hidden;padding:10px 0;backdrop-filter:blur(10px);border-bottom:1px solid ${cfg.border}}
 .cats{display:flex;gap:8px;padding:4px 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
-.cat{padding:10px 22px;border-radius:${cfg.catRadius};font-size:0.85rem;font-weight:600;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.05);color:#fff;cursor:pointer;transition:all 0.3s;white-space:nowrap}
-.cat.on{background:${cfg.primary};border-color:${cfg.primary};color:${preset==='luxury'||preset==='modern-dark'?'#000':'#fff'};box-shadow:0 4px 15px ${cfg.primary}44}
+.cat{padding:10px 22px;border-radius:${cfg.catRadius};font-size:0.85rem;font-weight:600;background:rgba(150,150,150,0.05);border:1.5px solid rgba(150,150,150,0.05);color:${preset==='izmir'?'#4B5563':'#fff'};cursor:pointer;transition:all 0.3s;white-space:nowrap}
+.cat.on{background:${preset==='izmir'?'#EFF6FF':cfg.primary};border-color:${preset==='izmir'?'#BFDBFE':cfg.primary};color:${preset==='luxury'||preset==='modern-dark'?'#000':preset==='izmir'?'#1D4ED8':'#fff'};box-shadow:0 4px 15px ${preset==='izmir'?'rgba(37,99,235,0.1)':cfg.primary+'44'}}
 
 .grid{display:grid;grid-template-columns:repeat(1,1fr);gap:20px;padding:20px}
 @media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;padding:40px}}
 .card{background:${cfg.card};border:1px solid ${cfg.border};border-radius:24px;overflow:hidden;transition:all 0.3s;cursor:pointer;display:flex;flex-direction:column;height:100%;${cfg.extraCss}}
 .card:active{transform:scale(0.98)}
-.card .img-box{width:100%;aspect-ratio:16/9;position:relative;background:#27272a}
-.card .img-box img{width:100%;height:100%;object-fit:cover}
-.card .badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);color:#fff;padding:4px 12px;border-radius:10px;font-size:0.7rem;font-weight:700;z-index:1}
-.card .body{padding:20px;flex:1;display:flex;flex-direction:column}
-.card .name{font-size:1.2rem;font-weight:800;margin-bottom:8px;line-height:1.2;color:#fff}
-.card .desc{font-size:0.85rem;opacity:0.6;margin-bottom:20px;line-height:1.5;color:#a1a1aa}
-.card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
-.card .price{font-size:1.4rem;font-weight:800;color:${cfg.primary}}
+.card .img-box{width:100%;aspect-ratio:16/11;position:relative;background:#E5E7EB;${preset==='izmir'?'padding:12px 12px 0 12px; background:transparent;':''}}
+.card .img-box img{width:100%;height:100%;object-fit:cover;${preset==='izmir'?'border-radius:16px;':''}}
+.card .badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);color:#fff;padding:4px 12px;border-radius:10px;font-size:0.7rem;font-weight:700;z-index:1;${preset==='izmir'?'top:20px;right:20px;':''}}
+.card .body{padding:${preset==='izmir'?'16px 20px':'20px'};flex:1;display:flex;flex-direction:column}
+.card .name{font-size:1.1rem;font-weight:700;margin-bottom:8px;line-height:1.3;color:${preset==='izmir'?'#111827':'#fff'}}
+.card .desc{font-size:0.85rem;opacity:0.8;margin-bottom:16px;line-height:1.5;color:${preset==='izmir'?'#6B7280':'#a1a1aa'}}
+.card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;${preset==='izmir'?'flex-direction:column;align-items:flex-start;':''}}
+.card .title-row{display:flex;justify-content:space-between;width:100%;align-items:flex-start;}
+.card .price{font-size:1.1rem;font-weight:700;color:${preset==='izmir'?'#2563EB':cfg.primary}}
 .add{height:42px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:0.95rem;transition:all 0.2s;${cfg.addBtn}}
 .add:active{transform:scale(0.9)}
 @keyframes fi{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -712,6 +721,25 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
     ? `<div class="img-box"><span class="badge">${item.category||'Genel'}</span><img src="${item.imageUrl}" alt="${item.name}"></div>`
     : `<div class="img-box"><span class="badge">${item.category||'Genel'}</span><div class="emoji">${item.emoji||'🍽️'}</div></div>`;
 
+  const addIcon = preset==='izmir'?'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>':(preset==='modern-dark'?'<span class="material-icons-round" style="font-size:1.2rem">add</span>':'');
+  const addText = preset==='izmir'?'Sepete Ekle':(preset==='modern-dark'?(lang==='en'?'Add':lang==='de'?'Hinzu':'Ekle'):'+');
+
+  if (preset === 'izmir') {
+    return `<div class="card" data-c="${item.category||'Genel'}" style="animation-delay:${i*0.05}s">
+      ${mediaHtml}
+      <div class="body">
+        <div class="title-row">
+          <div class="name">${item.name}</div>
+          <span class="price">₺${(item.price||0).toFixed(2)}</span>
+        </div>
+        <div class="desc">${item.description||''}</div>
+        <div class="foot">
+          <button class="add" onclick="ac(event, '${item.id}','${(item.name||'').replace(/'/g,"\\'")}',${item.price||0})">${addIcon} ${addText}</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
   return `<div class="card" data-c="${item.category||'Genel'}" style="animation-delay:${i*0.05}s">
     ${mediaHtml}
     <div class="body">
@@ -719,18 +747,53 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
       <div class="desc">${item.description||''}</div>
       <div class="foot">
         <span class="price">₺${(item.price||0).toFixed(2)}</span>
-        <button class="add" onclick="ac(event, '${item.id}','${(item.name||'').replace(/'/g,"\\'")}',${item.price||0})">${preset==='modern-dark'?`<span class="material-icons-round" style="font-size:1.2rem">add</span> ${lang==='en'?'Add':lang==='de'?'Hinzu':'Ekle'}`:'+' }</button>
+        <button class="add" onclick="ac(event, '${item.id}','${(item.name||'').replace(/'/g,"\\'")}',${item.price||0})">${addIcon} ${addText}</button>
       </div>
     </div>
   </div>`;
 }).join('')}</div>
-<button class="fcart" id="fc" onclick="try{window.parent.postMessage({type:'openCart'},'*')}catch(e){}">
+<button class="fcart ${preset==='izmir'?'izmir':''}" id="fc" onclick="try{window.parent.postMessage({type:'openCart'},'*')}catch(e){}">
+  ${preset==='izmir' ? `
+    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
+      <span style="font-size:0.75rem; color:rgba(255,255,255,0.8);">Ortak Hesap</span>
+      <div style="display:flex; align-items:center; gap:4px;">
+        <span style="font-size:0.9rem; font-weight:600;">Kalan:</span>
+        <span style="font-weight:800; font-size:1.1rem" id="tp">₺0.00</span>
+      </div>
+    </div>
+    <div style="background:#2563EB; border-radius:30px; padding:8px 20px; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px;">
+      Ödemeye Katıl <span class="material-icons-round" style="font-size:1rem;">chevron_right</span>
+    </div>
+  ` : `
   <div style="display:flex;align-items:center;gap:10px">
     <div class="cc" id="cn">0</div>
     <span style="font-weight:600;font-size:0.9rem">${tCart}</span>
   </div>
   <span style="font-weight:800;font-size:1.1rem" id="tp">₺0.00</span>
+  `}
 </button>
+<style>
+.fcart.izmir {
+  background: #FFFFFF;
+  color: #111827;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 100%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 24px 24px 24px;
+}
+.fcart.izmir span[style*="rgba(255,255,255,0.8)"] {
+  color: #6B7280 !important;
+}
+.fcart.izmir .cc { display:none; }
+.fcart.izmir div[style*="#2563EB"] {
+  color: #FFFFFF !important;
+}
+</style>
 <` + `script>
 const preset = '${preset}';
 function ac(e, id, name, price){
