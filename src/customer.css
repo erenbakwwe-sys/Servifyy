@@ -594,6 +594,7 @@
     left: 16px;
     right: 16px;
     width: calc(100% - 32px);
+  }
 }
 
 /* Item Meta Badges (Allergens, Calories, Stock) */

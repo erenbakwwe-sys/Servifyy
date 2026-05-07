@@ -143,7 +143,7 @@ export function renderAIThemeContent(userData, userId) {
             </div>
 
             <div class="tpl-card ${activePreset === 'organic' ? 'tpl-active' : ''}" data-preset="organic">
-              <div class="tpl-preview" style="background:#F4F9F4;">
+              <div class="tpl-preview" style="background:linear-gradient(180deg,#F0F7EE,#E8F3E5);">
                 <div class="tpl-preview-bar"><span style="background:#2E7D32"></span><span style="background:#81C784"></span><span style="background:#E8F5E9"></span></div>
                 <div class="tpl-preview-icon" style="color:#2E7D32;">eco</div>
               </div>
@@ -155,7 +155,7 @@ export function renderAIThemeContent(userData, userId) {
             </div>
 
             <div class="tpl-card ${activePreset === 'sunset' ? 'tpl-active' : ''}" data-preset="sunset">
-              <div class="tpl-preview" style="background:linear-gradient(135deg,#FF9A9E,#FECFEF);">
+              <div class="tpl-preview" style="background:linear-gradient(160deg,#FF9A9E,#FECFEF,#FAD0C4);">
                 <div class="tpl-preview-bar"><span style="background:#FF4E50"></span><span style="background:#FC913A"></span><span style="background:#fff"></span></div>
                 <div class="tpl-preview-icon" style="color:#fff;">wb_twilight</div>
               </div>
@@ -167,7 +167,7 @@ export function renderAIThemeContent(userData, userId) {
             </div>
 
             <div class="tpl-card ${activePreset === 'glass' ? 'tpl-active' : ''}" data-preset="glass">
-              <div class="tpl-preview" style="background:linear-gradient(135deg,#e0c3fc,#8ec5fc);">
+              <div class="tpl-preview" style="background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);">
                 <div class="tpl-preview-bar"><span style="background:rgba(255,255,255,0.8)"></span><span style="background:rgba(255,255,255,0.5)"></span><span style="background:rgba(255,255,255,0.3)"></span></div>
                 <div class="tpl-preview-icon" style="color:#fff;">blur_on</div>
               </div>
@@ -179,8 +179,8 @@ export function renderAIThemeContent(userData, userId) {
             </div>
 
             <div class="tpl-card ${activePreset === 'default' ? 'tpl-active' : ''}" data-preset="default">
-              <div class="tpl-preview" style="background:linear-gradient(135deg,#FFF5F5,#FFE3E3);">
-                <div class="tpl-preview-bar"><span style="background:#FF6B6B"></span><span style="background:#FECFEF"></span><span style="background:#fff"></span></div>
+              <div class="tpl-preview" style="background:linear-gradient(160deg,#FFF5F5,#FFE3E3,#FECFEF);">
+                <div class="tpl-preview-bar"><span style="background:#FF6B6B"></span><span style="background:#FF8E8B"></span><span style="background:#fff"></span></div>
                 <div class="tpl-preview-icon" style="color:#FF6B6B;">favorite</div>
               </div>
               <div class="tpl-info">
@@ -596,69 +596,82 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
   const tWaiter = lang === 'en' ? 'Call Waiter' : lang === 'de' ? 'Kellner rufen' : 'Garson Çağır';
   const tCart = lang === 'en' ? 'View Cart' : lang === 'de' ? 'Warenkorb' : 'Sepeti Görüntüle';
 
+  // isDark helper for category text color
+  const darkPresets = ['dark','luxury','modern-dark'];
+  const lightPresets = ['default','minimal','organic','sunset','glass','izmir'];
+
   const configs = {
     default: {
-      bg: 'linear-gradient(135deg, #FFF5F5, #FFE3E3)', headerBg: 'rgba(255, 255, 255, 0.7)',
-      primary: '#FF6B6B', accent: '#FECFEF', card: 'rgba(255, 255, 255, 0.9)', border: 'rgba(255, 107, 107, 0.1)',
-      text: '#2D3436', font: 'Poppins', sub: 'Lezzet Dünyası', extraCss: 'backdrop-filter: blur(12px); border-radius: 28px; box-shadow: 0 8px 32px rgba(255,107,107,0.05);',
-      addBtn: 'background: linear-gradient(135deg, #FF6B6B, #FF8E8B); box-shadow: 0 4px 12px rgba(255,107,107,0.3); border-radius: 50%; color: #FFF;',
-      headerText: '#2D3436', catRadius: '50px'
+      bg: 'linear-gradient(160deg, #FFF5F5 0%, #FFE3E3 50%, #FECFEF 100%)', headerBg: 'rgba(255,255,255,0.75)',
+      primary: '#FF6B6B', accent: '#FF8E8B', card: 'rgba(255,255,255,0.92)', border: 'rgba(255,107,107,0.12)',
+      text: '#2D3436', font: 'Poppins', sub: 'Lezzet Dünyası ✨', extraCss: 'backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:28px;box-shadow:0 8px 32px rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.08);',
+      addBtn: 'background:linear-gradient(135deg,#FF6B6B,#FF8E8B);box-shadow:0 4px 14px rgba(255,107,107,0.35);border-radius:50%;color:#FFF;width:40px;height:40px;border:none;',
+      headerText: '#2D3436', catRadius: '50px', isDark: false,
+      imgBg: 'linear-gradient(135deg,#FFF5F5,#FFE3E3)', catTextOff: '#6B7280', catBgOff: 'rgba(0,0,0,0.03)', catBorderOff: 'rgba(0,0,0,0.06)'
     },
     dark: {
-      bg: '#09090B', headerBg: 'rgba(9, 9, 11, 0.85)',
-      primary: '#00F0FF', accent: '#FF003C', card: 'rgba(24, 24, 27, 0.8)', border: 'rgba(0, 240, 255, 0.15)',
-      text: '#FFFFFF', font: 'Space Grotesk', sub: 'Cyber Menu', extraCss: 'backdrop-filter: blur(16px); border-radius: 16px; border: 1px solid rgba(0, 240, 255, 0.2); box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);',
-      addBtn: 'background: transparent; border: 1.5px solid #00F0FF; color: #00F0FF; text-shadow: 0 0 5px #00F0FF; box-shadow: 0 0 10px rgba(0,240,255,0.2); border-radius: 8px;',
-      headerText: '#00F0FF', catRadius: '12px'
+      bg: '#09090B', headerBg: 'rgba(9,9,11,0.92)',
+      primary: '#00F0FF', accent: '#FF003C', card: 'rgba(24,24,27,0.85)', border: 'rgba(0,240,255,0.12)',
+      text: '#FFFFFF', font: 'Space Grotesk', sub: '// CYBER_MENU.exe', extraCss: 'backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:12px;border:1px solid rgba(0,240,255,0.15);box-shadow:0 0 25px rgba(0,240,255,0.06),inset 0 1px 0 rgba(0,240,255,0.08);',
+      addBtn: 'background:transparent;border:1.5px solid #00F0FF;color:#00F0FF;text-shadow:0 0 8px rgba(0,240,255,0.6);box-shadow:0 0 15px rgba(0,240,255,0.2);border-radius:8px;width:auto;min-width:70px;',
+      headerText: '#00F0FF', catRadius: '8px', isDark: true,
+      imgBg: 'linear-gradient(135deg,rgba(0,240,255,0.06),rgba(255,0,60,0.04))', catTextOff: 'rgba(255,255,255,0.5)', catBgOff: 'rgba(255,255,255,0.03)', catBorderOff: 'rgba(255,255,255,0.06)'
     },
     luxury: {
-      bg: '#0F172A', headerBg: 'rgba(15, 23, 42, 0.9)',
-      primary: '#D4AF37', accent: '#F1E5AC', card: 'rgba(30, 41, 59, 0.7)', border: 'rgba(212, 175, 55, 0.25)',
-      text: '#F8FAFC', font: 'Playfair Display', sub: 'Premium Experience', extraCss: 'backdrop-filter: blur(10px); border-radius: 0px; border-bottom: 2px solid #D4AF37;',
-      addBtn: 'background: #D4AF37; color: #0F172A; border-radius: 0px; font-weight: 700;',
-      headerText: '#D4AF37', catRadius: '0px'
+      bg: 'linear-gradient(180deg,#080c18 0%,#0F172A 40%,#141d36 100%)', headerBg: 'rgba(8,12,24,0.95)',
+      primary: '#D4AF37', accent: '#F1E5AC', card: 'rgba(20,29,54,0.85)', border: 'rgba(212,175,55,0.18)',
+      text: '#F0ECE3', font: 'Playfair Display', sub: '— Fine Dining Experience —', extraCss: 'border-radius:4px;border:1px solid rgba(212,175,55,0.15);border-bottom:2px solid rgba(212,175,55,0.3);box-shadow:0 12px 40px rgba(0,0,0,0.3);',
+      addBtn: 'background:linear-gradient(135deg,#D4AF37,#C29200);color:#0F172A;border-radius:2px;font-weight:700;width:auto;min-width:70px;border:none;letter-spacing:1px;text-transform:uppercase;font-size:0.7rem;',
+      headerText: '#D4AF37', catRadius: '2px', isDark: true,
+      imgBg: 'linear-gradient(135deg,rgba(212,175,55,0.08),rgba(241,229,172,0.04))', catTextOff: 'rgba(240,236,227,0.5)', catBgOff: 'rgba(212,175,55,0.05)', catBorderOff: 'rgba(212,175,55,0.1)'
     },
     minimal: {
-      bg: '#F5F5F7', headerBg: 'rgba(245, 245, 247, 0.9)',
-      primary: '#000000', accent: '#86868B', card: '#FFFFFF', border: 'rgba(0, 0, 0, 0.04)',
-      text: '#1D1D1F', font: 'Inter', sub: lang === 'en' ? 'Curated Selection' : lang === 'de' ? 'Auswahl' : 'Seçkin Menü', extraCss: 'border-radius: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.03); border: none;',
-      addBtn: 'background: #F5F5F7; color: #1D1D1F; border: none; border-radius: 50%;',
-      headerText: '#1D1D1F', catRadius: '50px'
+      bg: '#F5F5F7', headerBg: 'rgba(245,245,247,0.92)',
+      primary: '#1D1D1F', accent: '#86868B', card: '#FFFFFF', border: 'rgba(0,0,0,0.06)',
+      text: '#1D1D1F', font: 'Inter', sub: lang === 'en' ? 'Curated Selection' : lang === 'de' ? 'Kuratierte Auswahl' : 'Seçkin Menü', extraCss: 'border-radius:20px;box-shadow:0 2px 20px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);',
+      addBtn: 'background:#1D1D1F;color:#FFF;border:none;border-radius:50%;width:38px;height:38px;',
+      headerText: '#1D1D1F', catRadius: '50px', isDark: false,
+      imgBg: '#F5F5F7', catTextOff: '#86868B', catBgOff: 'rgba(0,0,0,0.03)', catBorderOff: 'rgba(0,0,0,0.06)'
     },
     organic: {
-      bg: '#F4F9F4', headerBg: 'rgba(244, 249, 244, 0.9)',
-      primary: '#2E7D32', accent: '#81C784', card: '#FFFFFF', border: 'rgba(46, 125, 50, 0.1)',
-      text: '#1B5E20', font: 'Quicksand', sub: lang === 'en' ? 'Fresh & Natural' : lang === 'de' ? 'Frisch & Natürlich' : 'Doğal & Taze', extraCss: 'border-radius: 30px; box-shadow: 0 10px 30px rgba(46,125,50,0.05);',
-      addBtn: 'background: #E8F5E9; color: #2E7D32; border-radius: 14px; font-weight: 700;',
-      headerText: '#2E7D32', catRadius: '15px'
+      bg: 'linear-gradient(180deg,#F0F7EE 0%,#E8F3E5 100%)', headerBg: 'rgba(240,247,238,0.95)',
+      primary: '#2E7D32', accent: '#66BB6A', card: 'rgba(255,255,255,0.95)', border: 'rgba(46,125,50,0.1)',
+      text: '#1B3A1D', font: 'Quicksand', sub: lang === 'en' ? '🌿 Fresh & Natural' : lang === 'de' ? '🌿 Frisch & Natürlich' : '🌿 Doğal & Taze', extraCss: 'border-radius:24px;box-shadow:0 6px 24px rgba(46,125,50,0.06);border:1px solid rgba(46,125,50,0.08);',
+      addBtn: 'background:linear-gradient(135deg,#2E7D32,#43A047);color:#FFF;border-radius:14px;font-weight:700;width:auto;min-width:70px;border:none;box-shadow:0 3px 10px rgba(46,125,50,0.2);',
+      headerText: '#1B5E20', catRadius: '50px', isDark: false,
+      imgBg: 'linear-gradient(135deg,#E8F5E9,#F1F8E9)', catTextOff: '#4A7C4F', catBgOff: 'rgba(46,125,50,0.06)', catBorderOff: 'rgba(46,125,50,0.1)'
     },
     sunset: {
-      bg: 'linear-gradient(135deg, #FF9A9E 0%, #FAD0C4 100%)', headerBg: 'rgba(255, 255, 255, 0.2)',
-      primary: '#FF4E50', accent: '#FC913A', card: 'rgba(255, 255, 255, 0.85)', border: 'rgba(255, 78, 80, 0.1)',
-      text: '#4A4A4A', font: 'Nunito', sub: 'Sweet Moments', extraCss: 'backdrop-filter: blur(10px); border-radius: 24px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);',
-      addBtn: 'background: linear-gradient(135deg, #FF4E50, #FC913A); color: #FFF; border-radius: 50%; box-shadow: 0 4px 12px rgba(255,78,80,0.3);',
-      headerText: '#FFF', catRadius: '50px'
+      bg: 'linear-gradient(160deg,#FF9A9E 0%,#FECFEF 50%,#FAD0C4 100%)', headerBg: 'rgba(255,255,255,0.25)',
+      primary: '#FF4E50', accent: '#FC913A', card: 'rgba(255,255,255,0.82)', border: 'rgba(255,255,255,0.4)',
+      text: '#3D2C2E', font: 'Nunito', sub: '🌅 Sweet Moments', extraCss: 'backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px;box-shadow:0 8px 32px rgba(255,78,80,0.08);border:1px solid rgba(255,255,255,0.3);',
+      addBtn: 'background:linear-gradient(135deg,#FF4E50,#FC913A);color:#FFF;border-radius:50%;box-shadow:0 4px 14px rgba(255,78,80,0.35);width:40px;height:40px;border:none;',
+      headerText: '#FFF', catRadius: '50px', isDark: false,
+      imgBg: 'linear-gradient(135deg,rgba(255,255,255,0.5),rgba(254,207,239,0.3))', catTextOff: '#8B6062', catBgOff: 'rgba(255,255,255,0.35)', catBorderOff: 'rgba(255,255,255,0.5)'
     },
     glass: {
-      bg: 'linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%)', headerBg: 'rgba(255, 255, 255, 0.3)',
-      primary: '#000', accent: '#FFF', card: 'rgba(255, 255, 255, 0.4)', border: 'rgba(255, 255, 255, 0.5)',
-      text: '#1a1a1a', font: 'Poppins', sub: 'Glass Collection', extraCss: 'backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); border-radius: 24px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);',
-      addBtn: 'background: rgba(0,0,0,0.8); color: #FFF; border-radius: 50%; backdrop-filter: blur(4px);',
-      headerText: '#000', catRadius: '50px'
+      bg: 'linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%)', headerBg: 'rgba(255,255,255,0.15)',
+      primary: '#FFFFFF', accent: '#f093fb', card: 'rgba(255,255,255,0.18)', border: 'rgba(255,255,255,0.25)',
+      text: '#FFFFFF', font: 'Poppins', sub: '✦ Glass Collection', extraCss: 'backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.2);border-radius:24px;box-shadow:0 8px 32px rgba(31,38,135,0.15);',
+      addBtn: 'background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);color:#FFF;border-radius:50%;border:1px solid rgba(255,255,255,0.3);width:40px;height:40px;',
+      headerText: '#FFF', catRadius: '50px', isDark: true,
+      imgBg: 'linear-gradient(135deg,rgba(255,255,255,0.1),rgba(240,147,251,0.1))', catTextOff: 'rgba(255,255,255,0.6)', catBgOff: 'rgba(255,255,255,0.1)', catBorderOff: 'rgba(255,255,255,0.2)'
     },
     'modern-dark': {
-      bg: '#000000', headerBg: '#000000',
-      primary: '#EAB308', accent: '#EF4444', card: '#18181B', border: 'rgba(255,255,255,0.05)',
-      text: '#FFFFFF', font: 'Inter', sub: 'Premium Experience', extraCss: 'border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5);',
-      addBtn: 'background: #B91C1C; color: #FFF; border-radius: 12px; font-weight: 700; padding: 0 16px; width: auto; min-width: 80px;',
-      headerText: '#FFFFFF', catRadius: '50px'
+      bg: '#000000', headerBg: 'rgba(0,0,0,0.95)',
+      primary: '#EAB308', accent: '#EF4444', card: 'rgba(24,24,27,0.95)', border: 'rgba(255,255,255,0.06)',
+      text: '#FFFFFF', font: 'Inter', sub: '⭐ Premium Experience', extraCss: 'border-radius:20px;border:1px solid rgba(255,255,255,0.06);box-shadow:0 10px 30px rgba(0,0,0,0.5);',
+      addBtn: 'background:#B91C1C;color:#FFF;border-radius:12px;font-weight:700;padding:0 16px;width:auto;min-width:80px;border:none;box-shadow:0 4px 12px rgba(185,28,28,0.3);',
+      headerText: '#FFFFFF', catRadius: '50px', isDark: true,
+      imgBg: 'linear-gradient(135deg,rgba(234,179,8,0.08),rgba(239,68,68,0.05))', catTextOff: 'rgba(255,255,255,0.45)', catBgOff: 'rgba(255,255,255,0.04)', catBorderOff: 'rgba(255,255,255,0.06)'
     },
     izmir: {
       bg: '#F9FAFB', headerBg: '#FFFFFF',
       primary: '#2563EB', accent: '#3B82F6', card: '#FFFFFF', border: 'rgba(0,0,0,0.04)',
-      text: '#111827', font: 'Inter', sub: '', extraCss: 'border-radius: 24px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.04);',
-      addBtn: 'background: #0F172A; color: #FFF; border-radius: 24px; font-weight: 600; padding: 0 16px; width: 100%; height: 48px; margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 8px;',
-      headerText: '#111827', catRadius: '50px'
+      text: '#111827', font: 'Inter', sub: '', extraCss: 'border-radius:24px;border:none;box-shadow:0 4px 20px rgba(0,0,0,0.04);',
+      addBtn: 'background:#0F172A;color:#FFF;border-radius:24px;font-weight:600;padding:0 16px;width:100%;height:48px;margin-top:12px;display:flex;justify-content:center;align-items:center;gap:8px;border:none;',
+      headerText: '#111827', catRadius: '50px', isDark: false,
+      imgBg: '#F3F4F6', catTextOff: '#4B5563', catBgOff: 'rgba(0,0,0,0.03)', catBorderOff: 'rgba(0,0,0,0.06)'
     }
   };
 
@@ -678,33 +691,48 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
 .header h1{font-size:1.8rem;font-weight:800;color:${cfg.headerText};letter-spacing:-1px}
 .header .sub{font-size:0.85rem;opacity:0.7;margin-top:6px;text-transform:uppercase;letter-spacing:1px}
 
-.cats-wrapper{position:sticky;top:0;z-index:90;background:${cfg.headerBg};overflow:hidden;padding:10px 0;backdrop-filter:blur(10px);border-bottom:1px solid ${cfg.border}}
+.cats-wrapper{position:sticky;top:0;z-index:90;background:${cfg.headerBg};overflow:hidden;padding:10px 0;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid ${cfg.border}}
 .cats{display:flex;gap:8px;padding:4px 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
-.cat{padding:10px 22px;border-radius:${cfg.catRadius};font-size:0.85rem;font-weight:600;background:rgba(150,150,150,0.05);border:1.5px solid rgba(150,150,150,0.05);color:${preset==='izmir'?'#4B5563':'#fff'};cursor:pointer;transition:all 0.3s;white-space:nowrap}
-.cat.on{background:${preset==='izmir'?'#EFF6FF':cfg.primary};border-color:${preset==='izmir'?'#BFDBFE':cfg.primary};color:${preset==='luxury'||preset==='modern-dark'?'#000':preset==='izmir'?'#1D4ED8':'#fff'};box-shadow:0 4px 15px ${preset==='izmir'?'rgba(37,99,235,0.1)':cfg.primary+'44'}}
+.cat{padding:10px 22px;border-radius:${cfg.catRadius};font-size:0.85rem;font-weight:600;background:${cfg.catBgOff || 'rgba(150,150,150,0.05)'};border:1.5px solid ${cfg.catBorderOff || 'rgba(150,150,150,0.05)'};color:${cfg.catTextOff || cfg.text};cursor:pointer;transition:all 0.3s;white-space:nowrap;font-family:inherit}
+.cat.on{background:${cfg.primary};border-color:${cfg.primary};color:${cfg.isDark && preset!=='glass' ? '#000' : '#fff'};box-shadow:0 4px 15px ${cfg.primary}44}
+${preset==='luxury'?`.cat.on{color:#0F172A;background:linear-gradient(135deg,#D4AF37,#C29200)}`:``}
+${preset==='dark'?`.cat.on{color:#000;text-shadow:none;box-shadow:0 0 20px rgba(0,240,255,0.3)}`:``}
+${preset==='minimal'?`.cat.on{background:#1D1D1F;color:#FFF}`:``}
+${preset==='organic'?`.cat.on{color:#FFF}`:``}
 
-.grid{display:grid;grid-template-columns:repeat(1,1fr);gap:20px;padding:20px}
-@media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;padding:40px}}
-.card{background:${cfg.card};border:1px solid ${cfg.border};border-radius:24px;overflow:hidden;transition:all 0.3s;cursor:pointer;display:flex;flex-direction:column;height:100%;${cfg.extraCss}}
-.card:active{transform:scale(0.98)}
-.card .img-box{width:100%;aspect-ratio:16/11;position:relative;background:#E5E7EB;${preset==='izmir'?'padding:12px 12px 0 12px; background:transparent;':''}}
-.card .img-box img{width:100%;height:100%;object-fit:cover;${preset==='izmir'?'border-radius:16px;':''}}
-.card .badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);color:#fff;padding:4px 12px;border-radius:10px;font-size:0.7rem;font-weight:700;z-index:1;${preset==='izmir'?'top:20px;right:20px;':''}}
-.card .body{padding:${preset==='izmir'?'16px 20px':'20px'};flex:1;display:flex;flex-direction:column}
-.card .name{font-size:1.1rem;font-weight:700;margin-bottom:8px;line-height:1.3;color:${preset==='izmir'?'#111827':'#fff'}}
-.card .desc{font-size:0.85rem;opacity:0.8;margin-bottom:16px;line-height:1.5;color:${preset==='izmir'?'#6B7280':'#a1a1aa'}}
-.card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;${preset==='izmir'?'flex-direction:column;align-items:flex-start;':''}}
-.card .title-row{display:flex;justify-content:space-between;width:100%;align-items:flex-start;}
-.card .price{font-size:1.1rem;font-weight:700;color:${preset==='izmir'?'#2563EB':cfg.primary}}
-.add{height:42px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:0.95rem;transition:all 0.2s;${cfg.addBtn}}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:16px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;padding:24px}}
+.card{background:${cfg.card};border-radius:${preset==='luxury'?'4px':'18px'};overflow:hidden;transition:all 0.3s;cursor:pointer;display:flex;flex-direction:column;height:100%;${cfg.extraCss}}
+.card:hover{transform:translateY(-3px);box-shadow:${cfg.isDark ? `0 12px 36px rgba(0,0,0,0.5)` : `0 12px 36px rgba(0,0,0,0.08)`}}
+.card:active{transform:scale(0.97)}
+.card .img-box{width:100%;aspect-ratio:4/3;position:relative;background:${cfg.imgBg || '#E5E7EB'};display:flex;align-items:center;justify-content:center;overflow:hidden;${preset==='izmir'?'padding:8px 8px 0 8px;background:transparent;':''}}
+.card .img-box img{width:100%;height:100%;object-fit:cover;${preset==='izmir'?'border-radius:12px;':''}}
+.card .img-box.has-emoji{aspect-ratio:auto;padding:16px 16px 8px 16px;min-height:0}
+.card .badge{position:absolute;top:8px;right:8px;background:${cfg.isDark?'rgba(0,0,0,0.6)':'rgba(0,0,0,0.45)'};backdrop-filter:blur(4px);color:#fff;padding:3px 8px;border-radius:8px;font-size:0.6rem;font-weight:700;z-index:1;${preset==='izmir'?'top:14px;right:14px;':''}}
+.card .body{padding:${preset==='izmir'?'12px 14px':'12px 14px'};flex:1;display:flex;flex-direction:column}
+.card .name{font-size:0.95rem;font-weight:700;margin-bottom:4px;line-height:1.3;color:${cfg.isDark?'#fff':cfg.text};display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .desc{font-size:0.75rem;opacity:0.7;margin-bottom:10px;line-height:1.4;color:${cfg.isDark?'#a1a1aa':'#6B7280'};display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:8px;${preset==='izmir'?'flex-direction:column;align-items:flex-start;':''}}
+.card .title-row{display:flex;justify-content:space-between;width:100%;align-items:flex-start;gap:4px}
+.card .price{font-size:0.95rem;font-weight:700;color:${preset==='izmir'?'#2563EB':cfg.primary};white-space:nowrap}
+.add{height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:0.85rem;transition:all 0.2s;font-family:inherit;flex-shrink:0;${cfg.addBtn}}
+.add:hover{filter:brightness(1.1);transform:scale(1.05)}
 .add:active{transform:scale(0.9)}
-@keyframes fi{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.card{animation:fi 0.5s cubic-bezier(0.2,0.8,0.2,1) backwards}
+@keyframes fi{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fi 0.4s cubic-bezier(0.2,0.8,0.2,1) backwards}
+${preset==='dark'?`
+.header h1{text-shadow:0 0 30px rgba(0,240,255,0.4)}
+.header .sub{font-family:'Space Grotesk',sans-serif;letter-spacing:3px;text-transform:uppercase;font-size:0.75rem;color:#00F0FF;opacity:0.6}
+`:``}
+${preset==='luxury'?`
+.header h1{letter-spacing:3px;font-style:italic;text-transform:uppercase;font-size:1.5rem}
+.header .sub{letter-spacing:4px;font-size:0.7rem;color:${cfg.accent};opacity:0.8;font-style:italic}
+`:``}
 
-.emoji{font-size:3rem;text-align:center;padding:20px}
+.emoji{font-size:2.2rem;text-align:center;line-height:1}
 
-.fcart{position:fixed;bottom:20px;left:20px;right:20px;z-index:200;display:none;align-items:center;justify-content:space-between;padding:16px 24px;background:#B91C1C;border-radius:16px;color:#fff;box-shadow:0 8px 32px rgba(185,28,28,0.4);border:none;width:calc(100% - 40px);max-width:500px;margin:0 auto;font-family:inherit;cursor:pointer;transition:all 0.3s}
+.fcart{position:fixed;bottom:20px;left:20px;right:20px;z-index:200;display:none;align-items:center;justify-content:space-between;padding:16px 24px;background:${preset==='modern-dark'?'#B91C1C':preset==='luxury'?'linear-gradient(135deg,#D4AF37,#C29200)':preset==='dark'?'linear-gradient(135deg,#00F0FF,#0088aa)':preset==='glass'?'rgba(255,255,255,0.25);backdrop-filter:blur(16px)':preset==='organic'?'linear-gradient(135deg,#2E7D32,#43A047)':preset==='sunset'?'linear-gradient(135deg,#FF4E50,#FC913A)':'linear-gradient(135deg,'+cfg.primary+','+cfg.accent+')'};border-radius:16px;color:${preset==='luxury'||preset==='dark'?'#000':'#fff'};box-shadow:0 8px 32px ${cfg.primary}44;border:${preset==='glass'?'1px solid rgba(255,255,255,0.3)':'none'};width:calc(100% - 40px);max-width:500px;margin:0 auto;font-family:inherit;cursor:pointer;transition:all 0.3s}
 .fcart.show{display:flex;animation:fi 0.4s ease-out}
 .fcart .cc{width:28px;height:28px;background:rgba(255,255,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem}
 </style></head><body>
@@ -719,7 +747,7 @@ body{font-family:'${cfg.font}',sans-serif;background:${cfg.bg};color:${cfg.text}
 <div class="grid" id="g">${menuItems.map((item,i)=>{
   const mediaHtml = item.imageUrl 
     ? `<div class="img-box"><span class="badge">${item.category||'Genel'}</span><img src="${item.imageUrl}" alt="${item.name}"></div>`
-    : `<div class="img-box"><span class="badge">${item.category||'Genel'}</span><div class="emoji">${item.emoji||'🍽️'}</div></div>`;
+    : `<div class="img-box has-emoji"><span class="badge">${item.category||'Genel'}</span><div class="emoji">${item.emoji||'🍽️'}</div></div>`;
 
   const addIcon = preset==='izmir'?'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>':(preset==='modern-dark'?'<span class="material-icons-round" style="font-size:1.2rem">add</span>':'');
   const addText = preset==='izmir'?'Sepete Ekle':(preset==='modern-dark'?(lang==='en'?'Add':lang==='de'?'Hinzu':'Ekle'):'+');
