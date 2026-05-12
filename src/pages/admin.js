@@ -243,7 +243,8 @@ function renderPage(userId) {
       content.innerHTML = renderHistoryContent(orders);
       break;
     case 'finance':
-      content.innerHTML = renderFinanceContent(orders);
+      content.innerHTML = renderFinanceContent(orders, userData);
+      setupFinanceHandlers(userId, content);
       break;
     case 'branches':
       content.innerHTML = renderBranchesContent();
@@ -546,6 +547,92 @@ function setupAIHandlers(userId, content) {
     }
   });
 
+  // Helper: rebuild preview with current active template and given lang
+  async function rebuildPreviewWithLang(newLang) {
+    // Save lang to Firestore
+    try {
+      await setDoc(doc(db, 'users', userId), { menuLang: newLang }, { merge: true });
+      if (userData) userData.menuLang = newLang;
+    } catch(e) { console.warn('Lang save error:', e); }
+
+    // Find active preset
+    let presetId = 'default';
+    if (userData?.lastPrompt && userData.lastPrompt.startsWith('Hazır Şablon: ')) {
+      presetId = userData.lastPrompt.replace('Hazır Şablon: ', '').trim();
+    }
+    let keyword = presetId;
+    if (!['luxury','dark','minimal','organic','sunset','glass','modern-dark','default'].includes(keyword)) keyword = 'default';
+
+    const previewContent = content.querySelector('#ai-preview-content');
+    if (!previewContent) return;
+
+    const customStyles = {
+      primaryColor: content.querySelector('#custom-primary')?.value,
+      bgColor: content.querySelector('#custom-bg')?.value,
+      font: content.querySelector('#custom-font')?.value,
+      currency: content.querySelector('#custom-currency')?.value
+    };
+    if (!customStyles.font) delete customStyles.font;
+
+    const html = generateThemeHTML(keyword, menuItems, userData?.restaurant?.name, newLang, customStyles);
+
+    previewContent.innerHTML = '';
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'width:100%;min-height:700px;border:none;border-radius:12px;background:#fff;';
+    previewContent.appendChild(iframe);
+
+    const menuDataScript = '<scr' + 'ipt>window.menuData = ' + JSON.stringify(menuItems) + ';<\/scr' + 'ipt>';
+    try {
+      const idoc = iframe.contentDocument || iframe.contentWindow.document;
+      idoc.open();
+      idoc.write(menuDataScript + html);
+      idoc.close();
+    } catch(e) { iframe.srcdoc = menuDataScript + html; }
+
+    setTimeout(() => {
+      try {
+        const idoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (idoc?.body) iframe.style.height = Math.max(700, idoc.body.scrollHeight) + 'px';
+      } catch(e) {}
+    }, 1000);
+
+    await setDoc(doc(db, 'users', userId), { themeHtml: html }, { merge: true });
+    if (userData) userData.themeHtml = html;
+
+    showToast(newLang === 'tr' ? 'Menü dili Türkçe olarak ayarlandı ✓' : newLang === 'en' ? 'Menu language set to English ✓' : 'Menüsprache auf Deutsch eingestellt ✓', 'success');
+  }
+
+  // Top dropdown language change
+  content.querySelector('#ai-lang')?.addEventListener('change', async (e) => {
+    const newLang = e.target.value;
+    // Sync bottom buttons
+    content.querySelectorAll('.menu-lang-btn').forEach(btn => {
+      const isActive = btn.dataset.lang === newLang;
+      btn.classList.toggle('active', isActive);
+      btn.style.background = isActive ? 'var(--primary)' : 'var(--bg-secondary)';
+      btn.style.color = isActive ? '#fff' : 'var(--text-secondary)';
+    });
+    await rebuildPreviewWithLang(newLang);
+  });
+
+  // Bottom button language change
+  content.querySelectorAll('.menu-lang-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const newLang = btn.dataset.lang;
+      // Sync top dropdown
+      const topSelect = content.querySelector('#ai-lang');
+      if (topSelect) topSelect.value = newLang;
+      // Update button styles
+      content.querySelectorAll('.menu-lang-btn').forEach(b => {
+        const isActive = b.dataset.lang === newLang;
+        b.classList.toggle('active', isActive);
+        b.style.background = isActive ? 'var(--primary)' : 'var(--bg-secondary)';
+        b.style.color = isActive ? '#fff' : 'var(--text-secondary)';
+      });
+      await rebuildPreviewWithLang(newLang);
+    });
+  });
+
   // Handle pre-made template selection
   content.querySelectorAll('.tpl-card').forEach(card => {
     card.addEventListener('click', async () => {
@@ -627,7 +714,8 @@ function setupAIHandlers(userId, content) {
     const customStyles = {
       primaryColor: content.querySelector('#custom-primary')?.value,
       bgColor: content.querySelector('#custom-bg')?.value,
-      font: content.querySelector('#custom-font')?.value
+      font: content.querySelector('#custom-font')?.value,
+      currency: content.querySelector('#custom-currency')?.value
     };
     
     if (!customStyles.font) delete customStyles.font;
@@ -663,8 +751,9 @@ function setupAIHandlers(userId, content) {
       }, 1000);
       
       // Save to DB
-      await setDoc(doc(db, 'users', userId), { themeHtml: html }, { merge: true });
-      if (userData) { userData.themeHtml = html; }
+      const menuCurrency = customStyles.currency || 'TRY';
+      await setDoc(doc(db, 'users', userId), { themeHtml: html, menuCurrency }, { merge: true });
+      if (userData) { userData.themeHtml = html; userData.menuCurrency = menuCurrency; }
       
       const badge = content.querySelector('.ai-preview-header .badge');
       if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
@@ -911,5 +1000,49 @@ async function renderFeedbackPage(content, userId) {
   } catch(e) {
     console.error('Feedback load error:', e);
     content.innerHTML = `<div style="text-align:center;padding:40px;color:var(--danger);">${t('feedbackLoadError', 'admin')}</div>`;
+  }
+}
+
+function setupFinanceHandlers(userId, content) {
+  const providerSelect = content.querySelector('#pos-provider');
+  const keysContainer = content.querySelector('#pos-keys-container');
+  const saveBtn = content.querySelector('#save-pos-settings');
+  
+  if (providerSelect && keysContainer) {
+    providerSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'none') {
+        keysContainer.style.display = 'none';
+      } else {
+        keysContainer.style.display = 'block';
+      }
+    });
+  }
+
+  if (saveBtn) {
+    saveBtn.addEventListener('click', async () => {
+      const provider = providerSelect.value;
+      const apiKey = content.querySelector('#pos-api-key').value.trim();
+      const secretKey = content.querySelector('#pos-secret-key').value.trim();
+      
+      if (provider !== 'none' && (!apiKey || !secretKey)) {
+        showToast(t('enterCodeAndValue', 'admin') || 'API Key ve Secret Key zorunludur!', 'warning');
+        return;
+      }
+      
+      saveBtn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></span>...';
+      saveBtn.disabled = true;
+      
+      try {
+        const paymentSettings = { provider, apiKey, secretKey };
+        await updateDoc(doc(db, 'users', userId), { paymentSettings }, { merge: true });
+        if (typeof userData !== 'undefined') { userData.paymentSettings = paymentSettings; }
+        showToast('Sanal POS Ayarları kaydedildi ✓', 'success');
+      } catch (err) {
+        showToast('Hata: ' + err.message, 'error');
+      } finally {
+        saveBtn.innerHTML = '<span class="material-icons-round">save</span> ' + t('savePosSettings', 'admin');
+        saveBtn.disabled = false;
+      }
+    });
   }
 }

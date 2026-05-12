@@ -1,4 +1,4 @@
-import { showToast } from '../utils.js';
+import { showToast, CURRENCIES, getCurrency, getCurrencySymbol } from '../utils.js';
 import { t, getAdminLang } from '../i18n.js';
 
 function getGeminiKey() {
@@ -15,6 +15,8 @@ export function renderAIThemeContent(userData, userId) {
   const isTr = getAdminLang() === 'tr';
   const isDe = getAdminLang() === 'de';
   const activePreset = (userData?.lastPrompt || '').startsWith('Hazır Şablon: ') ? userData.lastPrompt.replace('Hazır Şablon: ', '').trim() : '';
+  const savedMenuLang = userData?.menuLang || 'tr';
+  const savedMenuCurrency = userData?.menuCurrency || getCurrency() || 'TRY';
 
   const texts = {
     title: isTr ? 'AI Menü Tema Tasarımcısı' : isDe ? 'KI Menü-Design' : 'AI Menu Theme Designer',
@@ -38,7 +40,11 @@ export function renderAIThemeContent(userData, userId) {
     bgColor: isTr ? 'Arka Plan Rengi' : isDe ? 'Hintergrundfarbe' : 'Background Color',
     menuFont: isTr ? 'Menü Fontu' : isDe ? 'Menü-Schriftart' : 'Menu Font',
     applyBtn: isTr ? 'Uygula' : isDe ? 'Anwenden' : 'Apply',
-    tuneNote: isTr ? 'Not: Bu ayarlar seçtiğiniz son "Hazır Şablon" üzerinde uygulanır.' : isDe ? 'Hinweis: Diese Einstellungen werden auf die zuletzt gewählte Vorlage angewendet.' : 'Note: These settings are applied to the last selected template.'
+    tuneNote: isTr ? 'Not: Bu ayarlar seçtiğiniz son "Hazır Şablon" üzerinde uygulanır.' : isDe ? 'Hinweis: Diese Einstellungen werden auf die zuletzt gewählte Vorlage angewendet.' : 'Note: These settings are applied to the last selected template.',
+    menuLangTitle: isTr ? 'Müşteri Menü Dili' : isDe ? 'Kunden-Menüsprache' : 'Customer Menu Language',
+    menuLangDesc: isTr ? 'Müşterilerinizin göreceği menüdeki buton ve etiketlerin dili' : isDe ? 'Sprache der Buttons und Labels im Kundenmenü' : 'Language of buttons and labels in the customer menu',
+    currencyTitle: isTr ? 'Para Birimi' : isDe ? 'Währung' : 'Currency',
+    currencyDesc: isTr ? 'Menüde görünecek fiyat sembolü' : isDe ? 'Währungssymbol im Menü' : 'Price symbol shown in the menu'
   };
 
   return `
@@ -59,11 +65,18 @@ export function renderAIThemeContent(userData, userId) {
           </div>
           <p style="font-size:0.7rem;color:var(--text-muted);margin-top:8px;">${texts.keyWarn} <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--primary-light);">aistudio.google.com/apikey</a></p>
         </div>
-        <div style="display:flex;gap:10px;margin-bottom:8px;">
-          <select id="ai-lang" class="input-field" style="width:140px;padding:8px 12px;font-size:0.85rem;font-weight:600;">
-            <option value="tr">🇹🇷 Türkçe Menu</option>
-            <option value="en">🇬🇧 English Menu</option>
-            <option value="de">🇩🇪 Deutsch Menu</option>
+        <div class="menu-lang-selector" style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:12px 16px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:var(--radius-lg);">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;">
+            <span class="material-icons-round" style="font-size:1.2rem;color:var(--primary-light);">translate</span>
+            <div>
+              <div style="font-size:0.8rem;font-weight:700;color:var(--text-primary);">${texts.menuLangTitle}</div>
+              <div style="font-size:0.65rem;color:var(--text-muted);margin-top:2px;">${texts.menuLangDesc}</div>
+            </div>
+          </div>
+          <select id="ai-lang" class="input-field" style="width:auto;min-width:160px;padding:8px 12px;font-size:0.85rem;font-weight:600;background:var(--bg-secondary);border:1.5px solid var(--border);border-radius:var(--radius-md);">
+            <option value="tr" ${savedMenuLang==='tr'?'selected':''}>🇹🇷 Türkçe Menü</option>
+            <option value="en" ${savedMenuLang==='en'?'selected':''}>🇬🇧 English Menu</option>
+            <option value="de" ${savedMenuLang==='de'?'selected':''}>🇩🇪 Deutsch Menü</option>
           </select>
         </div>
         <textarea id="ai-prompt" placeholder="${texts.promptPh}">${userData?.lastPrompt || ''}</textarea>
@@ -92,6 +105,15 @@ export function renderAIThemeContent(userData, userId) {
         <div class="ai-prompt-area">
           <h3><span class="material-icons-round" style="color:var(--primary);">style</span> ${texts.premadeTitle}</h3>
           <p>${texts.premadeDesc}</p>
+          <div class="tpl-lang-bar" style="display:flex;align-items:center;gap:10px;margin:12px 0 4px;padding:10px 14px;background:var(--bg-elevated);border-radius:var(--radius-md);border:1px solid var(--border);">
+            <span class="material-icons-round" style="font-size:1rem;color:var(--text-muted);">translate</span>
+            <span style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);">${texts.menuLangTitle}:</span>
+            <div style="display:flex;gap:4px;">
+              <button class="menu-lang-btn ${savedMenuLang==='tr'?'active':''}" data-lang="tr" style="padding:5px 12px;border-radius:8px;font-size:0.75rem;font-weight:700;border:1.5px solid var(--border);background:${savedMenuLang==='tr'?'var(--primary)':'var(--bg-secondary)'};color:${savedMenuLang==='tr'?'#fff':'var(--text-secondary)'};cursor:pointer;transition:all 0.2s;">🇹🇷 TR</button>
+              <button class="menu-lang-btn ${savedMenuLang==='en'?'active':''}" data-lang="en" style="padding:5px 12px;border-radius:8px;font-size:0.75rem;font-weight:700;border:1.5px solid var(--border);background:${savedMenuLang==='en'?'var(--primary)':'var(--bg-secondary)'};color:${savedMenuLang==='en'?'#fff':'var(--text-secondary)'};cursor:pointer;transition:all 0.2s;">🇬🇧 EN</button>
+              <button class="menu-lang-btn ${savedMenuLang==='de'?'active':''}" data-lang="de" style="padding:5px 12px;border-radius:8px;font-size:0.75rem;font-weight:700;border:1.5px solid var(--border);background:${savedMenuLang==='de'?'var(--primary)':'var(--bg-secondary)'};color:${savedMenuLang==='de'?'#fff':'var(--text-secondary)'};cursor:pointer;transition:all 0.2s;">🇩🇪 DE</button>
+            </div>
+          </div>
           <div class="tpl-grid">
 
             <div class="tpl-card ${activePreset === 'modern-dark' ? 'tpl-active' : ''}" data-preset="modern-dark">
@@ -194,30 +216,53 @@ export function renderAIThemeContent(userData, userId) {
           
           <div class="tpl-customize-box">
             <h4><span class="material-icons-round">tune</span> ${texts.tuneTitle}</h4>
-            <div class="tpl-customize-controls">
-              <div class="tpl-color-pick">
-                <label>${texts.pColor}</label>
-                <input type="color" id="custom-primary" value="#FF6B6B">
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <!-- Color pickers -->
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <label style="font-size:0.75rem;font-weight:600;color:var(--text-secondary);">${texts.pColor}</label>
+                <div style="display:flex;align-items:center;gap:8px;background:var(--bg-secondary);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;">
+                  <input type="color" id="custom-primary" value="#FF6B6B" style="width:28px;height:28px;border:none;border-radius:6px;cursor:pointer;background:none;padding:0;">
+                  <span id="primary-hex" style="font-size:0.75rem;color:var(--text-muted);font-family:monospace;">#FF6B6B</span>
+                </div>
               </div>
-              <div class="tpl-color-pick">
-                <label>${texts.bgColor}</label>
-                <input type="color" id="custom-bg" value="#FFFFFF">
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <label style="font-size:0.75rem;font-weight:600;color:var(--text-secondary);">${texts.bgColor}</label>
+                <div style="display:flex;align-items:center;gap:8px;background:var(--bg-secondary);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;">
+                  <input type="color" id="custom-bg" value="#FFFFFF" style="width:28px;height:28px;border:none;border-radius:6px;cursor:pointer;background:none;padding:0;">
+                  <span id="bg-hex" style="font-size:0.75rem;color:var(--text-muted);font-family:monospace;">#FFFFFF</span>
+                </div>
               </div>
-              <div class="tpl-font-pick">
-                <label>${texts.menuFont}</label>
-                <select id="custom-font" class="input-field">
-                  <option value="">(Şablona Göre / Auto)</option>
-                  <option value="Poppins">Poppins (Modern)</option>
-                  <option value="Inter">Inter (Sade)</option>
-                  <option value="Playfair Display">Playfair (Lüks)</option>
-                  <option value="Space Grotesk">Space Grotesk (Fütüristik)</option>
-                  <option value="Quicksand">Quicksand (Organik)</option>
-                  <option value="Nunito">Nunito (Tatlı)</option>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+              <!-- Font picker -->
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <label style="font-size:0.75rem;font-weight:600;color:var(--text-secondary);">${texts.menuFont}</label>
+                <select id="custom-font" class="input-field" style="font-size:0.82rem;height:42px;">
+                  <option value="">(${isTr?'Otomatik':'Auto'})</option>
+                  <option value="Poppins">Poppins</option>
+                  <option value="Inter">Inter</option>
+                  <option value="Playfair Display">Playfair Display</option>
+                  <option value="Space Grotesk">Space Grotesk</option>
+                  <option value="Quicksand">Quicksand</option>
+                  <option value="Nunito">Nunito</option>
+                  <option value="DM Sans">DM Sans</option>
                 </select>
               </div>
-              <button class="btn btn-primary" id="apply-custom-btn"><span class="material-icons-round">palette</span> ${texts.applyBtn}</button>
+              <!-- Currency picker -->
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <label style="font-size:0.75rem;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:4px;"><span class="material-icons-round" style="font-size:0.9rem;">payments</span>${texts.currencyTitle}</label>
+                <select id="custom-currency" class="input-field" style="font-size:0.82rem;height:42px;">
+                  ${CURRENCIES.map(c => `<option value="${c.code}" ${savedMenuCurrency===c.code?'selected':''}>${c.symbol} ${c.code}</option>`).join('')}
+                </select>
+              </div>
             </div>
-            <p class="tpl-customize-note">${texts.tuneNote}</p>
+
+            <button class="btn btn-primary" id="apply-custom-btn" style="width:100%;justify-content:center;gap:8px;padding:12px;font-size:0.9rem;">
+              <span class="material-icons-round">auto_fix_high</span> ${texts.applyBtn}
+            </button>
+            <p class="tpl-customize-note" style="margin-top:10px;">${texts.tuneNote}</p>
           </div>
           
         </div>
@@ -550,8 +595,8 @@ export async function generateThemeWithAI(prompt, menuItems, restaurantName, lan
         if (err.message.includes('429') || err.message.includes('503') || err.message.includes('RATE_LIMIT')) {
           _onStatus?.(`Sunucular çok yoğun, otomatik olarak yedek lüks şablon yükleniyor...`);
           console.log(`[AI Theme] Google API overloaded, using local templates.`);
-          await wait(1000); // Sadece yazıyı okuması için 1sn bekle
-          return generateThemeHTML(prompt, menuItems, restaurantName);
+          await wait(1000);
+          return generateThemeHTML(prompt, menuItems, restaurantName, lang);
         }
         
         if (err.message.includes('INVALID_HTML')) {
@@ -564,17 +609,16 @@ export async function generateThemeWithAI(prompt, menuItems, restaurantName, lan
         
         // Diğer bilinmeyen hatalar (404 vb) sonraki modele geç
         if (model === activeModels[activeModels.length - 1]) {
-           // Tüm modeller bittiyse fallback şablona geç! Asla error fırlatma.
            _onStatus?.(`API modelleri yanıt vermiyor, yedek premium şablon yükleniyor...`);
            await wait(1000);
-           return generateThemeHTML(prompt, menuItems, restaurantName);
+           return generateThemeHTML(prompt, menuItems, restaurantName, lang);
         }
         continue;
       }
     }
   }
   
-  return generateThemeHTML(prompt, menuItems, restaurantName);
+  return generateThemeHTML(prompt, menuItems, restaurantName, lang);
 }
 
 // Fallback: local generation (eski preset sistemi, API fail ederse)
@@ -592,9 +636,14 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
   else if (p === 'sunset') preset = 'sunset';
   else if (p === 'glass') preset = 'glass';
 
-  const tAll = lang === 'en' ? 'All' : lang === 'de' ? 'Alle' : 'Tümü';
-  const tWaiter = lang === 'en' ? 'Call Waiter' : lang === 'de' ? 'Kellner rufen' : 'Garson Çağır';
-  const tCart = lang === 'en' ? 'View Cart' : lang === 'de' ? 'Warenkorb' : 'Sepeti Görüntüle';
+  const tAll    = lang === 'en' ? 'All'         : lang === 'de' ? 'Alle'           : 'Tümü';
+  const tWaiter = lang === 'en' ? 'Call Waiter' : lang === 'de' ? 'Kellner rufen'  : 'Garson Çağır';
+  const tCart   = lang === 'en' ? 'View Cart'   : lang === 'de' ? 'Warenkorb'      : 'Sepeti Görüntüle';
+  const tAdd    = lang === 'en' ? 'Add'         : lang === 'de' ? 'Hinzufügen'     : 'Ekle';
+  const tAddShort = lang === 'en' ? 'Add'       : lang === 'de' ? 'Hinzu'          : 'Ekle';
+  const tToCart = lang === 'en' ? 'Add to Cart' : lang === 'de' ? 'In den Warenkorb' : 'Sepete Ekle';
+  // Currency symbol for price display
+  const currSym = getCurrencySymbol(customStyles.currency || 'TRY');
 
   // isDark helper for category text color
   const darkPresets = ['dark','luxury','modern-dark'];
@@ -749,8 +798,24 @@ ${preset==='luxury'?`
     ? `<div class="img-box"><span class="badge">${item.category||'Genel'}</span><img src="${item.imageUrl}" alt="${item.name}"></div>`
     : `<div class="img-box has-emoji"><span class="badge">${item.category||'Genel'}</span><div class="emoji">${item.emoji||'🍽️'}</div></div>`;
 
-  const addIcon = preset==='izmir'?'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>':(preset==='modern-dark'?'<span class="material-icons-round" style="font-size:1.2rem">add</span>':'');
-  const addText = preset==='izmir'?'Sepete Ekle':(preset==='modern-dark'?(lang==='en'?'Add':lang==='de'?'Hinzu':'Ekle'):'+');
+  const addIcon = preset==='izmir'
+    ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>'
+    : preset==='modern-dark'
+      ? '<span class="material-icons-round" style="font-size:1.2rem">add</span>'
+      : preset==='luxury'
+        ? '<span class="material-icons-round" style="font-size:1rem">add_circle_outline</span>'
+        : preset==='dark'
+          ? '<span style="font-size:0.9rem;">⚡</span>'
+          : '';
+  const addText = preset==='izmir' ? tToCart
+    : preset==='modern-dark' ? tAddShort
+    : preset==='luxury'      ? tAdd
+    : preset==='dark'        ? tAddShort
+    : preset==='minimal'     ? tAdd
+    : preset==='organic'     ? tToCart
+    : preset==='sunset'      ? tAddShort
+    : preset==='glass'       ? tAddShort
+    : '+';
 
   if (preset === 'izmir') {
     return `<div class="card" data-c="${item.category||'Genel'}" style="animation-delay:${i*0.05}s">
@@ -758,7 +823,7 @@ ${preset==='luxury'?`
       <div class="body">
         <div class="title-row">
           <div class="name">${item.name}</div>
-          <span class="price">₺${(item.price||0).toFixed(2)}</span>
+          <span class="price">${currSym}${(item.price||0).toFixed(2)}</span>
         </div>
         <div class="desc">${item.description||''}</div>
         <div class="foot">
@@ -774,7 +839,7 @@ ${preset==='luxury'?`
       <div class="name">${item.name}</div>
       <div class="desc">${item.description||''}</div>
       <div class="foot">
-        <span class="price">₺${(item.price||0).toFixed(2)}</span>
+        <span class="price">${currSym}${(item.price||0).toFixed(2)}</span>
         <button class="add" onclick="ac(event, '${item.id}','${(item.name||'').replace(/'/g,"\\'")}',${item.price||0})">${addIcon} ${addText}</button>
       </div>
     </div>
@@ -786,7 +851,7 @@ ${preset==='luxury'?`
       <span style="font-size:0.75rem; color:rgba(255,255,255,0.8);">Ortak Hesap</span>
       <div style="display:flex; align-items:center; gap:4px;">
         <span style="font-size:0.9rem; font-weight:600;">Kalan:</span>
-        <span style="font-weight:800; font-size:1.1rem" id="tp">₺0.00</span>
+        <span style="font-weight:800; font-size:1.1rem" id="tp">${currSym}0.00</span>
       </div>
     </div>
     <div style="background:#2563EB; border-radius:30px; padding:8px 20px; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px;">
@@ -797,7 +862,7 @@ ${preset==='luxury'?`
     <div class="cc" id="cn">0</div>
     <span style="font-weight:600;font-size:0.9rem">${tCart}</span>
   </div>
-  <span style="font-weight:800;font-size:1.1rem" id="tp">₺0.00</span>
+  <span style="font-weight:800;font-size:1.1rem" id="tp">${currSym}0.00</span>
   `}
 </button>
 <style>
@@ -847,7 +912,7 @@ function uc(){
       if(n > 0){
         f.classList.add('show');
         document.getElementById('cn').textContent = n;
-        document.getElementById('tp').textContent = '₺' + t.toFixed(2);
+        document.getElementById('tp').textContent = '${currSym}' + t.toFixed(2);
       } else {
         f.classList.remove('show');
       }

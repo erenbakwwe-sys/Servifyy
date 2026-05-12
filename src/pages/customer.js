@@ -1,7 +1,8 @@
 import { db, doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, onSnapshot, where, updateDoc } from '../firebase.js';
-import { showToast, formatCurrency } from '../utils.js';
+import { showToast, formatCurrency, setCurrency } from '../utils.js';
 import { t, getLang, setLang } from '../i18n.js';
 import { validateCoupon, useCoupon } from './admin-coupons.js';
+import { generateThemeHTML } from './admin-ai-theme.js';
 
 let cart = [];
 let restaurantData = null;
@@ -43,6 +44,7 @@ export async function renderCustomerMenu(container, params) {
       return;
     }
     restaurantData = userDoc.data();
+    setCurrency(restaurantData.menuCurrency || 'TRY');
 
     // Load menu items
     const menuSnap = await getDocs(query(collection(db, 'users', currentUserId, 'menuItems'), orderBy('createdAt', 'desc')));
@@ -68,25 +70,82 @@ export async function renderCustomerMenu(container, params) {
   }
 }
 
-function renderCustomTheme(container) {
-  // Inject custom theme HTML with functional cart and waiter call
-  let themeHtml = restaurantData.themeHtml;
-  
-  // Replace the simple cart with our functional one
+function renderCustomTheme(container, overrideLang) {
+  // Determine language: 1) overrideLang from re-render, 2) restaurantData.menuLang (admin-set), 3) 'tr'
+  const activeLang = overrideLang || restaurantData.menuLang || 'tr';
+
+  // Determine preset keyword from lastPrompt
+  let presetKeyword = 'default';
+  const lp = (restaurantData.lastPrompt || '');
+  if (lp.startsWith('Hazır Şablon: ')) {
+    const k = lp.replace('Hazır Şablon: ', '').trim();
+    if (['luxury','dark','minimal','organic','sunset','glass','modern-dark','izmir','default'].includes(k)) presetKeyword = k;
+  }
+
+  // Build the HTML - if restaurantData.themeHtml exists, use it as-is (could be AI-generated)
+  // but for preset themes, regenerate with correct lang
+  let themeHtml;
+  if (presetKeyword !== 'default' || !restaurantData.themeHtml) {
+    // Preset theme: always regenerate with correct lang so translations are correct
+    themeHtml = generateThemeHTML(presetKeyword, menuItemsData, restaurantData?.restaurant?.name || '', activeLang);
+  } else {
+    // AI-generated or unknown: use stored HTML as-is (AI already embedded lang)
+    themeHtml = restaurantData.themeHtml;
+  }
+
   container.innerHTML = `
     <div class="custom-theme-container" id="custom-theme-container">
       <iframe id="theme-iframe" style="width:100%;min-height:100vh;border:none;display:block;" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+    <!-- Floating language switcher for custom theme -->
+    <div id="theme-lang-switcher" style="
+      position:fixed;bottom:24px;right:16px;z-index:10000;
+      display:flex;gap:4px;
+      background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);
+      border-radius:30px;padding:5px 8px;
+      box-shadow:0 4px 24px rgba(0,0,0,0.3);
+      border:1px solid rgba(255,255,255,0.15);
+    ">
+      <button class="theme-lang-btn" data-lang="tr" style="
+        padding:5px 10px;border-radius:20px;border:none;cursor:pointer;font-size:0.7rem;font-weight:700;transition:all 0.2s;
+        background:${activeLang==='tr'?'rgba(255,255,255,0.9)':'transparent'};
+        color:${activeLang==='tr'?'#000':'rgba(255,255,255,0.7)'};
+      ">🇹🇷</button>
+      <button class="theme-lang-btn" data-lang="en" style="
+        padding:5px 10px;border-radius:20px;border:none;cursor:pointer;font-size:0.7rem;font-weight:700;transition:all 0.2s;
+        background:${activeLang==='en'?'rgba(255,255,255,0.9)':'transparent'};
+        color:${activeLang==='en'?'#000':'rgba(255,255,255,0.7)'};
+      ">🇬🇧</button>
+      <button class="theme-lang-btn" data-lang="de" style="
+        padding:5px 10px;border-radius:20px;border:none;cursor:pointer;font-size:0.7rem;font-weight:700;transition:all 0.2s;
+        background:${activeLang==='de'?'rgba(255,255,255,0.9)':'transparent'};
+        color:${activeLang==='de'?'#000':'rgba(255,255,255,0.7)'};
+      ">🇩🇪</button>
     </div>
     <button class="waiter-call-btn" id="waiter-call-btn" style="position:fixed;top:12px;right:12px;z-index:9999;display:none;">
       <span class="material-icons-round">room_service</span>
       ${t('callWaiter', 'customer')}
     </button>
     <div id="floating-cart-wrapper"></div>
+    
+    <!-- Floating table badge -->
+    <div style="
+      position:fixed;top:12px;left:12px;z-index:9998;
+      background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+      color:#fff;font-weight:700;font-size:0.85rem;
+      padding:6px 14px;border-radius:20px;
+      display:flex;align-items:center;gap:6px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.2);
+      border:1px solid rgba(255,255,255,0.1);
+    ">
+      <span class="material-icons-round" style="font-size:1.1rem;color:#FF6B6B;">table_restaurant</span>
+      ${activeLang === 'en' ? 'Table' : activeLang === 'de' ? 'Tisch' : 'Masa'} ${currentTableNo}
+    </div>
   `;
 
   const iframe = document.getElementById('theme-iframe');
-  
-  // Inject menu data safely (only clean fields, no raw Firestore timestamps)
+
+  // Inject menu data
   const safeRestaurantData = {
     restaurant: restaurantData?.restaurant || {},
     plan: restaurantData?.plan || 'trial'
@@ -98,13 +157,12 @@ function renderCustomTheme(container) {
     <\/script>
   `;
 
-  // Inject the script into the theme HTML properly
   const finalHtml = themeHtml.includes('<head>') 
     ? themeHtml.replace('<head>', '<head>' + menuDataScript)
     : menuDataScript + themeHtml;
 
   iframe.srcdoc = finalHtml;
-  
+
   iframe.addEventListener('load', () => {
     const resizeIframe = () => {
       try {
@@ -115,29 +173,11 @@ function renderCustomTheme(container) {
         }
       } catch(e) {}
     };
-    
     resizeIframe();
-    // Multiple checks to ensure height is correct after images/fonts load
     const timer = setInterval(resizeIframe, 1000);
     setTimeout(() => clearInterval(timer), 5000);
 
-    // Cleanup AI metadata junk if present
-    try {
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      if (iframeDoc && iframeDoc.body) {
-        const junk = ['Created At:', 'Completed At:', 'ArtifactType:', 'Summary:', 'TargetFile:'];
-        const walk = (node) => {
-          if (node.nodeType === 3) {
-            if (junk.some(j => node.textContent.includes(j))) node.textContent = '';
-          } else if (node.childNodes) {
-            for (let n of node.childNodes) walk(n);
-          }
-        };
-        walk(iframeDoc.body);
-      }
-    } catch(e) {}
-
-    // Override iframe's addToCart function
+    // Override iframe's addToCart
     try {
       iframe.contentWindow.addToCart = (id, name, price) => {
         addToCart({ id, name, price: parseFloat(price) });
@@ -145,24 +185,24 @@ function renderCustomTheme(container) {
     } catch(e) {}
   });
 
-  // Listen for postMessage events from iframe (works even with sandbox)
-  window.addEventListener('message', (e) => {
-    if (e.data?.type === 'addToCart' && e.data.item) {
-      addToCart(e.data.item);
-    }
-    if (e.data?.type === 'openCart') {
-      openCartPanel();
-    }
-    if (e.data?.type === 'callWaiter') {
-      triggerWaiterCall();
-    }
+  // Language switcher clicks
+  container.querySelectorAll('.theme-lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newLang = btn.dataset.lang;
+      setLang(newLang); // also sets customer-side lang
+      renderCustomTheme(container, newLang); // re-render with new lang
+    });
   });
 
-  // Waiter call
+  // Listen for postMessage events
+  window.addEventListener('message', (e) => {
+    if (e.data?.type === 'addToCart' && e.data.item) addToCart(e.data.item);
+    if (e.data?.type === 'openCart') openCartPanel();
+    if (e.data?.type === 'callWaiter') triggerWaiterCall();
+  });
+
   setupWaiterCall();
   updateFloatingCart(container);
-  
-  // Track active orders
   setupOrderTracking(container);
 }
 

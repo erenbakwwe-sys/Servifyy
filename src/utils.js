@@ -33,12 +33,41 @@ export function showToast(message, type = 'info') {
   }, 4000);
 }
 
-export function formatCurrency(amount) {
-  return new Intl.NumberFormat('tr-TR', {
-    style: 'currency',
-    currency: 'TRY',
-    minimumFractionDigits: 2
-  }).format(amount);
+// --- Currency helpers ---
+export const CURRENCIES = [
+  { code: 'TRY', symbol: '\u20ba', label: 'T\u00fcrk Liras\u0131 (\u20ba)', locale: 'tr-TR' },
+  { code: 'USD', symbol: '$',     label: 'US Dollar ($)',          locale: 'en-US' },
+  { code: 'EUR', symbol: '\u20ac',  label: 'Euro (\u20ac)',             locale: 'de-DE' },
+  { code: 'GBP', symbol: '\u00a3',  label: 'British Pound (\u00a3)',    locale: 'en-GB' },
+  { code: 'SAR', symbol: '\ufdfc', label: 'Saudi Riyal (\ufdfc)',    locale: 'ar-SA' },
+  { code: 'AED', symbol: '\u062f.\u0625', label: 'UAE Dirham',      locale: 'ar-AE' },
+];
+
+export function getCurrency() {
+  return localStorage.getItem('menu_currency') || 'TRY';
+}
+
+export function setCurrency(code) {
+  localStorage.setItem('menu_currency', code);
+}
+
+export function getCurrencySymbol(code) {
+  const c = code || getCurrency();
+  return CURRENCIES.find(x => x.code === c)?.symbol || '\u20ba';
+}
+
+export function formatCurrency(amount, currencyOverride) {
+  const code = currencyOverride || getCurrency();
+  const info = CURRENCIES.find(x => x.code === code);
+  try {
+    return new Intl.NumberFormat(info?.locale || 'tr-TR', {
+      style: 'currency',
+      currency: code,
+      minimumFractionDigits: 2
+    }).format(amount);
+  } catch(e) {
+    return (info?.symbol || '\u20ba') + amount.toFixed(2);
+  }
 }
 
 export function formatDate(date) {

@@ -201,7 +201,7 @@ export function renderHistoryContent(orders) {
   `;
 }
 
-export function renderFinanceContent(orders) {
+export function renderFinanceContent(orders, userData) {
   const completed = orders.filter(o => o.status === 'completed');
   const totalRevenue = completed.reduce((s, o) => s + (o.total || 0), 0);
   const cashRevenue = completed.filter(o => o.paymentMethod === 'cash').reduce((s, o) => s + (o.total || 0), 0);
@@ -232,6 +232,39 @@ export function renderFinanceContent(orders) {
           <h4>${t('totalOrder', 'admin')}</h4>
           <div class="finance-value">${completed.length}</div>
         </div>
+      </div>
+      </div>
+      
+      <div class="card" style="margin-top:24px; max-width:600px;">
+        <h3 style="margin-bottom:16px; font-size:1.1rem; border-bottom:1px solid var(--border); padding-bottom:12px;">
+          <span class="material-icons-round" style="vertical-align:middle; margin-right:4px; color:var(--primary);">credit_card</span>
+          ${t('posSettings', 'admin')}
+        </h3>
+        
+        <div class="input-group">
+          <label>${t('posProvider', 'admin')}</label>
+          <select id="pos-provider" class="input-field">
+            <option value="none" ${(!userData?.paymentSettings?.provider || userData.paymentSettings.provider === 'none') ? 'selected' : ''}>Yok (Sadece Masada Ödeme)</option>
+            <option value="iyzico" ${userData?.paymentSettings?.provider === 'iyzico' ? 'selected' : ''}>Iyzico</option>
+            <option value="stripe" ${userData?.paymentSettings?.provider === 'stripe' ? 'selected' : ''}>Stripe</option>
+            <option value="paytr" ${userData?.paymentSettings?.provider === 'paytr' ? 'selected' : ''}>PayTR</option>
+          </select>
+        </div>
+        
+        <div id="pos-keys-container" style="${(!userData?.paymentSettings?.provider || userData.paymentSettings.provider === 'none') ? 'display:none;' : ''}">
+          <div class="input-group">
+            <label>${t('apiKey', 'admin')}</label>
+            <input type="text" id="pos-api-key" class="input-field" value="${userData?.paymentSettings?.apiKey || ''}" placeholder="pk_test_...">
+          </div>
+          <div class="input-group">
+            <label>${t('secretKey', 'admin')}</label>
+            <input type="password" id="pos-secret-key" class="input-field" value="${userData?.paymentSettings?.secretKey || ''}" placeholder="sk_test_...">
+          </div>
+        </div>
+        
+        <button id="save-pos-settings" class="btn btn-primary" style="margin-top:8px;">
+          <span class="material-icons-round">save</span> ${t('savePosSettings', 'admin')}
+        </button>
       </div>
     </div>
   `;

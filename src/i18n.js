@@ -11,6 +11,7 @@ export const translations = {
       addCat: 'Kategori Ekle', addItem: 'Ürün Ekle', noCat: 'Henüz kategori eklenmemiş',
       noCatSub: 'Menü oluşturmaya başlamak için kategori ekleyin', emptyCat: 'Bu kategoride henüz ürün yok',
       price: 'Fiyat', desc: 'Açıklama', edit: 'Düzenle', del: 'Sil', status: 'Durum',
+      posSettings: 'Sanal POS & Ödeme Ayarları', posProvider: 'POS Sağlayıcı', apiKey: 'API Anahtarı', secretKey: 'Gizli Anahtar', savePosSettings: 'POS Ayarlarını Kaydet',
       // Coupons
       couponMgmt: 'Kupon & İndirim Yönetimi', couponMgmtSub: 'Promosyon kodları ve otomatik indirimler oluşturun',
       newCoupon: 'Yeni Kupon', noCoupons: 'Henüz kupon oluşturulmamış', noCouponsSub: 'Müşterilerinize özel indirim kodları oluşturun',
@@ -251,6 +252,7 @@ export const translations = {
       addCat: 'Add Category', addItem: 'Add Item', noCat: 'No categories yet',
       noCatSub: 'Add a category to start building your menu', emptyCat: 'No items in this category yet',
       price: 'Price', desc: 'Description', edit: 'Edit', del: 'Delete', status: 'Status',
+      posSettings: 'Virtual POS & Payment Settings', posProvider: 'POS Provider', apiKey: 'API Key', secretKey: 'Secret Key', savePosSettings: 'Save POS Settings',
       // Coupons
       couponMgmt: 'Coupon & Discount Management', couponMgmtSub: 'Create promo codes and automatic discounts',
       newCoupon: 'New Coupon', noCoupons: 'No coupons created yet', noCouponsSub: 'Create discount codes for your customers',
@@ -491,6 +493,7 @@ export const translations = {
       addCat: 'Kategorie hinzufügen', addItem: 'Artikel hinzufügen', noCat: 'Noch keine Kategorien',
       noCatSub: 'Fügen Sie eine Kategorie hinzu, um Ihr Menü zu erstellen', emptyCat: 'Noch keine Artikel in dieser Kategorie',
       price: 'Preis', desc: 'Beschreibung', edit: 'Bearbeiten', del: 'Löschen', status: 'Status',
+      posSettings: 'Virtuelle POS & Zahlungseinstellungen', posProvider: 'POS-Anbieter', apiKey: 'API-Schlüssel', secretKey: 'Geheimer Schlüssel', savePosSettings: 'POS-Einstellungen speichern',
       // Coupons
       couponMgmt: 'Gutschein- & Rabattverwaltung', couponMgmtSub: 'Erstellen Sie Aktionscodes und automatische Rabatte',
       newCoupon: 'Neuer Gutschein', noCoupons: 'Noch keine Gutscheine erstellt', noCouponsSub: 'Erstellen Sie Rabattcodes für Ihre Kunden',
