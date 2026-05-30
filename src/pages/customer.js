@@ -11,6 +11,7 @@ let currentUserId = null;
 let currentTableNo = null;
 let unsubCustomerOrders = null;
 let activeOrders = [];
+let isMessageListenerSetup = false;
 
 const ALLERGENS = [
   {id:'gluten',label:'Gluten',emoji:'🌾'},{id:'dairy',label:'Süt',emoji:'🥛'},{id:'eggs',label:'Yumurta',emoji:'🥚'},
@@ -194,12 +195,15 @@ function renderCustomTheme(container, overrideLang) {
     });
   });
 
-  // Listen for postMessage events
-  window.addEventListener('message', (e) => {
-    if (e.data?.type === 'addToCart' && e.data.item) addToCart(e.data.item);
-    if (e.data?.type === 'openCart') openCartPanel();
-    if (e.data?.type === 'callWaiter') triggerWaiterCall();
-  });
+  // Listen for postMessage events only once to prevent duplicate listeners
+  if (!isMessageListenerSetup) {
+    window.addEventListener('message', (e) => {
+      if (e.data?.type === 'addToCart' && e.data.item) addToCart(e.data.item);
+      if (e.data?.type === 'openCart') openCartPanel();
+      if (e.data?.type === 'callWaiter') triggerWaiterCall();
+    });
+    isMessageListenerSetup = true;
+  }
 
   setupWaiterCall();
   updateFloatingCart(container);
