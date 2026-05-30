@@ -1,5 +1,6 @@
 import { db, collection, query, orderBy, onSnapshot, updateDoc, doc, where } from '../firebase.js';
 import { t } from '../i18n.js';
+import { escapeHtml } from '../utils.js';
 
 let unsubKitchen = null;
 let kitchenOrders = [];
@@ -130,7 +131,7 @@ function renderKitchenOrders() {
             </div>
           `).join('')}
         </div>
-        ${order.note ? `<div class="kds-card-note"><span class="material-icons-round" style="font-size:0.9rem;">sticky_note_2</span> ${order.note}</div>` : ''}
+        ${order.note ? `<div class="kds-card-note"><span class="material-icons-round" style="font-size:0.9rem;">sticky_note_2</span> ${escapeHtml(order.note)}</div>` : ''}
         <div class="kds-card-actions">${actions}</div>
       </div>
     `;

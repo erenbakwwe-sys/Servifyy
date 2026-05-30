@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, orderBy, onSnapshot, getDocs, deleteDoc, serverTimestamp, Timestamp, writeBatch, limit } from 'firebase/firestore';
-
+import { getFunctions, httpsCallable } from 'firebase/functions';
 // Firebase configuration - REPLACE with your own config
 const firebaseConfig = {
   apiKey: "AIzaSyATYXq3ccp1_YFMqrK6ZfV0rYPCfzl9gw4",
@@ -18,7 +18,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 export {
-  auth, db,
+  auth, db, getFunctions, httpsCallable,
   createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification,
   doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, orderBy, onSnapshot, getDocs, deleteDoc, serverTimestamp, Timestamp, writeBatch, limit
 };

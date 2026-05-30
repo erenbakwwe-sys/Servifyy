@@ -1,5 +1,5 @@
 import { auth, db, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, signOut, getDocs } from '../firebase.js';
-import { showToast, getTrialDaysLeft, playNotificationSound } from '../utils.js';
+import { showToast, getTrialDaysLeft, playNotificationSound, escapeHtml } from '../utils.js';
 import { renderDashboardContent } from './admin-dashboard.js';
 import { renderMenuContent, showAddItemModal, showEditItemModal, showAddCategoryModal, deleteMenuItem } from './admin-menu.js';
 import { renderQRContent, generateAllQR, renderCallsContent, renderOrdersContent, renderHistoryContent, renderFinanceContent } from './admin-sections.js';
@@ -37,6 +37,16 @@ async function loadAdminData(userId, container) {
     const userDoc = await getDoc(doc(db, 'users', userId));
     userData = userDoc.exists() ? userDoc.data() : {};
 
+    // Load secure POS keys if they exist in privateSettings/keys (for owner only)
+    try {
+      const keysDoc = await getDoc(doc(db, 'users', userId, 'privateSettings', 'keys'));
+      if (keysDoc.exists()) {
+        userData.paymentSettings = keysDoc.data();
+      }
+    } catch (keyErr) {
+      console.warn('Could not load secure payment keys:', keyErr);
+    }
+
     if (!userData.onboardingComplete) {
       window.location.hash = '/onboarding';
       return;
@@ -57,7 +67,7 @@ async function loadAdminData(userId, container) {
     }, 1000);
   } catch (e) {
     console.error('Admin load error:', e);
-    showToast('Veri yüklenirken hata oluştu', 'error');
+    showToast('Veri yüklenirken hata oluştu: ' + (e.message || e), 'error');
   }
 }
 
@@ -986,7 +996,7 @@ async function renderFeedbackPage(content, userId) {
           ` : feedbacks.map(f => `
             <div class="feedback-card">
               <div class="feedback-stars">${'★'.repeat(f.rating || 0)}${'☆'.repeat(5 - (f.rating || 0))}</div>
-              ${f.comment ? `<div class="feedback-comment">"${f.comment}"</div>` : ''}
+              ${f.comment ? `<div class="feedback-comment">"${escapeHtml(f.comment)}"</div>` : ''}
               <div class="feedback-meta">
                 <span>${t('tableLabel', 'admin')} ${f.tableNo || '?'}</span>
                 <span>${f.createdAt?.toDate ? f.createdAt.toDate().toLocaleDateString() : ''}</span>
@@ -1034,9 +1044,16 @@ function setupFinanceHandlers(userId, content) {
       
       try {
         const paymentSettings = { provider, apiKey, secretKey };
-        await updateDoc(doc(db, 'users', userId), { paymentSettings }, { merge: true });
+        // Save only provider to public document
+        await updateDoc(doc(db, 'users', userId), { 
+          'paymentSettings.provider': provider 
+        }, { merge: true });
+        
+        // Save sensitive keys to the secure privateSettings document
+        await setDoc(doc(db, 'users', userId, 'privateSettings', 'keys'), paymentSettings);
+        
         if (typeof userData !== 'undefined') { userData.paymentSettings = paymentSettings; }
-        showToast('Sanal POS Ayarları kaydedildi ✓', 'success');
+        showToast('Sanal POS Ayarları güvenli şekilde kaydedildi ✓', 'success');
       } catch (err) {
         showToast('Hata: ' + err.message, 'error');
       } finally {

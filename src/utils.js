@@ -168,3 +168,14 @@ export function generateQRCode(text, size = 4) {
     return qr.createSvgTag({ cellSize: size, margin: 2 });
   });
 }
+
+export function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+

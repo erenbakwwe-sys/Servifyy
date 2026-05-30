@@ -66,7 +66,7 @@ export async function renderCustomerMenu(container, params) {
     }
   } catch (e) {
     console.error('Menu load error:', e);
-    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;"><div><h2>${t('errorOccurred', 'customer')}</h2><p style="color:var(--text-muted);margin-top:8px;">${t('tryAgain', 'customer')}</p></div></div>`;
+    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;"><div><h2>${t('errorOccurred', 'customer')}</h2><p style="color:var(--danger);margin-top:8px;">Hata Detayı: ${e.message || e}</p><p style="color:var(--text-muted);margin-top:8px;">${t('tryAgain', 'customer')}</p></div></div>`;
   }
 }
 
@@ -122,7 +122,7 @@ function renderCustomTheme(container, overrideLang) {
         color:${activeLang==='de'?'#000':'rgba(255,255,255,0.7)'};
       ">🇩🇪</button>
     </div>
-    <button class="waiter-call-btn" id="waiter-call-btn" style="position:fixed;top:12px;right:12px;z-index:9999;display:none;">
+    <button class="waiter-call-btn" id="waiter-call-btn" style="position:fixed;top:12px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;">
       <span class="material-icons-round">room_service</span>
       ${t('callWaiter', 'customer')}
     </button>
@@ -517,9 +517,9 @@ function openCartPanel() {
             <div class="payment-icon">💵</div>
             <div class="payment-label">${t('cash', 'customer')}</div>
           </div>
-          <div class="payment-option" data-method="online">
+          <div class="payment-option" data-method="online_payment">
             <div class="payment-icon">📲</div>
-            <div class="payment-label">${t('physicalPos', 'customer')}</div>
+            <div class="payment-label">Online Öde</div>
           </div>
         </div>
 
@@ -738,22 +738,79 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
   orderBtn.disabled = true;
   orderBtn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> İşleniyor...';
 
-  // Online Payment Simulation
-  if (paymentMethod === 'online') {
-    showToast('Sanal POS ekranına yönlendiriliyorsunuz...', 'info');
-    await new Promise(r => setTimeout(r, 1500));
-    // In a real app, redirect to Stripe/Iyzico here
-    showToast('Ödeme başarıyla alındı ✓', 'success');
+  // Priority Keywords
+  let priority = '';
+  const noteLower = orderNote.toLowerCase();
+  if (noteLower.includes('acil') || noteLower.includes('urgent')) priority = 'acil';
+  if (noteLower.includes('alerji') || noteLower.includes('allergy')) priority = 'alerji';
+
+  // Online Payment Logic
+  if (paymentMethod === 'online_payment') {
+    showToast('Ödeme sayfasına yönlendiriliyorsunuz...', 'info');
+    try {
+      const fetchResponse = await fetch('/api/createPaymentSession', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: currentUserId,
+          amount: grandTotal,
+          currency: 'TRY',
+          items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+          tipAmount: tipAmount || 0,
+          appliedCouponId: appliedCouponId || null,
+          returnUrl: window.location.origin + '/'
+        })
+      });
+
+      const responseData = await fetchResponse.json();
+
+      if (!fetchResponse.ok) {
+        throw new Error(responseData.error || 'Ödeme linki alınamadı.');
+      }
+
+      if (responseData && responseData.paymentUrl) {
+        // Save the order FIRST as 'pending_payment' so we have a record
+        await addDoc(collection(db, 'users', currentUserId, 'orders'), {
+          tableNo: currentTableNo,
+          items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+          total: grandTotal,
+          subtotal: total,
+          tip: tipAmount,
+          couponDiscount: couponDiscount,
+          paymentMethod: paymentMethod,
+          splitCount: splitCountVal,
+          note: orderNote,
+          priority: priority,
+          status: 'pending_payment',
+          paymentSessionId: responseData.sessionId || null,
+          createdAt: serverTimestamp()
+        });
+
+        // Use coupon if applied
+        if (appliedCouponId) {
+          await useCoupon(currentUserId, appliedCouponId);
+        }
+
+        // Redirect to payment URL
+        window.location.href = responseData.paymentUrl;
+        return;
+      } else {
+        throw new Error(responseData.error || 'Ödeme linki alınamadı.');
+      }
+    } catch (err) {
+      console.error('Payment Error:', err);
+      showToast('Ödeme başlatılamadı: ' + err.message, 'error');
+      orderBtn.disabled = false;
+      orderBtn.innerHTML = '<span class="material-icons-round">send</span> Siparişi Gönder';
+      return;
+    }
   }
 
   try {
     
-    // Automatically flag priority if note contains keywords
-    let priority = '';
-    const noteLower = orderNote.toLowerCase();
-    if (noteLower.includes('acil') || noteLower.includes('urgent')) priority = 'acil';
-    if (noteLower.includes('alerji') || noteLower.includes('allergy')) priority = 'alerji';
-    
+
     await addDoc(collection(db, 'users', currentUserId, 'orders'), {
       tableNo: currentTableNo,
       items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),

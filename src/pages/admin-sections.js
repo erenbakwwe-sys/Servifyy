@@ -1,4 +1,4 @@
-import { generateQRCode, showToast, formatCurrency, formatDate, timeAgo } from '../utils.js';
+import { generateQRCode, showToast, formatCurrency, formatDate, timeAgo, escapeHtml } from '../utils.js';
 import { db, doc, updateDoc, collection, query, where, orderBy, onSnapshot } from '../firebase.js';
 import { t } from '../i18n.js';
 
@@ -163,7 +163,7 @@ export function renderOrdersContent(orders) {
               </div>
             </div>
             ${o.note ? `<div style="padding:12px; border-top:1px dashed var(--border); background:var(--bg-elevated); color:var(--text-secondary); font-size:0.85rem; font-style:italic;">
-              <strong>${t('note', 'admin')}:</strong> ${o.note}
+              <strong>${t('note', 'admin')}:</strong> ${escapeHtml(o.note)}
             </div>` : ''}
           </div>
         `}).join('')}

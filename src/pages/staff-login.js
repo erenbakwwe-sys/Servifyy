@@ -1,12 +1,4 @@
-import { db, collection, getDocs, query, where } from '../firebase.js';
 import { showToast } from '../utils.js';
-
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 export function renderStaffLogin(container) {
   container.innerHTML = `
@@ -119,48 +111,31 @@ async function handleLogin() {
   btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> Giriş yapılıyor...';
 
   try {
-    // Query only this specific username — never download all staff
-    const staffSnap = await getDocs(
-      query(collection(db, 'users', orgCode, 'staff'), where('username', '==', username))
-    );
-    const passHash = await hashPassword(password);
-    let found = null;
-
-    staffSnap.forEach(d => {
-      const data = d.data();
-      if (data.passwordHash === passHash) {
-        found = { staffId: d.id, ...data };
-      }
+    const fetchResponse = await fetch('/api/staffLogin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ orgCode, username, password })
     });
 
-    if (!found) {
-      showToast('Kullanıcı adı veya şifre hatalı', 'error');
-      btn.disabled = false;
-      btn.innerHTML = '<span class="material-icons-round">login</span> Giriş Yap';
-      return;
-    }
+    const responseData = await fetchResponse.json();
 
-    if (!found.isActive) {
-      showToast('Hesabınız devre dışı bırakılmış. Yöneticinize başvurun.', 'error');
+    if (!fetchResponse.ok) {
+      showToast(responseData.error || 'Giriş başarısız', 'error');
       btn.disabled = false;
       btn.innerHTML = '<span class="material-icons-round">login</span> Giriş Yap';
       return;
     }
 
     // Save session
-    localStorage.setItem('staffSession', JSON.stringify({
-      staffId: found.staffId,
-      username: found.username,
-      role: found.role,
-      assignedBranchId: found.assignedBranchId,
-      orgId: orgCode
-    }));
+    localStorage.setItem('staffSession', JSON.stringify(responseData.staffSession));
 
-    showToast(`Hoş geldiniz, ${found.username}! 👋`, 'success');
+    showToast(`Hoş geldiniz, ${responseData.staffSession.username}! 👋`, 'success');
     window.location.hash = '/staff-panel';
   } catch (e) {
     console.error('Staff login error:', e);
-    showToast('Giriş hatası: Restoran kodu geçersiz olabilir', 'error');
+    showToast('Giriş hatası: Sunucuya bağlanılamadı.', 'error');
     btn.disabled = false;
     btn.innerHTML = '<span class="material-icons-round">login</span> Giriş Yap';
   }

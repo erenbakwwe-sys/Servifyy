@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "firebase": "^12.12.1",
-    "qrcode-generator": "^2.0.4"
+    "firebase-admin": "^13.9.0",
+    "iyzipay": "^2.0.67",
+    "qrcode-generator": "^2.0.4",
+    "stripe": "^22.1.1"
   }
 }
