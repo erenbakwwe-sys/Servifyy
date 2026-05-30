@@ -246,6 +246,8 @@ function renderDefaultMenu(container) {
         <span id="btn-call-text">${t('callWaiter', 'customer')}</span>
       </button>
 
+      <div id="floating-cart-wrapper"></div>
+
       <div class="category-tabs" id="category-tabs">
         <button class="category-tab active" data-cat="all">${t('all', 'customer')}</button>
         ${categories.map(c => `<button class="category-tab" data-cat="${c}">${c}</button>`).join('')}
@@ -427,7 +429,6 @@ function addToCart(item) {
   }
 
   updateFloatingCart(document.getElementById('app'));
-  openCartPanel();
 }
 
 function updateFloatingCart(container) {
@@ -544,11 +545,21 @@ function openCartPanel() {
         <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.05);">
           <div style="font-size:0.8rem; color:#71717a; margin-bottom:12px;">${t('cartItems', 'customer')}</div>
           ${cart.map((item, index) => `
-            <div class="cart-item" style="border:none; padding:8px 0;">
-              <div class="cart-item-info">
-                <div class="cart-item-name" style="font-size:0.85rem;">${item.qty} x ${item.name}</div>
+            <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+              <div class="cart-item-info" style="flex:1;">
+                <div class="cart-item-name" style="font-size:0.9rem; font-weight:600; color:#fff;">${item.name}</div>
+                <div class="cart-item-price" style="font-size:0.8rem; color:var(--primary-light); margin-top:2px;">${formatCurrency(item.price)}</div>
               </div>
-              <div class="cart-item-price" style="font-size:0.85rem;">${formatCurrency(item.price * item.qty)}</div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="cart-item-qty" style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:4px 8px;">
+                  <button class="cart-qty-btn" data-index="${index}" data-action="decrease" style="width:24px; height:24px; border-radius:50%; border:none; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.9rem; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">-</button>
+                  <span style="font-size:0.85rem; font-weight:700; min-width:18px; text-align:center; color:#fff;">${item.qty}</span>
+                  <button class="cart-qty-btn" data-index="${index}" data-action="increase" style="width:24px; height:24px; border-radius:50%; border:none; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.9rem; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">+</button>
+                </div>
+                <button class="cart-delete-btn" data-index="${index}" style="border:none; background:transparent; color:var(--danger); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:6px; transition:color 0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--danger)'" title="${t('delete', 'customer') || 'Sil'}">
+                  <span class="material-icons-round" style="font-size:1.15rem;">delete</span>
+                </button>
+              </div>
             </div>
           `).join('')}
         </div>
@@ -572,6 +583,27 @@ function openCartPanel() {
         cart[index].qty--;
         if (cart[index].qty <= 0) cart.splice(index, 1);
       }
+      panel.remove();
+      if (cart.length > 0) {
+        openCartPanel();
+      }
+      
+      // Sync with iframe
+      const iframe = document.getElementById('theme-iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'cartUpdated' }, '*');
+      }
+
+      updateFloatingCart(document.getElementById('app'));
+    });
+  });
+
+  // Delete handlers
+  panel.querySelectorAll('.cart-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const index = parseInt(btn.dataset.index);
+      cart.splice(index, 1);
+      
       panel.remove();
       if (cart.length > 0) {
         openCartPanel();
