@@ -254,6 +254,33 @@ function validateStep(step) {
   return true;
 }
 
+async function sendTelegramLeadNotification(data) {
+  const botToken = '8989887371:AAGf1jdwaEW3vn_83F6U_G2eInCnSC51deQ';
+  const chatId = '6330000122';
+  
+  const message = `🚀 *YENİ BAŞVURU (LEAD) GELDİ!* 🚀\n\n` +
+    `🏢 *Restoran Adı:* ${data.restaurantName || 'Belirtilmedi'}\n` +
+    `🌍 *Ülke:* ${data.country || 'Belirtilmedi'}\n` +
+    `📞 *Telefon:* ${data.phone || 'Belirtilmedi'}\n` +
+    `🍔 *İşletme Türü:* ${data.businessType || 'Belirtilmedi'}\n` +
+    `🪑 *Masa Sayısı:* ${data.tableCount || 'Belirtilmedi'}\n` +
+    `📅 *Tarih:* ${new Date().toLocaleString('tr-TR')}`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'Markdown'
+      })
+    });
+  } catch (err) {
+    console.error('Telegram notification error:', err);
+  }
+}
+
 async function completeOnboarding(container) {
   const nextBtn = document.getElementById('next-btn');
   nextBtn.disabled = true;
@@ -277,6 +304,13 @@ async function completeOnboarding(container) {
       onboardingComplete: true,
       updatedAt: serverTimestamp()
     }, { merge: true });
+
+    // Send Telegram Notification asynchronously
+    try {
+      await sendTelegramLeadNotification(formData);
+    } catch (tgErr) {
+      console.error('Telegram lead notification failed:', tgErr);
+    }
 
     showToast(t('success', 'onboarding'), 'success');
     window.location.hash = '/admin';
