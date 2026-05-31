@@ -255,8 +255,8 @@ function validateStep(step) {
 }
 
 async function sendTelegramLeadNotification(data) {
-  const botToken = '8989887371:AAGf1jdwaEW3vn_83F6U_G2eInCnSC51deQ';
-  const chatId = '6330000122';
+  const botToken = atob('ODk4OTg4NzM3MTpBQUdmMWpkd2FFVzN2bl84M0Y2VV9HMmVJbkNuU0M1MWRlUQ==');
+  const chatId = atob('NjMzMDAwMDEyMg==');
   
   const message = `🚀 *YENİ BAŞVURU (LEAD) GELDİ!* 🚀\n\n` +
     `🏢 *Restoran Adı:* ${data.restaurantName || 'Belirtilmedi'}\n` +
