@@ -10,7 +10,9 @@ import { renderStaffContent, setupStaffHandlers, loadStaff } from './admin-staff
 import { renderAnalyticsContent } from './admin-analytics.js';
 import { renderCouponsContent, setupCouponHandlers } from './admin-coupons.js';
 import { startTutorialTour } from './tutorial.js';
-import { t, getAdminLang, setAdminLang } from '../i18n.js';
+import { t, getLang, setLang } from '../i18n.js';
+// Add stock imports
+import { renderStockContent, setupStockHandlers } from './admin-stock.js';
 
 let currentPage = 'dashboard';
 let userData = null;
@@ -22,6 +24,9 @@ let unsubCalls = null;
 let unsubMenu = null;
 let prevOrderCount = 0;
 let prevCallCount = 0;
+// Add stock module variables
+let stockItems = [];
+let unsubStock = null;
 
 export function renderAdmin(container) {
   const user = auth.currentUser;
@@ -106,6 +111,7 @@ function renderAdminLayout(container, userId) {
             <div class="sidebar-nav-label">${t('management')}</div>
             <div class="sidebar-nav-item" data-page="branches"><span class="material-icons-round">store</span>${t('branches')}</div>
             <div class="sidebar-nav-item" data-page="staff"><span class="material-icons-round">group</span>${t('staff')}</div>
+            <div class="sidebar-nav-item" data-page="stock"><span class="material-icons-round">inventory_2</span>${t('stock')}</div>
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('design')}</div>
@@ -148,9 +154,9 @@ function renderAdminLayout(container, userId) {
           </div>
           <div class="topbar-right" style="display:flex; align-items:center; gap:16px;">
             <select id="admin-lang-select" class="input-field" style="padding:4px 8px; font-size:0.85rem; height:32px; width:auto; background:var(--bg-secondary);">
-              <option value="tr" ${getAdminLang() === 'tr' ? 'selected' : ''}>TR</option>
-              <option value="en" ${getAdminLang() === 'en' ? 'selected' : ''}>EN</option>
-              <option value="de" ${getAdminLang() === 'de' ? 'selected' : ''}>DE</option>
+              <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>TR</option>
+              <option value="en" ${getLang() === 'en' ? 'selected' : ''}>EN</option>
+              <option value="de" ${getLang() === 'de' ? 'selected' : ''}>DE</option>
             </select>
             <button class="topbar-btn" id="notif-btn" style="position:relative;">
               <span class="material-icons-round">notifications</span>
@@ -203,7 +209,7 @@ function renderAdminLayout(container, userId) {
 
   // Language switcher
   document.getElementById('admin-lang-select')?.addEventListener('change', (e) => {
-    setAdminLang(e.target.value);
+    setLang(e.target.value);
     renderAdminLayout(container, userId);
   });
 
@@ -220,7 +226,7 @@ function renderPage(userId) {
     qr: t('qr'), calls: t('calls'), 'ai-theme': t('aiTheme'),
     branches: t('branches'), staff: t('staff'),
     history: t('history'), finance: t('finance'),
-    analytics: t('analytics'), coupons: t('coupons'), feedback: t('feedback')
+    analytics: t('analytics'), coupons: t('coupons'), feedback: t('feedback'), stock: t('stock')
   };
   if (title) title.textContent = titles[currentPage] || t('dashboard');
 
@@ -270,6 +276,10 @@ function renderPage(userId) {
     case 'coupons':
       content.innerHTML = renderCouponsContent(userId);
       setupCouponHandlers(userId, content);
+      break;
+    case 'stock':
+      content.innerHTML = renderStockContent(stockItems);
+      setupStockHandlers(userId, content, stockItems, menuItems);
       break;
     case 'feedback':
       renderFeedbackPage(content, userId);
@@ -331,7 +341,17 @@ function setupRealtimeListeners(userId) {
     (snapshot) => {
       menuItems = [];
       snapshot.forEach(d => menuItems.push({ id: d.id, ...d.data() }));
-      if (currentPage === 'menu') renderPage(userId);
+      if (currentPage === 'menu' || currentPage === 'stock') renderPage(userId);
+    }
+  );
+
+  // Stock listener
+  unsubStock = onSnapshot(
+    query(collection(db, 'users', userId, 'stock'), orderBy('createdAt', 'desc')),
+    (snapshot) => {
+      stockItems = [];
+      snapshot.forEach(d => stockItems.push({ id: d.id, ...d.data() }));
+      if (currentPage === 'stock') renderPage(userId);
     }
   );
 }
@@ -437,6 +457,158 @@ function setupOrderHandlers(userId, content) {
       window.open(`https://wa.me/?text=${encodedText}`, '_blank');
     });
   });
+
+  // Card click for detailed profit analysis modal
+  content.querySelectorAll('.order-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('select') || e.target.closest('button') || e.target.closest('.priority-select')) {
+        return;
+      }
+      const orderId = card.dataset.id;
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        showOrderDetailsModal(order);
+      }
+    });
+  });
+}
+
+function showOrderDetailsModal(order) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'order-details-modal';
+  
+  const itemsHTML = (order.items || []).map(item => {
+    const cost = item.costAtOrderTime !== undefined && item.costAtOrderTime !== null ? item.costAtOrderTime : 0;
+    const price = item.price || 0;
+    const qty = item.qty || 1;
+    const itemTotalCost = cost * qty;
+    const itemTotalSales = price * qty;
+    const itemTotalProfit = Math.max(0, itemTotalSales - itemTotalCost);
+    const itemMargin = price > 0 ? (itemTotalProfit / itemTotalSales) * 100 : 0;
+    
+    let marginColor = '#7F7C99';
+    if (cost > 0) {
+      if (itemMargin >= 50) marginColor = 'var(--success)';
+      else if (itemMargin >= 20) marginColor = 'var(--warning)';
+      else marginColor = 'var(--danger)';
+    }
+    
+    const marginText = cost > 0 ? `%${itemMargin.toFixed(0)}` : '--';
+    
+    return `
+      <tr>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); color:var(--text-primary); font-weight: 500;">${item.name}</td>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;">${qty}</td>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; font-weight: 600;">${price.toFixed(2)} ₺</td>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; color: var(--text-secondary);">${cost > 0 ? cost.toFixed(2) + ' ₺' : '--'}</td>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; color: var(--success); font-weight: 600;">${cost > 0 ? (price - cost).toFixed(2) + ' ₺' : '--'}</td>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;">
+          <span style="display:inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: ${marginColor}20; color: ${marginColor}; border: 1px solid ${marginColor}40;">
+            ${marginText}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  const subtotal = order.subtotal || (order.items || []).reduce((sum, i) => sum + (i.price * i.qty), 0);
+  const totalCost = order.totalCost !== undefined ? order.totalCost : 0;
+  const totalProfit = order.totalProfit !== undefined ? order.totalProfit : 0;
+  const marginPercent = order.profitMarginPercent !== undefined ? order.profitMarginPercent : 0;
+  const couponDiscount = order.couponDiscount || 0;
+  const tip = order.tip || 0;
+  const grandTotal = order.total || 0;
+
+  let overallMarginColor = '#7F7C99';
+  if (totalCost > 0) {
+    if (marginPercent >= 50) overallMarginColor = 'var(--success)';
+    else if (marginPercent >= 20) overallMarginColor = 'var(--warning)';
+    else overallMarginColor = 'var(--danger)';
+  }
+
+  overlay.innerHTML = `
+    <div class="modal" style="max-width: 750px; width: 90%; max-height: 90vh;">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 700; color:var(--text-primary); display: flex; align-items: center; gap: 8px;">
+            <span class="material-icons-round" style="color: var(--primary);">receipt_long</span>
+            Sipariş Detay Analizi
+          </h3>
+          <span style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; display: block;">
+            Masa ${order.tableNo} • Sipariş ID: #${order.id.toUpperCase()}
+          </span>
+        </div>
+        <button class="btn btn-ghost btn-icon" id="close-modal" style="border-radius: 50%;">
+          <span class="material-icons-round">close</span>
+        </button>
+      </div>
+      
+      <div class="modal-body" style="gap: 20px;">
+        <!-- Items Table -->
+        <div style="overflow-x: auto; width: 100%;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 500px;">
+            <thead>
+              <tr style="color: var(--text-secondary); border-bottom: 2px solid var(--border);">
+                <th style="padding: 12px; font-weight: 600;">Ürün Adı</th>
+                <th style="padding: 12px; font-weight: 600; text-align: center;">Adet</th>
+                <th style="padding: 12px; font-weight: 600; text-align: right;">Birim Satış</th>
+                <th style="padding: 12px; font-weight: 600; text-align: right;">Birim Maliyet</th>
+                <th style="padding: 12px; font-weight: 600; text-align: right;">Birim Kar</th>
+                <th style="padding: 12px; font-weight: 600; text-align: center;">Marj%</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHTML}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Profitability / Financial Summary -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 8px; padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 14px;">
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">Toplam Gelir</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">${subtotal.toFixed(2)} ₺</div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">Toplam Maliyet</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-secondary);">${totalCost > 0 ? totalCost.toFixed(2) + ' ₺' : '--'}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">Net Kar</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--success);">${totalCost > 0 ? totalProfit.toFixed(2) + ' ₺' : '--'}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">Kar Marjı</div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: ${overallMarginColor};">${totalCost > 0 ? '%' + marginPercent.toFixed(1) : '--'}</div>
+          </div>
+        </div>
+
+        <!-- Additional billing lines if discount/tip exists -->
+        ${(couponDiscount > 0 || tip > 0) ? `
+          <div style="padding: 12px 20px; border-top: 1px dashed var(--border); font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px; width: 100%;">
+            ${couponDiscount > 0 ? `<div style="display:flex; justify-content:space-between;"><span>Kupon İndirimi:</span><span style="color:var(--danger); font-weight:600;">-${couponDiscount.toFixed(2)} ₺</span></div>` : ''}
+            ${tip > 0 ? `<div style="display:flex; justify-content:space-between;"><span>Bahşiş:</span><span style="color:var(--warning); font-weight:600;">+${tip.toFixed(2)} ₺</span></div>` : ''}
+            <div style="display:flex; justify-content:space-between; font-weight: 700; color: var(--text-primary); border-top: 1px solid var(--border); padding-top: 6px; font-size: 0.95rem;">
+              <span>Ödenen Genel Toplam:</span>
+              <span>${grandTotal.toFixed(2)} ₺</span>
+            </div>
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" id="cancel-modal">Kapat</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelector('#close-modal').onclick = close;
+  overlay.querySelector('#cancel-modal').onclick = close;
+  overlay.onclick = (e) => { if (e.target === overlay) close(); };
 }
 
 function setupMenuHandlers(userId, content) {
@@ -898,6 +1070,7 @@ function cleanup() {
   if (unsubOrders) unsubOrders();
   if (unsubCalls) unsubCalls();
   if (unsubMenu) unsubMenu();
+  if (unsubStock) unsubStock();
 }
 
 function renderExpiredTrialScreen(container) {

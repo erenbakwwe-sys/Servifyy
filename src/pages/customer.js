@@ -3,6 +3,7 @@ import { showToast, formatCurrency, setCurrency } from '../utils.js';
 import { t, getLang, setLang } from '../i18n.js';
 import { validateCoupon, useCoupon } from './admin-coupons.js';
 import { generateThemeHTML } from './admin-ai-theme.js';
+import { deductStockOnOrder } from '../lib/costCalculator.js';
 
 let cart = [];
 let restaurantData = null;
@@ -72,8 +73,9 @@ export async function renderCustomerMenu(container, params) {
 }
 
 function renderCustomTheme(container, overrideLang) {
-  // Determine language: 1) overrideLang from re-render, 2) restaurantData.menuLang (admin-set), 3) 'tr'
-  const activeLang = overrideLang || restaurantData.menuLang || 'tr';
+  // Determine language: 1) overrideLang, 2) local storage lang, 3) restaurant data lang, 4) 'tr'
+  const activeLang = overrideLang || getLang() || restaurantData.menuLang || 'tr';
+  setLang(activeLang); // Sync active language state globally
 
   // Determine preset keyword from lastPrompt
   let presetKeyword = 'default';
@@ -494,23 +496,67 @@ function openCartPanel() {
         
         <div id="split-equal-area" style="display:none; margin-bottom: 20px;">
           <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-secondary); padding:12px; border-radius:12px;">
-            <span>Kişi Sayısı:</span>
+            <span>${t('splitCountLabel', 'customer') || 'Kişi Sayısı:'}</span>
             <input type="number" id="split-count" class="input-field" value="2" min="2" max="20" style="width:80px; text-align:center;">
           </div>
           <div style="text-align:right; margin-top:8px; font-size:0.9rem; color:var(--text-secondary);" id="split-amount-display">
-            Kişi başı: ${formatCurrency(total / 2)}
+            ${t('perPerson', 'customer') || 'Kişi başı:'} ${formatCurrency(total / 2)}
           </div>
         </div>
 
         <div id="split-custom-area" style="display:none; margin-bottom: 20px;">
           <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-secondary); padding:12px; border-radius:12px;">
-            <span>Ödenecek Tutar:</span>
+            <span>${t('customAmountLabel', 'customer') || 'Ödenecek Tutar:'}</span>
             <div style="display:flex; align-items:center; gap:8px;">
               <input type="number" id="custom-pay-amount" class="input-field" value="" placeholder="0.00" style="width:100px; text-align:right;">
               <span style="font-weight:600;">₺</span>
             </div>
           </div>
         </div>
+
+        <!-- Coupon Section -->
+        <div class="checkout-section-title">${t('couponCode', 'customer')}</div>
+        <div class="coupon-input-section" style="margin-bottom: 20px;">
+          <div class="coupon-input-row" style="display:flex; gap:8px;">
+            <input type="text" id="coupon-code-input" class="input-field" placeholder="${t('couponCode', 'customer')}" style="margin: 0; flex: 1;">
+            <button class="btn btn-primary" id="apply-coupon-btn" style="white-space: nowrap; height: 46px; border-radius: 12px; padding: 0 16px;">${t('couponApply', 'customer')}</button>
+          </div>
+          <div id="coupon-result" class="coupon-result"></div>
+        </div>
+
+        <!-- Tip Section -->
+        <div class="checkout-section-title">${t('tipLeave', 'customer')}</div>
+        <div class="tip-section" style="margin-bottom: 20px;">
+          <div class="tip-options" style="display:flex; gap:8px; flex-wrap:wrap;">
+            <div class="tip-option" data-tip-pct="0">
+              %0
+              <span class="tip-pct" style="font-size:0.75rem; display:block; color:var(--text-muted); margin-top:2px;">${t('tipNone', 'customer')}</span>
+            </div>
+            <div class="tip-option" data-tip-pct="5">
+              %5
+            </div>
+            <div class="tip-option selected" data-tip-pct="10">
+              %10
+            </div>
+            <div class="tip-option" data-tip-pct="15">
+              %15
+            </div>
+            <div class="tip-option" data-tip-pct="custom">
+              ${t('tipCustom', 'customer')}
+            </div>
+          </div>
+          <div class="tip-custom-input" id="tip-custom-area" style="display:none;">
+            <input type="number" id="tip-custom-val" class="input-field" placeholder="0.00" style="margin-top: 8px;">
+          </div>
+          <div class="tip-total-row" style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+            <span class="tip-total-label" style="font-size: 0.85rem; color: #a1a1aa;">${t('tipIncluded', 'customer')}:</span>
+            <span class="tip-total-value" id="tip-grand-total" style="font-weight: 800; font-size: 1.1rem; color: #EAB308;">${formatCurrency(total * 1.1)}</span>
+          </div>
+        </div>
+
+        <!-- Order Note -->
+        <div class="checkout-section-title">${t('orderNote', 'customer')}</div>
+        <textarea id="order-note" class="input-field" rows="2" placeholder="${t('orderNote', 'customer')}" style="width:100%; border-radius:12px; padding:12px; margin-bottom:20px; resize: none;"></textarea>
 
         <div class="checkout-section-title">${t('paymentMethod', 'customer')}</div>
         <div class="payment-options">
@@ -524,7 +570,7 @@ function openCartPanel() {
           </div>
           <div class="payment-option" data-method="online_payment">
             <div class="payment-icon">📲</div>
-            <div class="payment-label">Online Öde</div>
+            <div class="payment-label">${t('onlinePos', 'customer')}</div>
           </div>
         </div>
 
@@ -543,7 +589,7 @@ function openCartPanel() {
 
         <button class="btn btn-primary btn-block btn-lg pay-button" id="place-order-btn">
           <span class="material-icons-round">check_circle</span>
-          ${formatCurrency(total)} ${t('pay', 'customer')}
+          ${formatCurrency(total * 1.1)} ${t('pay', 'customer')}
         </button>
 
         <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.05);">
@@ -630,16 +676,49 @@ function openCartPanel() {
   const splitDisplay = panel.querySelector('#split-amount-display');
   const payBtn = panel.querySelector('#place-order-btn');
 
+  // Tip selection variables
+  let selectedTipPct = 10;
+  let customTipAmount = 0;
+  let couponDiscount = 0;
+  let appliedCouponId = null;
+
+  const getGrandTotal = () => {
+    let tipAmount = selectedTipPct === 'custom' ? customTipAmount : total * (selectedTipPct / 100);
+    return Math.max(0, total + tipAmount - couponDiscount);
+  };
+
+  const updateGrandTotal = () => {
+    const grand = getGrandTotal();
+    
+    // Update tip-grand-total if exists
+    const grandEl = panel.querySelector('#tip-grand-total');
+    if (grandEl) grandEl.textContent = formatCurrency(grand);
+    
+    // Update the main total displays at the top
+    const mainTotalEl = panel.querySelector('.cart-summary.total .total-amount');
+    if (mainTotalEl) mainTotalEl.textContent = formatCurrency(grand);
+    
+    const remainingEl = panel.querySelector('.cart-summary.remaining .total-amount');
+    if (remainingEl) remainingEl.textContent = formatCurrency(grand);
+    
+    // Recalculate split display amounts
+    const splitCount = Math.max(2, parseInt(splitCountInput?.value) || 2);
+    if (splitDisplay) splitDisplay.textContent = (t('perPerson', 'customer') || 'Kişi başı:') + ' ' + formatCurrency(grand / splitCount);
+
+    updatePayButton();
+  };
+
   const updatePayButton = () => {
-    let payAmount = total;
+    const grand = getGrandTotal();
+    let payAmount = grand;
     const activeBtn = panel.querySelector('.amount-btn.selected');
     if (activeBtn) {
       if (activeBtn.dataset.type === 'equal') {
         const count = Math.max(2, parseInt(splitCountInput.value) || 2);
-        payAmount = total / count;
+        payAmount = grand / count;
       } else if (activeBtn.dataset.type === 'custom') {
         const customInput = panel.querySelector('#custom-pay-amount');
-        payAmount = Math.min(total, Math.max(0, parseFloat(customInput.value) || 0));
+        payAmount = Math.min(grand, Math.max(0, parseFloat(customInput.value) || 0));
       }
     }
     // Update the button text with the correct amount
@@ -648,9 +727,7 @@ function openCartPanel() {
 
   if (splitCountInput) {
     splitCountInput.addEventListener('input', () => {
-      const count = Math.max(2, parseInt(splitCountInput.value) || 2);
-      if (splitDisplay) splitDisplay.textContent = 'Kişi başı: ' + formatCurrency(total / count);
-      updatePayButton();
+      updateGrandTotal();
     });
   }
   
@@ -675,7 +752,7 @@ function openCartPanel() {
         if (equalArea) equalArea.style.display = 'none';
         if (customArea) customArea.style.display = 'none';
       }
-      updatePayButton();
+      updateGrandTotal();
     });
   });
 
@@ -683,6 +760,12 @@ function openCartPanel() {
   const cardInfoArea = panel.querySelector('.card-info-area');
   const cardSectionTitle = panel.querySelector('#card-details-title');
   
+  // Set initial POS/Cash view depending on selected method
+  if (cardInfoArea && cardSectionTitle) {
+    cardInfoArea.style.display = 'block'; // defaults to pos
+    cardSectionTitle.style.display = 'block';
+  }
+
   panel.querySelectorAll('.payment-option').forEach(opt => {
     opt.addEventListener('click', () => {
       panel.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
@@ -700,19 +783,7 @@ function openCartPanel() {
     });
   });
 
-  // Tip selection
-  let selectedTipPct = 10;
-  let customTipAmount = 0;
-  let couponDiscount = 0;
-  let appliedCouponId = null;
-
-  const updateGrandTotal = () => {
-    let tipAmount = selectedTipPct === 'custom' ? customTipAmount : total * (selectedTipPct / 100);
-    const grand = total + tipAmount - couponDiscount;
-    const grandEl = panel.querySelector('#tip-grand-total');
-    if (grandEl) grandEl.textContent = formatCurrency(Math.max(0, grand));
-  };
-
+  // Tip selection event listeners
   panel.querySelectorAll('.tip-option').forEach(opt => {
     opt.addEventListener('click', () => {
       panel.querySelectorAll('.tip-option').forEach(o => o.classList.remove('selected'));
@@ -720,10 +791,10 @@ function openCartPanel() {
       const pct = opt.dataset.tipPct;
       if (pct === 'custom') {
         selectedTipPct = 'custom';
-        panel.querySelector('#tip-custom-area').classList.add('show');
+        panel.querySelector('#tip-custom-area').style.display = 'block';
       } else {
         selectedTipPct = parseInt(pct);
-        panel.querySelector('#tip-custom-area').classList.remove('show');
+        panel.querySelector('#tip-custom-area').style.display = 'none';
       }
       updateGrandTotal();
     });
@@ -734,26 +805,31 @@ function openCartPanel() {
     updateGrandTotal();
   });
 
-  // Coupon
+  // Coupon application event listener
   panel.querySelector('#apply-coupon-btn')?.addEventListener('click', async () => {
     const code = panel.querySelector('#coupon-code-input')?.value?.trim();
     const resultEl = panel.querySelector('#coupon-result');
-    if (!code) { showToast('Kupon kodu girin', 'warning'); return; }
+    if (!code) { showToast(t('enterCouponWarn', 'customer') || 'Kupon kodu girin', 'warning'); return; }
     
     const result = await validateCoupon(currentUserId, code, total);
     if (result.valid) {
       couponDiscount = result.discount;
       appliedCouponId = result.couponId;
       resultEl.className = 'coupon-result success';
+      resultEl.style.display = 'block';
       resultEl.textContent = `✓ ${result.type === 'percent' ? '%' + result.value : formatCurrency(result.value)} indirim uygulandı! (-${formatCurrency(couponDiscount)})`;
     } else {
       couponDiscount = 0;
       appliedCouponId = null;
       resultEl.className = 'coupon-result error';
+      resultEl.style.display = 'block';
       resultEl.textContent = `✗ ${result.message}`;
     }
     updateGrandTotal();
   });
+
+  // Initial call to set initial grand total (total + 10% default tip)
+  updateGrandTotal();
 
   // Place order
   panel.querySelector('#place-order-btn').addEventListener('click', () => {
@@ -772,7 +848,7 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
   const splitCountVal = paymentMethod === 'split' ? parseInt(panel.querySelector('#split-count').value) : null;
 
   orderBtn.disabled = true;
-  orderBtn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> İşleniyor...';
+  orderBtn.innerHTML = `<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> ${t('processing', 'customer') || 'İşleniyor...'}`;
 
   // Priority Keywords
   let priority = '';
@@ -780,9 +856,28 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
   if (noteLower.includes('acil') || noteLower.includes('urgent')) priority = 'acil';
   if (noteLower.includes('alerji') || noteLower.includes('allergy')) priority = 'alerji';
 
+  // 1. Calculate snapshots for items and order level
+  const orderItems = cart.map(i => {
+    const menuItem = menuItemsData.find(m => m.id === i.id);
+    const costAtOrderTime = menuItem && menuItem.calculatedCost !== undefined && menuItem.calculatedCost !== null ? menuItem.calculatedCost : 0;
+    const profitAtOrderTime = Math.max(0, i.price - costAtOrderTime);
+    return {
+      id: i.id,
+      name: i.name,
+      price: i.price,
+      qty: i.qty,
+      costAtOrderTime: costAtOrderTime,
+      profitAtOrderTime: profitAtOrderTime
+    };
+  });
+
+  const totalCost = parseFloat(orderItems.reduce((sum, item) => sum + (item.costAtOrderTime * item.qty), 0).toFixed(2));
+  const totalProfit = parseFloat((total - totalCost - couponDiscount).toFixed(2));
+  const profitMarginPercent = (total - couponDiscount) > 0 ? parseFloat((totalProfit / (total - couponDiscount) * 100).toFixed(2)) : 0;
+
   // Online Payment Logic
   if (paymentMethod === 'online_payment') {
-    showToast('Ödeme sayfasına yönlendiriliyorsunuz...', 'info');
+    showToast(t('redirectingToPayment', 'customer') || 'Ödeme sayfasına yönlendiriliyorsunuz...', 'info');
     try {
       const fetchResponse = await fetch('/api/createPaymentSession', {
         method: 'POST',
@@ -810,7 +905,7 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
         // Save the order FIRST as 'pending_payment' so we have a record
         await addDoc(collection(db, 'users', currentUserId, 'orders'), {
           tableNo: currentTableNo,
-          items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+          items: orderItems,
           total: grandTotal,
           subtotal: total,
           tip: tipAmount,
@@ -821,12 +916,22 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
           priority: priority,
           status: 'pending_payment',
           paymentSessionId: responseData.sessionId || null,
+          totalCost: totalCost,
+          totalProfit: totalProfit,
+          profitMarginPercent: profitMarginPercent,
           createdAt: serverTimestamp()
         });
 
         // Use coupon if applied
         if (appliedCouponId) {
           await useCoupon(currentUserId, appliedCouponId);
+        }
+
+        // Deduct stock
+        try {
+          await deductStockOnOrder(cart, currentUserId);
+        } catch (stockErr) {
+          console.error('Stock deduction failed:', stockErr);
         }
 
         // Redirect to payment URL
@@ -837,19 +942,17 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
       }
     } catch (err) {
       console.error('Payment Error:', err);
-      showToast('Ödeme başlatılamadı: ' + err.message, 'error');
+      showToast((t('paymentStartError', 'customer') || 'Ödeme başlatılamadı: ') + err.message, 'error');
       orderBtn.disabled = false;
-      orderBtn.innerHTML = '<span class="material-icons-round">send</span> Siparişi Gönder';
+      orderBtn.innerHTML = `<span class="material-icons-round">send</span> ${t('sendOrder', 'customer') || 'Siparişi Gönder'}`;
       return;
     }
   }
 
   try {
-    
-
     await addDoc(collection(db, 'users', currentUserId, 'orders'), {
       tableNo: currentTableNo,
-      items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+      items: orderItems,
       total: grandTotal,
       subtotal: total,
       tip: tipAmount,
@@ -859,12 +962,22 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
       note: orderNote,
       priority: priority,
       status: 'new',
+      totalCost: totalCost,
+      totalProfit: totalProfit,
+      profitMarginPercent: profitMarginPercent,
       createdAt: serverTimestamp()
     });
 
     // Use coupon if applied
     if (appliedCouponId) {
       await useCoupon(currentUserId, appliedCouponId);
+    }
+
+    // Deduct stock
+    try {
+      await deductStockOnOrder(cart, currentUserId);
+    } catch (stockErr) {
+      console.error('Stock deduction failed:', stockErr);
     }
 
     panel.remove();
@@ -875,9 +988,9 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
     showOrderConfirmation();
   } catch (e) {
     console.error('Order error:', e);
-    showToast('Sipariş gönderilemedi: ' + e.message, 'error');
+    showToast((t('orderSendError', 'customer') || 'Sipariş gönderilemedi: ') + e.message, 'error');
     orderBtn.disabled = false;
-    orderBtn.innerHTML = '<span class="material-icons-round">send</span> Siparişi Gönder';
+    orderBtn.innerHTML = `<span class="material-icons-round">send</span> ${t('sendOrder', 'customer') || 'Siparişi Gönder'}`;
   }
 }
 
@@ -970,7 +1083,7 @@ function showFeedbackModal() {
   modal.querySelector('#skip-feedback-btn').addEventListener('click', () => modal.remove());
 
   modal.querySelector('#submit-feedback-btn').addEventListener('click', async () => {
-    if (selectedRating === 0) { showToast('Lütfen bir puan seçin', 'warning'); return; }
+    if (selectedRating === 0) { showToast(t('selectRatingWarn', 'customer') || 'Lütfen bir puan seçin', 'warning'); return; }
     try {
       await addDoc(collection(db, 'users', currentUserId, 'feedback'), {
         rating: selectedRating,
@@ -1008,7 +1121,7 @@ async function triggerWaiterCall() {
       createdAt: serverTimestamp()
     });
 
-    showToast('Garson çağrıldı! Birazdan gelecek.', 'success');
+    showToast(t('waiterCalledToast', 'customer') || 'Garson çağrıldı! Birazdan gelecek.', 'success');
 
     setTimeout(() => {
       if (btn) {
@@ -1017,7 +1130,7 @@ async function triggerWaiterCall() {
       }
     }, 5000);
   } catch (e) {
-    showToast('Çağrı gönderilemedi', 'error');
+    showToast(t('waiterCallError', 'customer') || 'Çağrı gönderilemedi', 'error');
     if (btn) {
       btn.classList.remove('called');
       btn.innerHTML = `<span class="material-icons-round">room_service</span> ${t('callWaiter', 'customer')}`;

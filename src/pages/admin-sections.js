@@ -135,6 +135,29 @@ export function renderOrdersContent(orders) {
                 <span class="badge ${o.status==='new'?'badge-primary':o.status==='preparing'?'badge-warning':'badge-success'}">
                   ${o.status==='new'?t('newOrder'):o.status==='preparing'?t('preparing'):t('completed')}
                 </span>
+                ${(() => {
+                  if (o.totalCost === undefined || o.totalCost === null || o.totalCost === 0) {
+                    return `<span class="badge" style="background:rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color:var(--text-secondary);">%--</span>`;
+                  }
+                  const margin = o.profitMarginPercent || 0;
+                  let badgeBg = 'rgba(255,255,255,0.05)';
+                  let badgeColor = 'var(--text-secondary)';
+                  let badgeBorder = 'rgba(255,255,255,0.1)';
+                  if (margin >= 50) {
+                    badgeBg = 'rgba(0, 184, 148, 0.1)';
+                    badgeColor = 'var(--success)';
+                    badgeBorder = 'rgba(0, 184, 148, 0.2)';
+                  } else if (margin >= 20) {
+                    badgeBg = 'rgba(253, 203, 110, 0.1)';
+                    badgeColor = 'var(--warning)';
+                    badgeBorder = 'rgba(253, 203, 110, 0.2)';
+                  } else {
+                    badgeBg = 'rgba(255, 118, 117, 0.1)';
+                    badgeColor = 'var(--danger)';
+                    badgeBorder = 'rgba(255, 118, 117, 0.2)';
+                  }
+                  return `<span class="badge" style="background:${badgeBg}; color:${badgeColor}; border:1px solid ${badgeBorder};">%${margin.toFixed(0)}</span>`;
+                })()}
                 <span class="order-time">${timeAgo(o.createdAt)}</span>
               </div>
             </div>

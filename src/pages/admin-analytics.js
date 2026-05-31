@@ -17,6 +17,16 @@ export function renderAnalyticsContent(orders, menuItems) {
   const monthRev = month.reduce((s,o) => s + (o.total||0), 0);
   const avgOrder = completedOrders.length > 0 ? completedOrders.reduce((s,o) => s + (o.total||0), 0) / completedOrders.length : 0;
 
+  // Maliyet & Net Kar Hesaplamaları
+  const todayCost = todayOrders.reduce((s,o) => s + (o.totalCost || 0), 0);
+  const todayProfit = todayOrders.reduce((s,o) => s + (o.totalProfit || 0), 0);
+
+  const weekCost = week.reduce((s,o) => s + (o.totalCost || 0), 0);
+  const weekProfit = week.reduce((s,o) => s + (o.totalProfit || 0), 0);
+
+  const monthCost = month.reduce((s,o) => s + (o.totalCost || 0), 0);
+  const monthProfit = month.reduce((s,o) => s + (o.totalProfit || 0), 0);
+
   // Top 10 Best Sellers
   const itemCounts = {};
   completedOrders.forEach(o => {
@@ -49,6 +59,45 @@ export function renderAnalyticsContent(orders, menuItems) {
   }
   const maxDayRev = Math.max(...dailyRev.map(d => d.rev), 1);
 
+  // Günlük net kar trendi (Son 7 gün)
+  const dailyProfit = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dayEnd = new Date(d); dayEnd.setHours(23,59,59,999);
+    const dayOrders = completedOrders.filter(o => { const od = parseDate(o); return od >= d && od <= dayEnd; });
+    const profit = dayOrders.reduce((s,o) => s + (o.totalProfit || 0), 0);
+    dailyProfit.push({ day: d.toLocaleDateString(undefined, { weekday: 'short' }), profit });
+  }
+  const maxDayProfit = Math.max(...dailyProfit.map(d => d.profit), 1);
+
+  // Ürün bazlı kar/maliyet kırılımı (Top 5 en karlı / en az karlı)
+  const productProfitData = {};
+  completedOrders.forEach(o => {
+    (o.items || []).forEach(i => {
+      if (!productProfitData[i.name]) {
+        productProfitData[i.name] = { qty: 0, revenue: 0, cost: 0, profit: 0 };
+      }
+      const cost = i.costAtOrderTime !== undefined && i.costAtOrderTime !== null ? i.costAtOrderTime : 0;
+      const profit = i.profitAtOrderTime !== undefined && i.profitAtOrderTime !== null ? i.profitAtOrderTime : Math.max(0, i.price - cost);
+      
+      productProfitData[i.name].qty += i.qty;
+      productProfitData[i.name].revenue += i.price * i.qty;
+      productProfitData[i.name].cost += cost * i.qty;
+      productProfitData[i.name].profit += profit * i.qty;
+    });
+  });
+
+  const soldProducts = Object.entries(productProfitData).map(([name, data]) => {
+    const margin = data.revenue > 0 ? (data.profit / data.revenue) * 100 : 0;
+    return { name, ...data, marginPercent: margin };
+  });
+
+  const topProfitable = [...soldProducts].sort((a,b) => b.profit - a.profit).slice(0, 5);
+  const maxProfitVal = topProfitable.length > 0 ? topProfitable[0].profit : 1;
+
+  const leastProfitable = [...soldProducts].filter(p => p.cost > 0).sort((a,b) => a.marginPercent - b.marginPercent).slice(0, 5);
+
   // Category breakdown
   const catRev = {};
   completedOrders.forEach(o => {
@@ -76,12 +125,12 @@ export function renderAnalyticsContent(orders, menuItems) {
 
   return `
     <div class="analytics-section">
-      <!-- Summary Cards -->
+      <!-- Ciro ve Sipariş Özet Kartları -->
       <div class="analytics-summary">
         <div class="analytics-card acard-purple">
           <div class="acard-icon"><span class="material-icons-round">today</span></div>
           <div class="acard-info">
-            <span class="acard-label">${t('today', 'admin')}</span>
+            <span class="acard-label">${t('today', 'admin')} Ciro</span>
             <span class="acard-value">${formatCurrency(todayRev)}</span>
             <span class="acard-sub">${todayOrders.length} ${t('orderCount', 'admin')}</span>
           </div>
@@ -89,7 +138,7 @@ export function renderAnalyticsContent(orders, menuItems) {
         <div class="analytics-card acard-blue">
           <div class="acard-icon"><span class="material-icons-round">date_range</span></div>
           <div class="acard-info">
-            <span class="acard-label">${t('thisWeek', 'admin')}</span>
+            <span class="acard-label">${t('thisWeek', 'admin')} Ciro</span>
             <span class="acard-value">${formatCurrency(weekRev)}</span>
             <span class="acard-sub">${week.length} ${t('orderCount', 'admin')}</span>
           </div>
@@ -97,7 +146,7 @@ export function renderAnalyticsContent(orders, menuItems) {
         <div class="analytics-card acard-green">
           <div class="acard-icon"><span class="material-icons-round">calendar_month</span></div>
           <div class="acard-info">
-            <span class="acard-label">${t('thisMonth', 'admin')}</span>
+            <span class="acard-label">${t('thisMonth', 'admin')} Ciro</span>
             <span class="acard-value">${formatCurrency(monthRev)}</span>
             <span class="acard-sub">${month.length} ${t('orderCount', 'admin')}</span>
           </div>
@@ -108,6 +157,46 @@ export function renderAnalyticsContent(orders, menuItems) {
             <span class="acard-label">${t('avgOrderAmount', 'admin')}</span>
             <span class="acard-value">${formatCurrency(avgOrder)}</span>
             <span class="acard-sub">${completedOrders.length} ${t('totalLabel', 'admin')}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kar & Maliyet Özet Kartları -->
+      <h3 style="margin: 24px 0 12px; font-size: 1.1rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+        <span class="material-icons-round" style="color: var(--success);">payments</span>
+        Maliyet & Net Kar Analizi
+      </h3>
+      <div class="analytics-summary" style="margin-bottom: 24px;">
+        <div class="analytics-card" style="background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 184, 148, 0.02)); border: 1px solid rgba(0, 184, 148, 0.2);">
+          <div class="acard-icon" style="background: rgba(0, 184, 148, 0.15); color: var(--success);"><span class="material-icons-round">paid</span></div>
+          <div class="acard-info">
+            <span class="acard-label" style="color: var(--text-secondary);">Bugün Net Kar</span>
+            <span class="acard-value" style="color: var(--success); font-weight:800;">${formatCurrency(todayProfit)}</span>
+            <span class="acard-sub" style="color: var(--text-muted);">Maliyet: ${formatCurrency(todayCost)}</span>
+          </div>
+        </div>
+        <div class="analytics-card" style="background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 184, 148, 0.02)); border: 1px solid rgba(0, 184, 148, 0.2);">
+          <div class="acard-icon" style="background: rgba(0, 184, 148, 0.15); color: var(--success);"><span class="material-icons-round">date_range</span></div>
+          <div class="acard-info">
+            <span class="acard-label" style="color: var(--text-secondary);">Bu Hafta Net Kar</span>
+            <span class="acard-value" style="color: var(--success); font-weight:800;">${formatCurrency(weekProfit)}</span>
+            <span class="acard-sub" style="color: var(--text-muted);">Maliyet: ${formatCurrency(weekCost)}</span>
+          </div>
+        </div>
+        <div class="analytics-card" style="background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 184, 148, 0.02)); border: 1px solid rgba(0, 184, 148, 0.2);">
+          <div class="acard-icon" style="background: rgba(0, 184, 148, 0.15); color: var(--success);"><span class="material-icons-round">calendar_month</span></div>
+          <div class="acard-info">
+            <span class="acard-label" style="color: var(--text-secondary);">Bu Ay Net Kar</span>
+            <span class="acard-value" style="color: var(--success); font-weight:800;">${formatCurrency(monthProfit)}</span>
+            <span class="acard-sub" style="color: var(--text-muted);">Maliyet: ${formatCurrency(monthCost)}</span>
+          </div>
+        </div>
+        <div class="analytics-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border);">
+          <div class="acard-icon" style="background: rgba(255,255,255,0.05); color: var(--text-primary);"><span class="material-icons-round">percent</span></div>
+          <div class="acard-info">
+            <span class="acard-label" style="color: var(--text-secondary);">Genel Kar Marjı</span>
+            <span class="acard-value" style="color: #fff; font-weight:800;">%${((monthRev - monthCost) > 0 && monthRev > 0) ? ((monthRev - monthCost) / monthRev * 100).toFixed(1) : '0.0'}</span>
+            <span class="acard-sub" style="color: var(--text-muted);">Son 30 Günlük Ortalama</span>
           </div>
         </div>
       </div>
@@ -124,6 +213,66 @@ export function renderAnalyticsContent(orders, menuItems) {
                 <div class="chart-bar-label">${d.day}</div>
               </div>
             `).join('')}
+          </div>
+        </div>
+
+        <!-- Günlük Kar Trendi -->
+        <div class="analytics-panel">
+          <h3><span class="material-icons-round">trending_up</span> Günlük Net Kar Trendi (Son 7 Gün)</h3>
+          <div class="chart-bar-container">
+            ${dailyProfit.map(d => `
+              <div class="chart-bar-wrapper">
+                <div class="chart-bar-value" style="color:var(--success); font-weight:600;">${formatCurrency(d.profit)}</div>
+                <div class="chart-bar" style="height: ${Math.max(4, (d.profit / maxDayProfit) * 100)}%; background: linear-gradient(to top, var(--success), var(--secondary-light));"></div>
+                <div class="chart-bar-label">${d.day}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- En Karlı 5 Menü Ürünü -->
+        <div class="analytics-panel">
+          <h3><span class="material-icons-round">military_tech</span> En Karlı 5 Menü Ürünü (Net Kar Tutarı)</h3>
+          <div class="top-sellers-list">
+            ${topProfitable.length === 0 ? `<p style="color:var(--text-muted);text-align:center;padding:20px;">Henüz satış verisi bulunmuyor.</p>` :
+              topProfitable.map((p, i) => `
+                <div class="top-seller-row">
+                  <span class="top-rank" style="background:rgba(0, 184, 148, 0.15); color:var(--success);">${i + 1}</span>
+                  <div class="top-info">
+                    <span class="top-name">${p.name}</span>
+                    <div class="top-bar-track" style="background: rgba(255,255,255,0.03);">
+                      <div class="top-bar-fill" style="width: ${(p.profit / maxProfitVal) * 100}%; background: linear-gradient(to right, var(--success), var(--secondary-light));"></div>
+                    </div>
+                  </div>
+                  <div class="top-stats">
+                    <span class="top-qty">${p.qty} Adet</span>
+                    <span class="top-rev" style="color: var(--success); font-weight:700;">+${formatCurrency(p.profit)} Kar</span>
+                  </div>
+                </div>
+              `).join('')}
+          </div>
+        </div>
+
+        <!-- En Düşük Marjlı 5 Menü Ürünü -->
+        <div class="analytics-panel">
+          <h3><span class="material-icons-round">trending_down</span> En Düşük Marjlı 5 Menü Ürünü</h3>
+          <div class="top-sellers-list">
+            ${leastProfitable.length === 0 ? `<p style="color:var(--text-muted);text-align:center;padding:20px;">Reçeteli ürün satışı bulunmuyor.</p>` :
+              leastProfitable.map((p, i) => `
+                <div class="top-seller-row">
+                  <span class="top-rank" style="background:rgba(255, 118, 117, 0.15); color:var(--danger);">${i + 1}</span>
+                  <div class="top-info">
+                    <span class="top-name">${p.name}</span>
+                    <div class="top-bar-track" style="background: rgba(255,255,255,0.03);">
+                      <div class="top-bar-fill" style="width: ${Math.max(5, p.marginPercent)}%; background: linear-gradient(to right, var(--danger), var(--accent-warm));"></div>
+                    </div>
+                  </div>
+                  <div class="top-stats">
+                    <span class="top-qty">%${p.marginPercent.toFixed(1)} Marj</span>
+                    <span class="top-rev" style="color: var(--text-secondary); font-size:0.8rem;">Maliyet: ${formatCurrency(p.cost / p.qty)}</span>
+                  </div>
+                </div>
+              `).join('')}
           </div>
         </div>
 
