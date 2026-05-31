@@ -45,6 +45,12 @@ service cloud.firestore {
         allow write: if isOwner(userId);
       }
 
+      // Stock Management (Readable and updateable by customers for stock deduction, managed by owner)
+      match /stock/{stockId} {
+        allow read, update: if true;
+        allow create, delete: if isOwner(userId);
+      }
+
       // Orders (Customers can create/track, KDS/Staff panel can read/update)
       match /orders/{orderId} {
         allow create: if true;
