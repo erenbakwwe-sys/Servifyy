@@ -574,18 +574,6 @@ function openCartPanel() {
           </div>
         </div>
 
-        <div class="checkout-section-title" id="card-details-title">${t('cardDetails', 'customer')}</div>
-        <div class="card-info-area">
-          <div class="card-header">
-            <span style="font-size:0.8rem;font-weight:600;color:#fff;">${t('cardDetails', 'customer')}</span>
-            <button class="scan-btn"><span class="material-icons-round" style="font-size:1rem;">qr_code_scanner</span> ${t('scanCard', 'customer')}</button>
-          </div>
-          <input type="text" class="card-input" placeholder="${t('cardNumber', 'customer')}">
-          <div class="card-row">
-            <input type="text" class="card-input" placeholder="AA/YY">
-            <input type="text" class="card-input" placeholder="CVV">
-          </div>
-        </div>
 
         <button class="btn btn-primary btn-block btn-lg pay-button" id="place-order-btn">
           <span class="material-icons-round">check_circle</span>
@@ -757,29 +745,10 @@ function openCartPanel() {
   });
 
   // Payment method selection
-  const cardInfoArea = panel.querySelector('.card-info-area');
-  const cardSectionTitle = panel.querySelector('#card-details-title');
-  
-  // Set initial POS/Cash view depending on selected method
-  if (cardInfoArea && cardSectionTitle) {
-    cardInfoArea.style.display = 'block'; // defaults to pos
-    cardSectionTitle.style.display = 'block';
-  }
-
   panel.querySelectorAll('.payment-option').forEach(opt => {
     opt.addEventListener('click', () => {
       panel.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
-      
-      const method = opt.dataset.method;
-      // Show card details ONLY if 'pos' (Credit Card) is selected. Hide for cash or physical POS.
-      if (method === 'pos') {
-        if (cardInfoArea) cardInfoArea.style.display = 'block';
-        if (cardSectionTitle) cardSectionTitle.style.display = 'block';
-      } else {
-        if (cardInfoArea) cardInfoArea.style.display = 'none';
-        if (cardSectionTitle) cardSectionTitle.style.display = 'none';
-      }
     });
   });
 
