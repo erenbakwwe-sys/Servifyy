@@ -63,8 +63,8 @@ export function renderStockContent(stockItems) {
       </div>
 
       <!-- Stock Table Panel -->
-      <div class="table-wrapper" style="overflow-x: auto;">
-        <table class="history-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+      <div class="table-wrapper" style="overflow-x: auto; width: 100%;">
+        <table class="history-table" style="width: 100%; min-width: 850px; border-collapse: collapse; text-align: left;">
           <thead>
             <tr style="border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.05);">
               <th style="padding: 14px 16px; white-space: nowrap;">${t('stockName', 'admin')}</th>
