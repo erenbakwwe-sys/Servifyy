@@ -63,23 +63,23 @@ export function renderStockContent(stockItems) {
       </div>
 
       <!-- Stock Table Panel -->
-      <div class="analytics-panel" style="overflow-x: auto; padding: 0;">
-        <table class="admin-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+      <div class="table-wrapper" style="overflow-x: auto;">
+        <table class="history-table" style="width: 100%; border-collapse: collapse; text-align: left;">
           <thead>
             <tr style="border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.05);">
-              <th style="padding: 14px 16px;">${t('stockName', 'admin')}</th>
-              <th style="padding: 14px 16px;">${t('unit', 'admin')}</th>
-              <th style="padding: 14px 16px;">${t('totalQty', 'admin')}</th>
-              <th style="padding: 14px 16px;">${t('remainingQty', 'admin')}</th>
-              <th style="padding: 14px 16px;">${t('unitCost', 'admin')}</th>
-              <th style="padding: 14px 16px;">${t('totalCost', 'admin')}</th>
-              <th style="padding: 14px 16px; text-align: right;">İşlemler</th>
+              <th style="padding: 14px 16px; white-space: nowrap;">${t('stockName', 'admin')}</th>
+              <th style="padding: 14px 16px; white-space: nowrap;">${t('unit', 'admin')}</th>
+              <th style="padding: 14px 16px; white-space: nowrap;">${t('totalQty', 'admin')}</th>
+              <th style="padding: 14px 16px; white-space: nowrap;">${t('remainingQty', 'admin')}</th>
+              <th style="padding: 14px 16px; white-space: nowrap;">${t('unitCost', 'admin')}</th>
+              <th style="padding: 14px 16px; white-space: nowrap;">${t('totalCost', 'admin')}</th>
+              <th style="padding: 14px 16px; text-align: right; white-space: nowrap;">İşlemler</th>
             </tr>
           </thead>
           <tbody>
             ${stockItems.length === 0 ? `
               <tr>
-                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted); white-space: nowrap;">
                   <span class="material-icons-round" style="font-size: 3rem; display:block; margin-bottom: 8px;">kitchen</span>
                   Henüz stok kalemi eklenmemiş.
                 </td>
@@ -102,20 +102,20 @@ export function renderStockContent(stockItems) {
 
               return `
                 <tr style="border-bottom: 1px solid var(--border); transition: background-color 0.2s; ${rowStyle}">
-                  <td style="padding: 14px 16px; font-weight: 600;">
+                  <td style="padding: 14px 16px; font-weight: 600; white-space: nowrap;">
                     ${item.name}
                     ${ratio <= 0.05 ? '<span style="color:var(--danger);font-size:0.75rem;margin-left:8px;font-weight:700;">[BİTTİ]</span>' : ratio <= 0.20 ? '<span style="color:var(--warning);font-size:0.75rem;margin-left:8px;font-weight:700;">[KRİTİK]</span>' : ''}
                   </td>
-                  <td style="padding: 14px 16px; text-transform: capitalize;">${item.unit}</td>
-                  <td style="padding: 14px 16px;">${item.totalQuantity}</td>
-                  <td style="padding: 14px 16px; font-weight: 700;">${item.remainingQuantity}</td>
-                  <td style="padding: 14px 16px;">${formattedCost}</td>
-                  <td style="padding: 14px 16px;">${totalRemainingCost}</td>
-                  <td style="padding: 14px 16px; text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
-                    <button class="btn btn-secondary btn-sm update-stock-btn" data-id="${item.id}" style="padding: 6px 10px;">
+                  <td style="padding: 14px 16px; text-transform: capitalize; white-space: nowrap;">${item.unit}</td>
+                  <td style="padding: 14px 16px; white-space: nowrap;">${item.totalQuantity}</td>
+                  <td style="padding: 14px 16px; font-weight: 700; white-space: nowrap;">${item.remainingQuantity}</td>
+                  <td style="padding: 14px 16px; white-space: nowrap;">${formattedCost}</td>
+                  <td style="padding: 14px 16px; white-space: nowrap;">${totalRemainingCost}</td>
+                  <td style="padding: 14px 16px; text-align: right; white-space: nowrap;">
+                    <button class="btn btn-secondary btn-sm update-stock-btn" data-id="${item.id}" style="padding: 6px 10px; display: inline-flex; vertical-align: middle; margin-right: 4px;">
                       <span class="material-icons-round" style="font-size: 1rem;">add_circle_outline</span> ${t('updateStock', 'admin')}
                     </button>
-                    <button class="btn btn-ghost btn-icon btn-sm delete-stock-btn" data-id="${item.id}" data-name="${item.name}" title="${t('del', 'admin')}">
+                    <button class="btn btn-ghost btn-icon btn-sm delete-stock-btn" data-id="${item.id}" data-name="${item.name}" title="${t('del', 'admin')}" style="display: inline-flex; vertical-align: middle;">
                       <span class="material-icons-round" style="color:var(--danger); font-size:1.1rem;">delete</span>
                     </button>
                   </td>
