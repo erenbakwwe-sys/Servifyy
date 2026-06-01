@@ -1252,6 +1252,10 @@
   .finance-cards {
     grid-template-columns: 1fr;
   }
+
+  .analytics-summary {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ============================================
@@ -1480,6 +1484,7 @@
 .acard-blue .acard-icon { background:rgba(9,132,227,0.12); color:#0984E3; }
 .acard-green .acard-icon { background:rgba(0,184,148,0.12); color:#00B894; }
 .acard-gold .acard-icon { background:rgba(253,203,110,0.12); color:#FDCB6E; }
+.acard-red .acard-icon { background:rgba(255,118,117,0.12); color:#FF7675; }
 .acard-info { display:flex; flex-direction:column; }
 .acard-label { font-size:0.8rem; color:var(--text-muted); font-weight:500; }
 .acard-value { font-size:1.4rem; font-weight:800; line-height:1.2; }
