@@ -28,7 +28,8 @@ export function renderStockContent(stockItems) {
           <p style="color:var(--text-muted);font-size:0.85rem;">${totalItems} ${t('items', 'admin')}</p>
         </div>
         <button class="btn btn-primary btn-sm" id="add-stock-btn">
-          <span class="material-icons-round">add</span> Yeni Hammadde
+          <span class="material-icons-round">add</span>
+          <span class="btn-text-responsive">Yeni Hammadde</span>
         </button>
       </div>
 
