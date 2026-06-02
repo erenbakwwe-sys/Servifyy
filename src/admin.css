@@ -1256,51 +1256,6 @@
   .analytics-summary {
     grid-template-columns: 1fr;
   }
-
-  .section-header {
-    display: flex;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: nowrap !important;
-    gap: 12px !important;
-    margin-bottom: 20px !important;
-  }
-
-  .section-header h3 {
-    font-size: 1.1rem !important;
-    white-space: nowrap;
-  }
-
-  .section-header p {
-    font-size: 0.75rem !important;
-  }
-
-  .section-header .btn {
-    width: auto !important;
-    padding: 6px 12px !important;
-    font-size: 0.8rem !important;
-    height: 32px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    justify-content: center !important;
-  }
-
-  @media (max-width: 380px) {
-    .btn-text-responsive {
-      display: none !important;
-    }
-    .section-header .btn {
-      padding: 6px !important;
-      border-radius: var(--radius-full) !important;
-      width: 32px !important;
-      height: 32px !important;
-      gap: 0 !important;
-    }
-  }
 }
 
 /* ============================================

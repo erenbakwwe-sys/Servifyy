@@ -21,15 +21,15 @@ export function renderStockContent(stockItems) {
   }).length;
 
   return `
-    <div class="menu-section">
-      <div class="section-header">
-        <div>
-          <h3 style="font-size:1.2rem;margin-bottom:4px;color:var(--text-primary);font-weight:700;">Stok Yönetimi</h3>
-          <p style="color:var(--text-muted);font-size:0.85rem;">${totalItems} ${t('items', 'admin')}</p>
+    <div class="stock-page-wrapper">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+        <div style="min-width:0;">
+          <h3 style="font-size:1.15rem; margin:0 0 2px 0; color:var(--text-primary); font-weight:700;">Stok Yönetimi</h3>
+          <p style="color:var(--text-muted); font-size:0.82rem; margin:0;">${totalItems} ${t('items', 'admin')}</p>
         </div>
-        <button class="btn btn-primary btn-sm" id="add-stock-btn">
-          <span class="material-icons-round">add</span>
-          <span class="btn-text-responsive">Yeni Hammadde</span>
+        <button class="btn btn-primary btn-sm" id="add-stock-btn" style="display:inline-flex !important; visibility:visible !important; opacity:1 !important; align-items:center; gap:6px; padding:8px 16px; font-size:0.85rem; white-space:nowrap; flex-shrink:0; z-index:10;">
+          <span class="material-icons-round" style="font-size:1.1rem;">add</span>
+          Yeni Hammadde
         </button>
       </div>
 
