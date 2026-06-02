@@ -21,17 +21,15 @@ export function renderStockContent(stockItems) {
   }).length;
 
   return `
-    <div class="stock-section">
-      <div class="menu-header">
+    <div class="menu-section">
+      <div class="section-header">
         <div>
-          <h3 style="font-size:1.1rem;margin-bottom:4px;">${t('stock', 'admin')}</h3>
+          <h3 style="font-size:1.2rem;margin-bottom:4px;color:var(--text-primary);font-weight:700;">Stok Yönetimi</h3>
           <p style="color:var(--text-muted);font-size:0.85rem;">${totalItems} ${t('items', 'admin')}</p>
         </div>
-        <div>
-          <button class="btn btn-primary btn-sm" id="add-stock-btn">
-            <span class="material-icons-round">add</span> ${t('addStock', 'admin')}
-          </button>
-        </div>
+        <button class="btn btn-primary btn-sm" id="add-stock-btn">
+          <span class="material-icons-round">add</span> Yeni Hammadde
+        </button>
       </div>
 
       <!-- Summary Widgets -->
