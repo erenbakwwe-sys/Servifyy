@@ -1,5 +1,5 @@
 import { db, doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy, onSnapshot, where, updateDoc } from '../firebase.js';
-import { showToast, formatCurrency, setCurrency } from '../utils.js';
+import { showToast, formatCurrency, setCurrency, getCurrencySymbol } from '../utils.js';
 import { t, getLang, setLang } from '../i18n.js';
 import { validateCoupon, useCoupon } from './admin-coupons.js';
 import { generateThemeHTML } from './admin-ai-theme.js';
@@ -68,7 +68,7 @@ export async function renderCustomerMenu(container, params) {
     }
   } catch (e) {
     console.error('Menu load error:', e);
-    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;"><div><h2>${t('errorOccurred', 'customer')}</h2><p style="color:var(--danger);margin-top:8px;">Hata Detayı: ${e.message || e}</p><p style="color:var(--text-muted);margin-top:8px;">${t('tryAgain', 'customer')}</p></div></div>`;
+    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;"><div><h2>${t('errorOccurred', 'customer')}</h2><p style="color:var(--danger);margin-top:8px;">${t('errorPrefix', 'admin') || 'Hata:'} ${e.message || e}</p><p style="color:var(--text-muted);margin-top:8px;">${t('tryAgain', 'customer')}</p></div></div>`;
   }
 }
 
@@ -142,7 +142,7 @@ function renderCustomTheme(container, overrideLang) {
       border:1px solid rgba(255,255,255,0.1);
     ">
       <span class="material-icons-round" style="font-size:1.1rem;color:#FF6B6B;">table_restaurant</span>
-      ${activeLang === 'en' ? 'Table' : activeLang === 'de' ? 'Tisch' : 'Masa'} ${currentTableNo}
+      ${t('table', 'customer') || 'Masa'} ${currentTableNo}
     </div>
   `;
 
@@ -223,7 +223,7 @@ function renderDefaultMenu(container) {
       <header class="customer-header">
         <h1 class="restaurant-name">${restaurantName}</h1>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-          <p class="table-info" style="margin:0;">Masa ${currentTableNo}</p>
+          <p class="table-info" style="margin:0;">${t('table', 'customer') || 'Masa'} ${currentTableNo}</p>
           <div class="lang-switcher">
             <select id="lang-select" class="input-field" style="padding:4px 8px; font-size:0.85rem; border-radius:12px; width:auto; background:var(--bg-secondary); border:1px solid var(--border);">
               <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
@@ -238,7 +238,7 @@ function renderDefaultMenu(container) {
         <div style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;" id="toggle-active-orders">
           <div style="display:flex; align-items:center; gap:8px;">
             <span class="material-icons-round">local_dining</span>
-            <span style="font-weight:700;" id="active-orders-text">Aktif Siparişleriniz</span>
+            <span style="font-weight:700;" id="active-orders-text">${t('activeOrders', 'customer') || 'Aktif Siparişleriniz'}</span>
           </div>
           <span class="material-icons-round" id="active-orders-icon">expand_more</span>
         </div>
@@ -426,7 +426,7 @@ function addToCart(item) {
   } else {
     cart.push({ ...item, qty: 1 });
   }
-  showToast(`${item.name} sepete eklendi`, 'success');
+  showToast(item.name + ' ' + (t('addedToCart', 'customer') || 'sepete eklendi'), 'success');
   
   // Sync with iframe if exists
   const iframe = document.getElementById('theme-iframe');
@@ -509,7 +509,7 @@ function openCartPanel() {
             <span>${t('customAmountLabel', 'customer') || 'Ödenecek Tutar:'}</span>
             <div style="display:flex; align-items:center; gap:8px;">
               <input type="number" id="custom-pay-amount" class="input-field" value="" placeholder="0.00" style="width:100px; text-align:right;">
-              <span style="font-weight:600;">₺</span>
+              <span style="font-weight:600;">${getCurrencySymbol()}</span>
             </div>
           </div>
         </div>
@@ -786,7 +786,7 @@ function openCartPanel() {
       appliedCouponId = result.couponId;
       resultEl.className = 'coupon-result success';
       resultEl.style.display = 'block';
-      resultEl.textContent = `✓ ${result.type === 'percent' ? '%' + result.value : formatCurrency(result.value)} indirim uygulandı! (-${formatCurrency(couponDiscount)})`;
+      resultEl.textContent = `✓ ${result.type === 'percent' ? '%' + result.value : formatCurrency(result.value)} ${t('couponAppliedSuccess', 'customer') || 'indirim uygulandı!'} (-${formatCurrency(couponDiscount)})`;
     } else {
       couponDiscount = 0;
       appliedCouponId = null;
@@ -1064,7 +1064,7 @@ function showFeedbackModal() {
       showToast(t('feedbackThanks', 'customer'), 'success');
       modal.remove();
     } catch(e) {
-      showToast('Gönderilemedi: ' + e.message, 'error');
+      showToast((t('feedbackSendError', 'customer') || 'Gönderilemedi') + ': ' + e.message, 'error');
     }
   });
 }

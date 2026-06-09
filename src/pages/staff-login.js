@@ -1,4 +1,5 @@
 import { showToast } from '../utils.js';
+import { t } from '../i18n.js';
 
 export function renderStaffLogin(container) {
   container.innerHTML = `
@@ -14,20 +15,20 @@ export function renderStaffLogin(container) {
           </div>
           <span class="gradient-text">QR Menü</span>
         </div>
-        <h2 class="auth-title">Personel Girişi</h2>
-        <p class="auth-subtitle">Yöneticinizin size verdiği bilgilerle giriş yapın</p>
+        <h2 class="auth-title">${t('staff').staffTitle}</h2>
+        <p class="auth-subtitle">${t('staff').staffSubtitle}</p>
 
         <form class="auth-form" id="staff-form">
           <div class="input-group">
             <label for="staff-org-code">
               <span class="material-icons-round" style="font-size:1rem;vertical-align:middle;margin-right:4px;">store</span>
-              Restoran Kodu
+              ${t('staff').businessCodeLabel}
             </label>
             <input
               type="text"
               id="staff-org-code"
               class="input-field"
-              placeholder="Restoranın kullanıcı ID kodu"
+              placeholder="${t('staff').businessCodePlaceholder}"
               autocomplete="off"
               required
             >
@@ -36,13 +37,13 @@ export function renderStaffLogin(container) {
           <div class="input-group">
             <label for="staff-login-user">
               <span class="material-icons-round" style="font-size:1rem;vertical-align:middle;margin-right:4px;">person</span>
-              Kullanıcı Adı
+              ${t('staff').usernameLabel}
             </label>
             <input
               type="text"
               id="staff-login-user"
               class="input-field"
-              placeholder="Kullanıcı adınız"
+              placeholder="${t('staff').usernamePlaceholder}"
               autocomplete="username"
               required
             >
@@ -51,13 +52,13 @@ export function renderStaffLogin(container) {
           <div class="input-group">
             <label for="staff-login-pass">
               <span class="material-icons-round" style="font-size:1rem;vertical-align:middle;margin-right:4px;">lock</span>
-              Şifre
+              ${t('staff').passwordLabel}
             </label>
             <input
               type="password"
               id="staff-login-pass"
               class="input-field"
-              placeholder="Şifreniz"
+              placeholder="${t('staff').passwordPlaceholder}"
               autocomplete="current-password"
               required
             >
@@ -65,20 +66,20 @@ export function renderStaffLogin(container) {
 
           <button type="submit" class="btn btn-primary btn-block btn-lg" id="staff-login-btn">
             <span class="material-icons-round">login</span>
-            Giriş Yap
+            ${t('staff').loginBtn}
           </button>
         </form>
 
         <div class="auth-switch">
           <a href="#/" style="color:var(--text-muted);font-size:0.85rem;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">
             <span class="material-icons-round" style="font-size:1rem;">arrow_back</span>
-            Ana Sayfaya Dön
+            ${t('staff').btnBackToMain}
           </a>
         </div>
 
         <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);text-align:center;">
           <a href="#/auth" style="color:var(--text-muted);font-size:0.8rem;text-decoration:none;">
-            Yönetici girişi için tıklayın
+            ${t('staff').adminLoginLink}
           </a>
         </div>
       </div>
@@ -103,12 +104,12 @@ async function handleLogin() {
   const btn       = document.getElementById('staff-login-btn');
 
   if (!orgCode || !username || !password) {
-    showToast('Tüm alanları doldurun', 'warning');
+    showToast(t('staff').fillAllFields, 'warning');
     return;
   }
 
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> Giriş yapılıyor...';
+  btn.innerHTML = `<span class="spinner" style="width:20px;height:20px;border-width:2px;"></span> ${t('staff').loggingIn}`;
 
   try {
     const fetchResponse = await fetch('/api/staffLogin', {
@@ -122,22 +123,22 @@ async function handleLogin() {
     const responseData = await fetchResponse.json();
 
     if (!fetchResponse.ok) {
-      showToast(responseData.error || 'Giriş başarısız', 'error');
+      showToast(responseData.error || t('staff').loginFailed, 'error');
       btn.disabled = false;
-      btn.innerHTML = '<span class="material-icons-round">login</span> Giriş Yap';
+      btn.innerHTML = `<span class="material-icons-round">login</span> ${t('staff').loginBtn}`;
       return;
     }
 
     // Save session
     localStorage.setItem('staffSession', JSON.stringify(responseData.staffSession));
 
-    showToast(`Hoş geldiniz, ${responseData.staffSession.username}! 👋`, 'success');
+    showToast(t('staff').welcomeStaff.replace('{name}', responseData.staffSession.username), 'success');
     window.location.hash = '/staff-panel';
   } catch (e) {
     console.error('Staff login error:', e);
-    showToast('Giriş hatası: Sunucuya bağlanılamadı.', 'error');
+    showToast(t('staff').serverConnectionError, 'error');
     btn.disabled = false;
-    btn.innerHTML = '<span class="material-icons-round">login</span> Giriş Yap';
+    btn.innerHTML = `<span class="material-icons-round">login</span> ${t('staff').loginBtn}`;
   }
 }
 

@@ -30,7 +30,7 @@ function getSteps() {
       icon: 'public',
       field: 'country',
       type: 'select',
-      options: ['Türkiye', 'Almanya', 'İngiltere', 'Amerika Birleşik Devletleri', 'Fransa', 'İtalya', 'İspanya', 'Hollanda', 'Belçika', 'Avusturya', 'İsviçre', 'Diğer']
+      options: t('countries', 'onboarding')
     },
     {
       title: t('s3Title', 'onboarding'),

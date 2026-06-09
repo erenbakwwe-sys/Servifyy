@@ -2,13 +2,24 @@ import { db, doc, updateDoc, deleteDoc, collection, addDoc, serverTimestamp } fr
 import { showToast, formatCurrency } from '../utils.js';
 import { t } from '../i18n.js';
 
-const ALLERGENS = [
-  {id:'gluten',label:'Gluten',emoji:'🌾'},{id:'dairy',label:'Süt',emoji:'🥛'},{id:'eggs',label:'Yumurta',emoji:'🥚'},
-  {id:'fish',label:'Balık',emoji:'🐟'},{id:'shellfish',label:'Kabuklu Deniz',emoji:'🦐'},{id:'nuts',label:'Sert Kabuklu',emoji:'🥜'},
-  {id:'peanuts',label:'Yer Fıstığı',emoji:'🥜'},{id:'soy',label:'Soya',emoji:'🫘'},{id:'celery',label:'Kereviz',emoji:'🥬'},
-  {id:'mustard',label:'Hardal',emoji:'🟡'},{id:'sesame',label:'Susam',emoji:'⚪'},{id:'sulphites',label:'Sülfit',emoji:'🍷'},
-  {id:'lupin',label:'Lupin',emoji:'🌸'},{id:'molluscs',label:'Yumuşakça',emoji:'🐚'}
-];
+function getAllergens() {
+  return [
+    {id:'gluten',label: t('allergenGluten', 'admin') || 'Gluten',emoji:'🌾'},
+    {id:'dairy',label: t('allergenDairy', 'admin') || 'Süt',emoji:'🥛'},
+    {id:'eggs',label: t('allergenEggs', 'admin') || 'Yumurta',emoji:'🥚'},
+    {id:'fish',label: t('allergenFish', 'admin') || 'Balık',emoji:'🐟'},
+    {id:'shellfish',label: t('allergenShellfish', 'admin') || 'Kabuklu Deniz',emoji:'🦐'},
+    {id:'nuts',label: t('allergenNuts', 'admin') || 'Sert Kabuklu',emoji:'🥜'},
+    {id:'peanuts',label: t('allergenPeanuts', 'admin') || 'Yer Fıstığı',emoji:'🥜'},
+    {id:'soy',label: t('allergenSoy', 'admin') || 'Soya',emoji:'🫘'},
+    {id:'celery',label: t('allergenCelery', 'admin') || 'Kereviz',emoji:'🥬'},
+    {id:'mustard',label: t('allergenMustard', 'admin') || 'Hardal',emoji:'🟡'},
+    {id:'sesame',label: t('allergenSesame', 'admin') || 'Susam',emoji:'⚪'},
+    {id:'sulphites',label: t('allergenSulphites', 'admin') || 'Sülfit',emoji:'🍷'},
+    {id:'lupin',label: t('allergenLupin', 'admin') || 'Lupin',emoji:'🌸'},
+    {id:'molluscs',label: t('allergenMolluscs', 'admin') || 'Yumuşakça',emoji:'🐚'}
+  ];
+}
 
 export function renderMenuContent(menuItems, categories, userId) {
   return `
@@ -77,72 +88,72 @@ function itemFormHTML(categories, item = null) {
   return `
     <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto;">
       <div class="modal-header">
-        <h3>${isEdit ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h3>
+        <h3>${isEdit ? t('edit', 'admin') : t('newItem', 'admin')}</h3>
         <button class="btn btn-ghost btn-icon" id="close-modal"><span class="material-icons-round">close</span></button>
       </div>
       <div class="modal-body">
         <div class="input-group">
-          <label>Ürün Adı</label>
-          <input type="text" class="input-field" id="item-name" placeholder="Örn: Karışık Pizza" value="${item?.name || ''}">
+          <label>${t('itemName', 'admin')}</label>
+          <input type="text" class="input-field" id="item-name" placeholder="${t('itemNamePlaceholder', 'admin')}" value="${item?.name || ''}">
         </div>
         <div class="input-group">
-          <label>Açıklama</label>
-          <textarea class="input-field" id="item-desc" placeholder="Ürün açıklaması..." rows="2">${item?.description || ''}</textarea>
+          <label>${t('desc', 'admin')}</label>
+          <textarea class="input-field" id="item-desc" placeholder="${t('itemDescPlaceholder', 'admin')}" rows="2">${item?.description || ''}</textarea>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
           <div class="input-group">
-            <label>Fiyat (₺)</label>
+            <label>${t('itemPriceLabel', 'admin')}</label>
             <input type="number" class="input-field" id="item-price" placeholder="0.00" step="0.01" min="0" value="${item?.price || ''}">
           </div>
           <div class="input-group">
-            <label>Kalori (kcal)</label>
+            <label>${t('calories', 'admin') || 'Kalori (kcal)'}</label>
             <input type="number" class="input-field" id="item-calories" placeholder="250" min="0" value="${item?.calories || ''}">
           </div>
           <div class="input-group">
-            <label>Stok Adedi</label>
+            <label>${t('stock', 'admin') || 'Stok Adedi'}</label>
             <input type="number" class="input-field" id="item-stock" placeholder="∞" min="0" value="${item?.stock ?? ''}">
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <div class="input-group">
-            <label>Kategori</label>
+            <label>${t('category', 'admin') || 'Kategori'}</label>
             <select class="input-field" id="item-category">
-              <option value="">Seçiniz...</option>
+              <option value="">${t('selectType', 'onboarding')}</option>
               ${categories.map(c => `<option value="${c}" ${item?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
-              <option value="__new__">+ Yeni Kategori</option>
+              <option value="__new__">+ ${t('newCatNameLabel', 'admin')}</option>
             </select>
           </div>
           <div class="input-group">
-            <label>Resim (URL veya Yükle)</label>
+            <label>${t('itemImageLabel', 'admin')}</label>
             <div style="display:flex;gap:8px;align-items:center;">
-              <input type="text" class="input-field" id="item-image" placeholder="https:// veya yükle" value="${item?.imageUrl || ''}" style="flex:1;">
-              <button type="button" class="btn btn-secondary btn-sm" id="upload-img-btn" style="padding:6px 10px;" title="Cihazdan Yükle">
+              <input type="text" class="input-field" id="item-image" placeholder="${t('itemImagePlaceholder', 'admin')}" value="${item?.imageUrl || ''}" style="flex:1;">
+              <button type="button" class="btn btn-secondary btn-sm" id="upload-img-btn" style="padding:6px 10px;" title="${t('uploadFromDevice', 'admin')}">
                 <span class="material-icons-round" style="font-size:1.2rem;">add_photo_alternate</span>
               </button>
               <input type="file" id="item-image-file" accept="image/jpeg, image/png, image/webp" style="display:none;">
             </div>
           </div>
           <div class="input-group">
-            <label>Emoji</label>
+            <label>${t('emoji', 'admin') || 'Emoji'}</label>
             <input type="text" class="input-field" id="item-emoji" placeholder="🍕" maxlength="4" value="${item?.emoji || ''}">
           </div>
         </div>
         <div class="input-group" id="new-cat-group" style="display:none;">
-          <label>Yeni Kategori Adı</label>
-          <input type="text" class="input-field" id="new-cat-name" placeholder="Kategori adı">
+          <label>${t('newCatNameLabel', 'admin')}</label>
+          <input type="text" class="input-field" id="new-cat-name" placeholder="${t('newCatPlaceholder', 'admin')}">
         </div>
         <div class="input-group">
-          <label>🇩🇪 Almanca Ad (opsiyonel)</label>
+          <label>${t('germanNameLabel', 'admin')}</label>
           <input type="text" class="input-field" id="item-name-de" placeholder="z.B. Gemischte Pizza" value="${item?.name_de || ''}">
         </div>
         <div class="input-group">
-          <label>🇬🇧 İngilizce Ad (opsiyonel)</label>
+          <label>${t('englishNameLabel', 'admin')}</label>
           <input type="text" class="input-field" id="item-name-en" placeholder="e.g. Mixed Pizza" value="${item?.name_en || ''}">
         </div>
         <div class="input-group">
-          <label>Alerjenler (AB 14 Temel Alerjen)</label>
+          <label>${t('allergensTitle', 'admin')} (${t('allergenHint', 'admin') || 'AB 14 Temel Alerjen'})</label>
           <div class="allergen-grid">
-            ${ALLERGENS.map(a => `
+            ${getAllergens().map(a => `
               <label class="allergen-chip ${(item?.allergens || []).includes(a.id) ? 'selected' : ''}">
                 <input type="checkbox" value="${a.id}" ${(item?.allergens || []).includes(a.id) ? 'checked' : ''}>
                 <span>${a.emoji} ${a.label}</span>
@@ -154,10 +165,10 @@ function itemFormHTML(categories, item = null) {
         <!-- Recipe Costing Section -->
         <div class="input-group" style="border-top:1px dashed var(--border); padding-top:16px; margin-top:16px;">
           <label style="display:flex; justify-content:space-between; align-items:center; font-weight:700;">
-            <span>🍳 Ürün Reçetesi (Maliyet & Kar Analizi)</span>
+            <span>${t('recipeCostAnalysis', 'admin')}</span>
             <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:normal; font-size:0.8rem; user-select:none;">
               <input type="checkbox" id="recipe-enabled" ${(item?.recipe && item.recipe.length > 0) ? 'checked' : ''} style="width:auto; margin:0;">
-              Reçete Etkinleştir
+              ${t('recipeEnabledLabel', 'admin')}
             </label>
           </label>
           
@@ -166,21 +177,21 @@ function itemFormHTML(categories, item = null) {
               <!-- Dynamic recipe rows go here -->
             </div>
             <button type="button" class="btn btn-secondary btn-sm" id="add-recipe-row-btn" style="width:100%; justify-content:center; display:flex; align-items:center; gap:6px;">
-              <span class="material-icons-round" style="font-size:1.1rem;">add</span> Hammadde Ekle
+              <span class="material-icons-round" style="font-size:1.1rem;">add</span> ${t('addStock', 'admin')}
             </button>
             
             <!-- Real-time Cost Preview -->
             <div id="recipe-preview-panel" style="margin-top:16px; padding:12px 16px; background:var(--bg-secondary); border-radius:12px; border:1px solid var(--border); font-size:0.85rem;">
-              <span style="color:var(--text-muted);">Reçete verileri yükleniyor...</span>
+              <span style="color:var(--text-muted);">${t('recipeLoading', 'admin')}</span>
             </div>
           </div>
         </div>
 
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="cancel-modal">İptal</button>
+        <button class="btn btn-secondary" id="cancel-modal">${t('cancel')}</button>
         <button class="btn btn-primary" id="save-item">
-          <span class="material-icons-round">save</span> ${isEdit ? 'Güncelle' : 'Kaydet'}
+          <span class="material-icons-round">save</span> ${isEdit ? t('update', 'admin') : t('save', 'admin')}
         </button>
       </div>
     </div>`;
@@ -266,7 +277,7 @@ async function setupFormEvents(overlay, userId, item, onComplete) {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
           urlInput.value = canvas.toDataURL('image/jpeg', 0.8);
-          showToast('Resim eklendi ✓', 'success');
+          showToast(t('imageAdded', 'admin') || 'Resim eklendi ✓', 'success');
         };
       };
       reader.readAsDataURL(file);
@@ -293,11 +304,11 @@ async function setupFormEvents(overlay, userId, item, onComplete) {
     return `
       <div class="recipe-row" style="display:flex; gap:10px; align-items:center;">
         <select class="input-field recipe-stock-select" style="flex:2; margin:0; height:38px;">
-          <option value="">Hammadde Seçin...</option>
+          <option value="">${t('selectStock', 'admin')}...</option>
           ${stockItems.map(s => `<option value="${s.id}" data-cost="${s.unitCostPerGram}" data-unit="${s.unit}" ${s.id === selectedStockId ? 'selected' : ''}>${s.name} (${formatCurrency(s.unitCostPerGram)}/${s.unit === 'gram'?'g':s.unit==='ml'?'ml':'ad'})</option>`).join('')}
         </select>
         <div style="display:flex; align-items:center; gap:6px; flex:1;">
-          <input type="number" class="input-field recipe-qty-input" placeholder="Miktar" value="${quantity}" min="0.01" step="any" style="margin:0; width:90px; height:38px; text-align:right;">
+          <input type="number" class="input-field recipe-qty-input" placeholder="${t('quantity', 'admin')}" value="${quantity}" min="0.01" step="any" style="margin:0; width:90px; height:38px; text-align:right;">
           <span class="recipe-unit-label" style="font-size:0.8rem; color:var(--text-muted); min-width:25px;">g</span>
         </div>
         <button type="button" class="btn btn-ghost btn-icon btn-sm remove-recipe-row" style="flex-shrink:0;">
@@ -309,7 +320,7 @@ async function setupFormEvents(overlay, userId, item, onComplete) {
 
   const calculateRecipePreview = () => {
     if (!recipeEnabled || !recipeEnabled.checked) {
-      if (previewPanel) previewPanel.innerHTML = '<span style="color:var(--text-muted);">Reçete devre dışı.</span>';
+      if (previewPanel) previewPanel.innerHTML = `<span style="color:var(--text-muted);">${t('recipeDisabled', 'admin')}</span>`;
       return;
     }
 
@@ -350,22 +361,22 @@ async function setupFormEvents(overlay, userId, item, onComplete) {
     if (previewPanel) {
       previewPanel.innerHTML = `
         <div style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px; max-height: 120px; overflow-y: auto;">
-          ${itemsPreview.length === 0 ? '<p style="color:var(--text-muted);text-align:center;margin:0;">Henüz hammadde seçilmedi.</p>' : itemsPreview.join('')}
+          ${itemsPreview.length === 0 ? `<p style="color:var(--text-muted);text-align:center;margin:0;">${t('noIngredientsSelected', 'admin')}</p>` : itemsPreview.join('')}
         </div>
         <div style="display:flex; justify-content:space-between; font-weight:700; margin-top:8px;">
-          <span>Toplam Maliyet:</span>
+          <span>${t('totalCost', 'admin')}:</span>
           <span style="color:var(--danger);">${formatCurrency(totalCost)}</span>
         </div>
         <div style="display:flex; justify-content:space-between; font-weight:700; margin-top:4px;">
-          <span>Satış Fiyatı:</span>
+          <span>${t('sellingPrice', 'admin')}:</span>
           <span>${formatCurrency(price)}</span>
         </div>
         <div style="display:flex; justify-content:space-between; font-weight:700; margin-top:4px;">
-          <span>Net Kar:</span>
+          <span>${t('profit', 'admin')}:</span>
           <span style="color:var(--success);">${formatCurrency(netProfit)}</span>
         </div>
         <div style="display:flex; justify-content:space-between; font-weight:700; margin-top:4px;">
-          <span>Kar Marjı:</span>
+          <span>${t('margin', 'admin')}:</span>
           <span style="color:${marginColor};">%${marginPct.toFixed(1)}</span>
         </div>
       `;
@@ -438,7 +449,7 @@ async function setupFormEvents(overlay, userId, item, onComplete) {
 
   overlay.querySelector('#save-item').addEventListener('click', async () => {
     const data = getFormData(overlay);
-    if (!data.name || data.price < 0) { showToast('Ürün adı ve fiyat girin', 'warning'); return; }
+    if (!data.name || data.price < 0) { showToast(t('invalidItemInfo', 'admin'), 'warning'); return; }
 
     // Parse recipes if enabled
     if (recipeEnabled && recipeEnabled.checked) {
@@ -478,15 +489,15 @@ async function setupFormEvents(overlay, userId, item, onComplete) {
     try {
       if (itemId) {
         await updateDoc(doc(db, 'users', userId, 'menuItems', itemId), data);
-        showToast('Ürün güncellendi ✓', 'success');
+        showToast(t('itemUpdated', 'admin'), 'success');
       } else {
         data.createdAt = serverTimestamp();
         await addDoc(collection(db, 'users', userId, 'menuItems'), data);
-        showToast('Ürün eklendi ✓', 'success');
+        showToast(t('itemAdded', 'admin'), 'success');
       }
       overlay.remove();
       if (onComplete) onComplete();
-    } catch (e) { showToast('Hata: ' + e.message, 'error'); }
+    } catch (e) { showToast(t('errorPrefix', 'admin') + e.message, 'error'); }
   });
 }
 
@@ -496,18 +507,18 @@ export function showAddCategoryModal(userId, onComplete) {
   overlay.innerHTML = `
     <div class="modal" style="max-width:400px;">
       <div class="modal-header">
-        <h3>Yeni Kategori</h3>
+        <h3>${t('addCat', 'admin')}</h3>
         <button class="btn btn-ghost btn-icon" id="close-modal"><span class="material-icons-round">close</span></button>
       </div>
       <div class="modal-body">
         <div class="input-group">
-          <label>Kategori Adı</label>
-          <input type="text" class="input-field" id="cat-name" placeholder="Örn: Ana Yemekler" required>
+          <label>${t('catNameLabel', 'admin')}</label>
+          <input type="text" class="input-field" id="cat-name" placeholder="${t('catNamePlaceholder', 'admin')}" required>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="cancel-modal">İptal</button>
-        <button class="btn btn-primary" id="save-cat">Kaydet</button>
+        <button class="btn btn-secondary" id="cancel-modal">${t('cancel')}</button>
+        <button class="btn btn-primary" id="save-cat">${t('save')}</button>
       </div>
     </div>
   `;
@@ -518,24 +529,24 @@ export function showAddCategoryModal(userId, onComplete) {
   
   overlay.querySelector('#save-cat').addEventListener('click', async () => {
     const name = overlay.querySelector('#cat-name').value.trim();
-    if (!name) { showToast('Kategori adı girin', 'warning'); return; }
+    if (!name) { showToast(t('invalidCatName', 'admin'), 'warning'); return; }
     try {
       await addDoc(collection(db, 'users', userId, 'menuItems'), {
-        name: name + ' (örnek)', category: name, price: 0, emoji: '🍽️',
-        description: 'Örnek ürün - düzenleyebilirsiniz', available: true, createdAt: serverTimestamp()
+        name: name + t('catExampleSuffix', 'admin'), category: name, price: 0, emoji: '🍽️',
+        description: t('catExampleItemDesc', 'admin'), available: true, createdAt: serverTimestamp()
       });
-      showToast('Kategori eklendi!', 'success');
+      showToast(t('addCat', 'admin') + ' ✓', 'success');
       overlay.remove();
       if (onComplete) onComplete();
-    } catch(e) { showToast('Hata: ' + e.message, 'error'); }
+    } catch(e) { showToast(t('errorPrefix', 'admin') + e.message, 'error'); }
   });
 }
 
 export async function deleteMenuItem(userId, itemId, onComplete) {
-  if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
+  if (!confirm(t('deleteItemConfirm', 'admin'))) return;
   try {
     await deleteDoc(doc(db, 'users', userId, 'menuItems', itemId));
-    showToast('Ürün silindi', 'success');
+    showToast(t('itemDeleted', 'admin'), 'success');
     if (onComplete) onComplete();
-  } catch(e) { showToast('Hata: ' + e.message, 'error'); }
+  } catch(e) { showToast(t('errorPrefix', 'admin') + e.message, 'error'); }
 }

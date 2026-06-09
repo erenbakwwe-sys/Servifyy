@@ -1,5 +1,5 @@
 import { auth, db, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, signOut, getDocs } from '../firebase.js';
-import { showToast, getTrialDaysLeft, playNotificationSound, escapeHtml } from '../utils.js';
+import { showToast, getTrialDaysLeft, playNotificationSound, escapeHtml, formatCurrency } from '../utils.js';
 import { renderDashboardContent } from './admin-dashboard.js';
 import { renderMenuContent, showAddItemModal, showEditItemModal, showAddCategoryModal, deleteMenuItem } from './admin-menu.js';
 import { renderQRContent, generateAllQR, renderCallsContent, renderOrdersContent, renderHistoryContent, renderFinanceContent } from './admin-sections.js';
@@ -32,7 +32,7 @@ export function renderAdmin(container) {
   const user = auth.currentUser;
   if (!user) { window.location.hash = '/auth'; return; }
 
-  container.innerHTML = '<div class="loading-screen"><div class="spinner"></div><div class="loading-logo">Yükleniyor...</div></div>';
+  container.innerHTML = `<div class="loading-screen"><div class="spinner"></div><div class="loading-logo">${t('loading')}</div></div>`;
 
   loadAdminData(user.uid, container);
 }
@@ -72,7 +72,7 @@ async function loadAdminData(userId, container) {
     }, 1000);
   } catch (e) {
     console.error('Admin load error:', e);
-    showToast('Veri yüklenirken hata oluştu: ' + (e.message || e), 'error');
+    showToast(t('admin').errorPrefix + (e.message || e), 'error');
   }
 }
 
@@ -85,7 +85,7 @@ function renderAdminLayout(container, userId) {
     return;
   }
 
-  const restaurantName = userData?.restaurant?.name || 'Restoranım';
+  const restaurantName = userData?.restaurant?.name || t('admin').myRestaurant;
 
   container.innerHTML = `
     <div class="admin-layout">
@@ -134,10 +134,10 @@ function renderAdminLayout(container, userId) {
           </div>
         </nav>
         <div class="sidebar-footer">
-          <div class="sidebar-user" id="logout-btn" onclick="if(window.logoutAdmin) window.logoutAdmin(); else alert('Sistem hatası: Çıkış fonksiyonu bulunamadı, sayfayı yenileyin.');">
+          <div class="sidebar-user" id="logout-btn" onclick="if(window.logoutAdmin) window.logoutAdmin(); else alert(\`\${t('admin').logoutErrorPrefix}\`);">
             <div class="sidebar-user-avatar">${(userData?.name || 'U')[0].toUpperCase()}</div>
             <div class="sidebar-user-info">
-              <div class="user-name">${userData?.name || 'Kullanıcı'}</div>
+              <div class="user-name">${userData?.name || t('user')}</div>
               <div class="user-email">${userData?.email || ''}</div>
             </div>
             <span class="material-icons-round" style="color:var(--text-muted);font-size:1.1rem;">logout</span>
@@ -170,11 +170,11 @@ function renderAdminLayout(container, userId) {
               <div class="trial-info">
                 <span class="material-icons-round">warning</span>
                 <div>
-                  <h4>Deneme süreniz ${trialDays} gün sonra bitiyor</h4>
-                  <p>Kesintisiz hizmet için planınızı yükseltin.</p>
+                  <h4>${t('admin').trialWarning.replace('{days}', trialDays)}</h4>
+                  <p>${t('admin').trialWarningSub}</p>
                 </div>
               </div>
-              <button class="btn btn-primary btn-sm" onclick="window.location.hash='/#pricing'">Plan Yükselt</button>
+              <button class="btn btn-primary btn-sm" onclick="window.location.hash='/#pricing'">${t('admin').upgradePlan}</button>
             </div>
           ` : ''}
           <div id="page-content"></div>
@@ -294,7 +294,7 @@ function renderPage(userId) {
 }
 
 function getCategories() {
-  return [...new Set(menuItems.map(i => i.category || 'Genel'))];
+  return [...new Set(menuItems.map(i => i.category || t('general')))];
 }
 
 function setupRealtimeListeners(userId) {
@@ -307,7 +307,7 @@ function setupRealtimeListeners(userId) {
       
       if (orders.length > 0 && newOrders.length > orders.length) {
         playNotificationSound();
-        showToast('🔔 Yeni sipariş geldi!', 'info');
+        showToast(t('admin').newOrderNotification, 'info');
       }
       orders = newOrders;
       updateBadges();
@@ -327,7 +327,7 @@ function setupRealtimeListeners(userId) {
       
       if (newActiveCalls > oldActiveCalls) {
         playNotificationSound();
-        showToast('🔔 Garson çağırılıyor!', 'warning');
+        showToast(t('admin').waiterCallNotification, 'warning');
       }
       calls = newCalls;
       updateBadges();
@@ -397,8 +397,8 @@ function setupOrderHandlers(userId, content) {
     btn.addEventListener('click', async () => {
       try {
         await updateDoc(doc(db, 'users', userId, 'orders', btn.dataset.id), { status: btn.dataset.status });
-        showToast('Sipariş güncellendi', 'success');
-      } catch(e) { showToast('Hata: ' + e.message, 'error'); }
+        showToast(t('admin').orderUpdated, 'success');
+      } catch(e) { showToast(t('admin').errorPrefix + e.message, 'error'); }
     });
   });
 
@@ -407,8 +407,8 @@ function setupOrderHandlers(userId, content) {
     select.addEventListener('change', async (e) => {
       try {
         await updateDoc(doc(db, 'users', userId, 'orders', e.target.dataset.id), { priority: e.target.value });
-        showToast('Öncelik güncellendi', 'success');
-      } catch(e) { showToast('Hata: ' + e.message, 'error'); }
+        showToast(t('admin').priorityUpdated, 'success');
+      } catch(e) { showToast(t('admin').errorPrefix + e.message, 'error'); }
     });
   });
 
@@ -420,8 +420,9 @@ function setupOrderHandlers(userId, content) {
       if(!order) return;
       
       const printWindow = window.open('', '_blank');
+      const receiptLocale = getLang() === 'en' ? 'en-US' : getLang() === 'de' ? 'de-DE' : 'tr-TR';
       printWindow.document.write(`
-        <html><head><title>Fiş #${order.id.slice(-6).toUpperCase()}</title>
+        <html><head><title>${t('admin').receiptForOrder.replace('{id}', order.id.slice(-6).toUpperCase())}</title>
         <style>
           body { font-family: monospace; width: 300px; padding: 20px; color: #000; background: #fff; }
           .center { text-align: center; }
@@ -429,14 +430,14 @@ function setupOrderHandlers(userId, content) {
           .item { display: flex; justify-content: space-between; margin-bottom: 5px; }
         </style>
         </head><body>
-          <h2 class="center">SİPARİŞ FİŞİ</h2>
-          <div class="center">Masa: ${order.tableNo}</div>
-          <div class="center">Tarih: ${new Date(order.createdAt?.toDate?.() || Date.now()).toLocaleString('tr-TR')}</div>
+          <h2 class="center">${t('admin').receiptHeader}</h2>
+          <div class="center">${t('admin').tables}: ${order.tableNo}</div>
+          <div class="center">${t('date')}: ${new Date(order.createdAt?.toDate?.() || Date.now()).toLocaleString(receiptLocale)}</div>
           <div class="line"></div>
-          ${(order.items||[]).map(i => `<div class="item"><span>${i.qty}x ${i.name}</span><span>${(i.price*i.qty).toFixed(2)} ₺</span></div>`).join('')}
+          ${(order.items||[]).map(i => `<div class="item"><span>${i.qty}x ${i.name}</span><span>${formatCurrency(i.price*i.qty)}</span></div>`).join('')}
           <div class="line"></div>
-          <div class="item" style="font-weight:bold; font-size:1.2em;"><span>TOPLAM:</span><span>${order.total?.toFixed(2)} ₺</span></div>
-          <div class="center" style="margin-top:20px;">Bizi tercih ettiğiniz için teşekkürler!</div>
+          <div class="item" style="font-weight:bold; font-size:1.2em;"><span>${t('total').toUpperCase()}:</span><span>${formatCurrency(order.total)}</span></div>
+          <div class="center" style="margin-top:20px;">${t('admin').receiptThanks}</div>
         </body></html>
       `);
       printWindow.document.close();
@@ -451,7 +452,7 @@ function setupOrderHandlers(userId, content) {
       const order = orders.find(o => o.id === orderId);
       if(!order) return;
       
-      const text = `*Sipariş Fişi #${order.id.slice(-6).toUpperCase()}*\nMasa: ${order.tableNo}\n\n${(order.items||[]).map(i => `${i.qty}x ${i.name} - ${(i.price*i.qty).toFixed(2)} ₺`).join('\n')}\n\n*TOPLAM: ${order.total?.toFixed(2)} ₺*\n\nBizi tercih ettiğiniz için teşekkürler!`;
+      const text = `*${t('admin').receiptHeader} #${order.id.slice(-6).toUpperCase()}*\n${t('admin').tables}: ${order.tableNo}\n\n${(order.items||[]).map(i => `${i.qty}x ${i.name} - ${formatCurrency(i.price*i.qty)}`).join('\n')}\n\n*${t('total').toUpperCase()}: ${formatCurrency(order.total)}*\n\n${t('admin').receiptThanks}`;
       
       const encodedText = encodeURIComponent(text);
       window.open(`https://wa.me/?text=${encodedText}`, '_blank');
@@ -500,9 +501,9 @@ function showOrderDetailsModal(order) {
       <tr>
         <td style="padding: 12px; border-bottom: 1px solid var(--border); color:var(--text-primary); font-weight: 500;">${item.name}</td>
         <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;">${qty}</td>
-        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; font-weight: 600;">${price.toFixed(2)} ₺</td>
-        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; color: var(--text-secondary);">${cost > 0 ? cost.toFixed(2) + ' ₺' : '--'}</td>
-        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; color: var(--success); font-weight: 600;">${cost > 0 ? (price - cost).toFixed(2) + ' ₺' : '--'}</td>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; font-weight: 600;">${formatCurrency(price)}</td>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; color: var(--text-secondary);">${cost > 0 ? formatCurrency(cost) : '--'}</td>
+        <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right; color: var(--success); font-weight: 600;">${cost > 0 ? formatCurrency(price - cost) : '--'}</td>
         <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;">
           <span style="display:inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: ${marginColor}20; color: ${marginColor}; border: 1px solid ${marginColor}40;">
             ${marginText}
@@ -533,10 +534,10 @@ function showOrderDetailsModal(order) {
         <div>
           <h3 style="font-size: 1.25rem; font-weight: 700; color:var(--text-primary); display: flex; align-items: center; gap: 8px;">
             <span class="material-icons-round" style="color: var(--primary);">receipt_long</span>
-            Sipariş Detay Analizi
+            ${t('admin').orderDetailAnalysis}
           </h3>
           <span style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; display: block;">
-            Masa ${order.tableNo} • Sipariş ID: #${order.id.toUpperCase()}
+            ${t('admin').tables} ${order.tableNo} • Sipariş ID: #${order.id.toUpperCase()}
           </span>
         </div>
         <button class="btn btn-ghost btn-icon" id="close-modal" style="border-radius: 50%;">
@@ -550,12 +551,12 @@ function showOrderDetailsModal(order) {
           <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 500px;">
             <thead>
               <tr style="color: var(--text-secondary); border-bottom: 2px solid var(--border);">
-                <th style="padding: 12px; font-weight: 600;">Ürün Adı</th>
-                <th style="padding: 12px; font-weight: 600; text-align: center;">Adet</th>
-                <th style="padding: 12px; font-weight: 600; text-align: right;">Birim Satış</th>
-                <th style="padding: 12px; font-weight: 600; text-align: right;">Birim Maliyet</th>
-                <th style="padding: 12px; font-weight: 600; text-align: right;">Birim Kar</th>
-                <th style="padding: 12px; font-weight: 600; text-align: center;">Marj%</th>
+                <th style="padding: 12px; font-weight: 600;">${t('admin').itemName || 'Ürün Adı'}</th>
+                <th style="padding: 12px; font-weight: 600; text-align: center;">${t('admin').quantity || 'Adet'}</th>
+                <th style="padding: 12px; font-weight: 600; text-align: right;">${t('admin').sellingPrice || 'Birim Satış'}</th>
+                <th style="padding: 12px; font-weight: 600; text-align: right;">${t('admin').unitCost || 'Birim Maliyet'}</th>
+                <th style="padding: 12px; font-weight: 600; text-align: right;">${t('admin').profit || 'Birim Kar'}</th>
+                <th style="padding: 12px; font-weight: 600; text-align: center;">${t('admin').marginPercent || 'Marj%'}</th>
               </tr>
             </thead>
             <tbody>
@@ -567,19 +568,19 @@ function showOrderDetailsModal(order) {
         <!-- Profitability / Financial Summary -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 8px; padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 14px;">
           <div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">Toplam Gelir</div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">${subtotal.toFixed(2)} ₺</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">${t('revenue') || 'Toplam Gelir'}</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">${formatCurrency(subtotal)}</div>
           </div>
           <div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">Toplam Maliyet</div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-secondary);">${totalCost > 0 ? totalCost.toFixed(2) + ' ₺' : '--'}</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">${t('admin').totalCost || 'Toplam Maliyet'}</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-secondary);">${totalCost > 0 ? formatCurrency(totalCost) : '--'}</div>
           </div>
           <div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">Net Kar</div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: var(--success);">${totalCost > 0 ? totalProfit.toFixed(2) + ' ₺' : '--'}</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">${t('admin').profit || 'Net Kar'}</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--success);">${totalCost > 0 ? formatCurrency(totalProfit) : '--'}</div>
           </div>
           <div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">Kar Marjı</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">${t('admin').margin || 'Kar Marjı'}</div>
             <div style="font-size: 1.15rem; font-weight: 800; color: ${overallMarginColor};">${totalCost > 0 ? '%' + marginPercent.toFixed(1) : '--'}</div>
           </div>
         </div>
@@ -587,18 +588,18 @@ function showOrderDetailsModal(order) {
         <!-- Additional billing lines if discount/tip exists -->
         ${(couponDiscount > 0 || tip > 0) ? `
           <div style="padding: 12px 20px; border-top: 1px dashed var(--border); font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px; width: 100%;">
-            ${couponDiscount > 0 ? `<div style="display:flex; justify-content:space-between;"><span>Kupon İndirimi:</span><span style="color:var(--danger); font-weight:600;">-${couponDiscount.toFixed(2)} ₺</span></div>` : ''}
-            ${tip > 0 ? `<div style="display:flex; justify-content:space-between;"><span>Bahşiş:</span><span style="color:var(--warning); font-weight:600;">+${tip.toFixed(2)} ₺</span></div>` : ''}
+            ${couponDiscount > 0 ? `<div style="display:flex; justify-content:space-between;"><span>${t('admin').discount}:</span><span style="color:var(--danger); font-weight:600;">-${formatCurrency(couponDiscount)}</span></div>` : ''}
+            ${tip > 0 ? `<div style="display:flex; justify-content:space-between;"><span>${t('customer').tip || 'Bahşiş'}:</span><span style="color:var(--warning); font-weight:600;">+${formatCurrency(tip)}</span></div>` : ''}
             <div style="display:flex; justify-content:space-between; font-weight: 700; color: var(--text-primary); border-top: 1px solid var(--border); padding-top: 6px; font-size: 0.95rem;">
-              <span>Ödenen Genel Toplam:</span>
-              <span>${grandTotal.toFixed(2)} ₺</span>
+              <span>${t('customer').totalBill || 'Ödenen Genel Toplam'}:</span>
+              <span>${formatCurrency(grandTotal)}</span>
             </div>
           </div>
         ` : ''}
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary btn-sm" id="cancel-modal">Kapat</button>
+        <button class="btn btn-secondary btn-sm" id="cancel-modal">${t('close')}</button>
       </div>
     </div>
   `;
@@ -653,7 +654,7 @@ function setupQRHandlers() {
   document.getElementById('print-all-qr')?.addEventListener('click', () => {
     const printWindow = window.open('', '_blank');
     const qrGrid = document.getElementById('qr-grid');
-    printWindow.document.write(`<html><head><title>QR Kodlar</title><style>
+    printWindow.document.write(`<html><head><title>${t('qr')}</title><style>
       body{font-family:sans-serif;padding:20px}
       .qr-item{display:inline-block;text-align:center;margin:20px;page-break-inside:avoid}
       .qr-item h3{margin-top:10px;font-size:1.2rem}
@@ -682,7 +683,7 @@ function setupQRHandlers() {
       const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = `masa-${tableNo}-qr.svg`; a.click();
+      a.href = url; a.download = `${t('admin').tables.toLowerCase()}-${tableNo}-qr.svg`; a.click();
       URL.revokeObjectURL(url);
     });
   });
@@ -693,8 +694,8 @@ function setupCallHandlers(userId, content) {
     btn.addEventListener('click', async () => {
       try {
         await updateDoc(doc(db, 'users', userId, 'calls', btn.dataset.id), { status: 'resolved' });
-        showToast('Çağrı çözüldü', 'success');
-      } catch(e) { showToast('Hata: ' + e.message, 'error'); }
+        showToast(t('admin').callResolved, 'success');
+      } catch(e) { showToast(t('admin').errorPrefix + e.message, 'error'); }
     });
   });
 }
@@ -714,10 +715,10 @@ function setupAIHandlers(userId, content) {
     const key = keyInput?.value?.trim();
     if (key) {
       localStorage.setItem('gemini_api_key', key);
-      showToast('API key kaydedildi ✓', 'success');
+      showToast(t('admin').apiKeySaved || 'API key kaydedildi ✓', 'success');
     } else {
       localStorage.removeItem('gemini_api_key');
-      showToast('API key silindi', 'info');
+      showToast(t('admin').apiKeyDeleted || 'API key silindi', 'info');
     }
   });
 
@@ -781,7 +782,7 @@ function setupAIHandlers(userId, content) {
     await setDoc(doc(db, 'users', userId), { themeHtml: html }, { merge: true });
     if (userData) userData.themeHtml = html;
 
-    showToast(newLang === 'tr' ? 'Menü dili Türkçe olarak ayarlandı ✓' : newLang === 'en' ? 'Menu language set to English ✓' : 'Menüsprache auf Deutsch eingestellt ✓', 'success');
+    showToast(t('admin').menuLangSetSuccess, 'success');
   }
 
   // Top dropdown language change
@@ -829,7 +830,7 @@ function setupAIHandlers(userId, content) {
       const previewContent = content.querySelector('#ai-preview-content');
       if (!previewContent) return;
       
-      previewContent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span>Şablon Uygulanıyor...</span></div>';
+      previewContent.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span>${t('admin').applyingTemplate}</span></div>`;
       
       try {
         const lang = content.querySelector('#ai-lang')?.value || 'tr';
@@ -862,13 +863,13 @@ function setupAIHandlers(userId, content) {
         if (userData) { userData.themeHtml = html; userData.lastPrompt = 'Hazır Şablon: ' + presetId; }
         
         const badge = content.querySelector('.ai-preview-header .badge');
-        if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
+        if (badge) { badge.className = 'badge badge-success'; badge.textContent = t('admin').activeTheme || 'Aktif Tema'; }
         
-        showToast('Şablon başarıyla uygulandı ✓', 'success');
+        showToast(t('admin').templateApplied || 'Şablon başarıyla uygulandı ✓', 'success');
         iframe.scrollIntoView({ behavior: 'smooth', block: 'start' });
         
       } catch(err) {
-        previewContent.innerHTML = '<div style="padding:30px;color:var(--danger);">Hata: ' + err.message + '</div>';
+        previewContent.innerHTML = '<div style="padding:30px;color:var(--danger);">' + t('admin').errorPrefix + err.message + '</div>';
       }
     });
   });
@@ -902,7 +903,7 @@ function setupAIHandlers(userId, content) {
     
     if (!customStyles.font) delete customStyles.font;
 
-    previewContent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span>Özelleştirme Uygulanıyor...</span></div>';
+    previewContent.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span>${t('admin').applyingCustomization}</span></div>`;
     
     try {
       const lang = content.querySelector('#ai-lang')?.value || 'tr';
@@ -938,12 +939,12 @@ function setupAIHandlers(userId, content) {
       if (userData) { userData.themeHtml = html; userData.menuCurrency = menuCurrency; }
       
       const badge = content.querySelector('.ai-preview-header .badge');
-      if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
+      if (badge) { badge.className = 'badge badge-success'; badge.textContent = t('admin').activeTheme || 'Aktif Tema'; }
       
-      showToast('Özel ayarlar uygulandı ✓', 'success');
+      showToast(t('admin').customSettingsApplied, 'success');
       
     } catch(err) {
-      previewContent.innerHTML = '<div style="padding:30px;color:var(--danger);">Hata: ' + err.message + '</div>';
+      previewContent.innerHTML = '<div style="padding:30px;color:var(--danger);">' + t('admin').errorPrefix + err.message + '</div>';
     }
   });
 
@@ -951,15 +952,15 @@ function setupAIHandlers(userId, content) {
   // Generate theme - BULLETPROOF VERSION
   content.querySelector('#generate-theme-btn')?.addEventListener('click', async () => {
     const prompt = content.querySelector('#ai-prompt')?.value?.trim();
-    if (!prompt) { showToast('Lütfen bir konsept açıklaması girin', 'warning'); return; }
+    if (!prompt) { showToast(t('admin').enterConceptError, 'warning'); return; }
 
     const previewContent = content.querySelector('#ai-preview-content');
     if (!previewContent) { alert('HATA: preview container yok'); return; }
     
     const btn = content.querySelector('#generate-theme-btn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> AI Üretiyor...';
-    previewContent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span id="ai-status-text">Oluşturuluyor...</span></div>';
+    btn.innerHTML = `<span class="material-icons-round">hourglass_top</span> ${t('admin').aiGenerating}`;
+    previewContent.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:300px;gap:12px;"><div class="ai-spinner"></div><span id="ai-status-text">${t('admin').aiCreating}</span></div>`;
 
     setStatusCallback((s) => { const el = document.getElementById('ai-status-text'); if(el) el.textContent = s; });
 
@@ -969,15 +970,15 @@ function setupAIHandlers(userId, content) {
       html = await generateThemeWithAI(prompt, menuItems, userData?.restaurant?.name, lang);
     } catch(err) {
       btn.disabled = false;
-      btn.innerHTML = '<span class="material-icons-round">auto_awesome</span> AI ile Tema Oluştur';
-      previewContent.innerHTML = '<div style="padding:30px;text-align:center;color:var(--danger);"><b>API Hatası:</b><br>' + String(err.message||err).replace(/</g,'&lt;') + '</div>';
+      btn.innerHTML = `<span class="material-icons-round">auto_awesome</span> ${t('admin').btnGenerate}`;
+      previewContent.innerHTML = '<div style="padding:30px;text-align:center;color:var(--danger);"><b>' + t('admin').apiError + ':</b><br>' + String(err.message||err).replace(/</g,'&lt;') + '</div>';
       return;
     }
 
     if (!html || html.length < 50) {
       btn.disabled = false;
-      btn.innerHTML = '<span class="material-icons-round">auto_awesome</span> AI ile Tema Oluştur';
-      previewContent.innerHTML = '<div style="padding:30px;text-align:center;color:var(--warning);">AI boş yanıt döndü, tekrar deneyin.</div>';
+      btn.innerHTML = `<span class="material-icons-round">auto_awesome</span> ${t('admin').btnGenerate}`;
+      previewContent.innerHTML = '<div style="padding:30px;text-align:center;color:var(--warning);">' + t('admin').aiEmptyResponse + '</div>';
       return;
     }
 
@@ -1020,26 +1021,26 @@ function setupAIHandlers(userId, content) {
       await setDoc(doc(db, 'users', userId), { themeHtml: html, lastPrompt: prompt }, { merge: true });
       if (userData) { userData.themeHtml = html; userData.lastPrompt = prompt; }
       const badge = content.querySelector('.ai-preview-header .badge');
-      if (badge) { badge.className = 'badge badge-success'; badge.textContent = 'Aktif Tema'; }
-      showToast('Tema oluşturuldu ✨', 'success');
+      if (badge) { badge.className = 'badge badge-success'; badge.textContent = t('admin').activeTheme || 'Aktif Tema'; }
+      showToast(t('admin').themeCreated, 'success');
     } catch(saveErr) {
-      showToast('Tema gösteriliyor ama kayıt başarısız: ' + saveErr.message, 'warning');
+      showToast(t('admin').themeSaveFailed + saveErr.message, 'warning');
     }
 
     btn.disabled = false;
-    btn.innerHTML = '<span class="material-icons-round">auto_awesome</span> AI ile Tema Oluştur';
+    btn.innerHTML = `<span class="material-icons-round">auto_awesome</span> ${t('admin').btnGenerate}`;
   });
 
   // Clear theme
   content.querySelector('#clear-theme-btn')?.addEventListener('click', async () => {
-    if (!confirm('Mevcut temayı silmek istediğinize emin misiniz?')) return;
+    if (!confirm(t('admin').resetThemeConfirm)) return;
     try {
       await setDoc(doc(db, 'users', userId), { themeHtml: null, lastPrompt: null }, { merge: true });
       userData.themeHtml = null;
       userData.lastPrompt = null;
-      showToast('Tema sıfırlandı', 'success');
+      showToast(t('admin').themeReset, 'success');
       renderPage(userId);
-    } catch(e) { showToast('Hata: ' + e.message, 'error'); }
+    } catch(e) { showToast(t('admin').errorPrefix + e.message, 'error'); }
   });
 
   // Load saved theme preview
@@ -1080,28 +1081,28 @@ function renderExpiredTrialScreen(container) {
         <div style="width: 80px; height: 80px; background: rgba(255, 107, 107, 0.1); color: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 24px;">
           <span class="material-icons-round" style="font-size:inherit;">timer_off</span>
         </div>
-        <h2 style="font-size: 1.8rem; margin-bottom: 12px; color: var(--text-primary); font-weight: 700;">Deneme Süreniz Bitti</h2>
+        <h2 style="font-size: 1.8rem; margin-bottom: 12px; color: var(--text-primary); font-weight: 700;">${t('admin').trialEndedTitle}</h2>
         <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; font-size: 0.95rem;">
-          14 günlük ücretsiz deneme sürenizi tamamladınız. Sisteme ve menülerinize kesintisiz erişim sağlamak için planınızı yükseltin.
+          ${t('admin').trialEndedDesc}
         </p>
         
         <div style="background: var(--bg-primary); border: 1.5px solid var(--primary); border-radius: 16px; padding: 20px; margin-bottom: 30px; text-align: left;">
           <h3 style="font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);">
-            <span class="material-icons-round" style="color: var(--primary);">star</span> Pro / Kurumsal Plan
+            <span class="material-icons-round" style="color: var(--primary);">star</span> ${t('landing').p2Name || 'Pro / Kurumsal Plan'}
           </h3>
           <ul style="list-style: none; padding: 0; margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
-            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> Limitsiz QR Menü & Yönetim</li>
-            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> Sınırsız Personel ve Şube</li>
-            <li style="display: flex; align-items: center; gap: 10px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> Gelişmiş AI Temaları</li>
+            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> ${t('admin').featureUnlimitedItems}</li>
+            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> ${t('admin').featureUnlimitedStaff}</li>
+            <li style="display: flex; align-items: center; gap: 10px;"><span class="material-icons-round" style="color: var(--success); font-size: 1.1rem;">check_circle</span> ${t('admin').featureAdvancedAi}</li>
           </ul>
         </div>
 
         <button onclick="window.open('https://tally.so/r/LZ5KYz', '_blank')" class="btn btn-primary btn-block" style="margin-bottom: 20px; padding: 14px; font-size: 1.05rem; justify-content: center;">
-          <span class="material-icons-round">rocket_launch</span> Teklif Al / Yükselt
+          <span class="material-icons-round">rocket_launch</span> ${t('admin').btnUpgradeOffer}
         </button>
 
         <a href="javascript:void(0)" onclick="if(window.logoutAdmin) window.logoutAdmin();" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">
-          <span class="material-icons-round" style="font-size: 1rem;">logout</span> Çıkış Yap
+          <span class="material-icons-round" style="font-size: 1rem;">logout</span> ${t('admin').btnLogOut}
         </a>
       </div>
     </div>
@@ -1208,7 +1209,7 @@ function setupFinanceHandlers(userId, content) {
       const secretKey = content.querySelector('#pos-secret-key').value.trim();
       
       if (provider !== 'none' && (!apiKey || !secretKey)) {
-        showToast(t('enterCodeAndValue', 'admin') || 'API Key ve Secret Key zorunludur!', 'warning');
+        showToast(t('admin').posKeysRequired || 'API Key ve Secret Key zorunludur!', 'warning');
         return;
       }
       

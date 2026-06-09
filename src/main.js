@@ -4,7 +4,7 @@ import './auth.css';
 import './admin.css';
 import './customer.css';
 
-import { getLang, setLang } from './i18n.js';
+import { getLang, setLang, t } from './i18n.js';
 import Router from './router.js';
 import { auth, db, doc, getDoc, onAuthStateChanged, signOut } from './firebase.js';
 import { renderLanding } from './pages/landing.js';
@@ -149,12 +149,12 @@ window.logoutAdmin = async () => {
     setTimeout(() => window.location.reload(), 100);
   } catch(err) {
     console.error('Logout error', err);
-    alert('Çıkış hatası: ' + err.message);
+    alert(t('logoutErrorGeneral', 'admin') + err.message);
   }
 };
 
 window.logoutStaff = () => {
-  if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+  if (confirm(t('logoutConfirm', 'admin'))) {
     localStorage.removeItem('staffSession');
     window.location.hash = '/personel-giris';
     setTimeout(() => window.location.reload(), 100);

@@ -642,8 +642,11 @@ export function generateThemeHTML(prompt, menuItems, restaurantName, lang = 'tr'
   const tAdd    = lang === 'en' ? 'Add'         : lang === 'de' ? 'Hinzufügen'     : 'Ekle';
   const tAddShort = lang === 'en' ? 'Add'       : lang === 'de' ? 'Hinzu'          : 'Ekle';
   const tToCart = lang === 'en' ? 'Add to Cart' : lang === 'de' ? 'In den Warenkorb' : 'Sepete Ekle';
+  const tSharedBill = lang === 'en' ? 'Shared Bill' : lang === 'de' ? 'Gemeinsame Rechnung' : 'Ortak Hesap';
+  const tRemaining  = lang === 'en' ? 'Remaining'   : lang === 'de' ? 'Rest'                 : 'Kalan';
+  const tJoinPayment = lang === 'en' ? 'Join Payment' : lang === 'de' ? 'Zahlung beitreten'  : 'Ödemeye Katıl';
   // Currency symbol for price display
-  const currSym = getCurrencySymbol(customStyles.currency || 'TRY');
+  const currSym = getCurrencySymbol(customStyles.currency);
 
   // isDark helper for category text color
   const darkPresets = ['dark','luxury','modern-dark'];
@@ -848,14 +851,14 @@ ${preset==='luxury'?`
 <button class="fcart ${preset==='izmir'?'izmir':''}" id="fc" onclick="try{window.parent.postMessage({type:'openCart'},'*')}catch(e){}">
   ${preset==='izmir' ? `
     <div style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
-      <span style="font-size:0.75rem; color:rgba(255,255,255,0.8);">Ortak Hesap</span>
+      <span style="font-size:0.75rem; color:rgba(255,255,255,0.8);">${tSharedBill}</span>
       <div style="display:flex; align-items:center; gap:4px;">
-        <span style="font-size:0.9rem; font-weight:600;">Kalan:</span>
+        <span style="font-size:0.9rem; font-weight:600;">${tRemaining}:</span>
         <span style="font-weight:800; font-size:1.1rem" id="tp">${currSym}0.00</span>
       </div>
     </div>
     <div style="background:#2563EB; border-radius:30px; padding:8px 20px; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px;">
-      Ödemeye Katıl <span class="material-icons-round" style="font-size:1rem;">chevron_right</span>
+      ${tJoinPayment} <span class="material-icons-round" style="font-size:1rem;">chevron_right</span>
     </div>
   ` : `
   <div style="display:flex;align-items:center;gap:10px">

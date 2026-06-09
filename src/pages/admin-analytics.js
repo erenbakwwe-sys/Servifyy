@@ -130,7 +130,7 @@ export function renderAnalyticsContent(orders, menuItems) {
         <div class="analytics-card acard-purple">
           <div class="acard-icon"><span class="material-icons-round">today</span></div>
           <div class="acard-info">
-            <span class="acard-label">${t('today', 'admin')} Ciro</span>
+            <span class="acard-label">${t('today', 'admin')} ${t('revenue')}</span>
             <span class="acard-value">${formatCurrency(todayRev)}</span>
             <span class="acard-sub">${todayOrders.length} ${t('orderCount', 'admin')}</span>
           </div>
@@ -138,7 +138,7 @@ export function renderAnalyticsContent(orders, menuItems) {
         <div class="analytics-card acard-blue">
           <div class="acard-icon"><span class="material-icons-round">date_range</span></div>
           <div class="acard-info">
-            <span class="acard-label">${t('thisWeek', 'admin')} Ciro</span>
+            <span class="acard-label">${t('thisWeek', 'admin')} ${t('revenue')}</span>
             <span class="acard-value">${formatCurrency(weekRev)}</span>
             <span class="acard-sub">${week.length} ${t('orderCount', 'admin')}</span>
           </div>
@@ -146,7 +146,7 @@ export function renderAnalyticsContent(orders, menuItems) {
         <div class="analytics-card acard-green">
           <div class="acard-icon"><span class="material-icons-round">calendar_month</span></div>
           <div class="acard-info">
-            <span class="acard-label">${t('thisMonth', 'admin')} Ciro</span>
+            <span class="acard-label">${t('thisMonth', 'admin')} ${t('revenue')}</span>
             <span class="acard-value">${formatCurrency(monthRev)}</span>
             <span class="acard-sub">${month.length} ${t('orderCount', 'admin')}</span>
           </div>
@@ -164,39 +164,39 @@ export function renderAnalyticsContent(orders, menuItems) {
       <!-- Kar & Maliyet Özet Kartları -->
       <h3 style="margin: 24px 0 12px; font-size: 1.1rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
         <span class="material-icons-round" style="color: var(--success);">payments</span>
-        Maliyet & Net Kar Analizi
+        ${t('costAtOrder', 'admin')} & ${t('profit', 'admin')} ${t('analytics')}
       </h3>
       <div class="analytics-summary" style="margin-bottom: 24px;">
         <div class="analytics-card" style="background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 184, 148, 0.02)); border: 1px solid rgba(0, 184, 148, 0.2);">
           <div class="acard-icon" style="background: rgba(0, 184, 148, 0.15); color: var(--success);"><span class="material-icons-round">paid</span></div>
           <div class="acard-info">
-            <span class="acard-label" style="color: var(--text-secondary);">Bugün Net Kar</span>
+            <span class="acard-label" style="color: var(--text-secondary);">${t('today', 'admin')} ${t('profit', 'admin')}</span>
             <span class="acard-value" style="color: var(--success); font-weight:800;">${formatCurrency(todayProfit)}</span>
-            <span class="acard-sub" style="color: var(--text-muted);">Maliyet: ${formatCurrency(todayCost)}</span>
+            <span class="acard-sub" style="color: var(--text-muted);">${t('costAtOrder', 'admin')}: ${formatCurrency(todayCost)}</span>
           </div>
         </div>
         <div class="analytics-card" style="background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 184, 148, 0.02)); border: 1px solid rgba(0, 184, 148, 0.2);">
           <div class="acard-icon" style="background: rgba(0, 184, 148, 0.15); color: var(--success);"><span class="material-icons-round">date_range</span></div>
           <div class="acard-info">
-            <span class="acard-label" style="color: var(--text-secondary);">Bu Hafta Net Kar</span>
+            <span class="acard-label" style="color: var(--text-secondary);">${t('thisWeek', 'admin')} ${t('profit', 'admin')}</span>
             <span class="acard-value" style="color: var(--success); font-weight:800;">${formatCurrency(weekProfit)}</span>
-            <span class="acard-sub" style="color: var(--text-muted);">Maliyet: ${formatCurrency(weekCost)}</span>
+            <span class="acard-sub" style="color: var(--text-muted);">${t('costAtOrder', 'admin')}: ${formatCurrency(weekCost)}</span>
           </div>
         </div>
         <div class="analytics-card" style="background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 184, 148, 0.02)); border: 1px solid rgba(0, 184, 148, 0.2);">
           <div class="acard-icon" style="background: rgba(0, 184, 148, 0.15); color: var(--success);"><span class="material-icons-round">calendar_month</span></div>
           <div class="acard-info">
-            <span class="acard-label" style="color: var(--text-secondary);">Bu Ay Net Kar</span>
+            <span class="acard-label" style="color: var(--text-secondary);">${t('thisMonth', 'admin')} ${t('profit', 'admin')}</span>
             <span class="acard-value" style="color: var(--success); font-weight:800;">${formatCurrency(monthProfit)}</span>
-            <span class="acard-sub" style="color: var(--text-muted);">Maliyet: ${formatCurrency(monthCost)}</span>
+            <span class="acard-sub" style="color: var(--text-muted);">${t('costAtOrder', 'admin')}: ${formatCurrency(monthCost)}</span>
           </div>
         </div>
         <div class="analytics-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border);">
           <div class="acard-icon" style="background: rgba(255,255,255,0.05); color: var(--text-primary);"><span class="material-icons-round">percent</span></div>
           <div class="acard-info">
-            <span class="acard-label" style="color: var(--text-secondary);">Genel Kar Marjı</span>
+            <span class="acard-label" style="color: var(--text-secondary);">${t('overallProfitMargin', 'admin')}</span>
             <span class="acard-value" style="color: #fff; font-weight:800;">%${((monthRev - monthCost) > 0 && monthRev > 0) ? ((monthRev - monthCost) / monthRev * 100).toFixed(1) : '0.0'}</span>
-            <span class="acard-sub" style="color: var(--text-muted);">Son 30 Günlük Ortalama</span>
+            <span class="acard-sub" style="color: var(--text-muted);">${t('last30DaysAvg', 'admin')}</span>
           </div>
         </div>
       </div>
@@ -218,7 +218,7 @@ export function renderAnalyticsContent(orders, menuItems) {
 
         <!-- Günlük Kar Trendi -->
         <div class="analytics-panel">
-          <h3><span class="material-icons-round">trending_up</span> Günlük Net Kar Trendi (Son 7 Gün)</h3>
+          <h3><span class="material-icons-round">trending_up</span> ${t('costProfitTrend', 'admin')}</h3>
           <div class="chart-bar-container">
             ${dailyProfit.map(d => `
               <div class="chart-bar-wrapper">
@@ -232,9 +232,9 @@ export function renderAnalyticsContent(orders, menuItems) {
 
         <!-- En Karlı 5 Menü Ürünü -->
         <div class="analytics-panel">
-          <h3><span class="material-icons-round">military_tech</span> En Karlı 5 Menü Ürünü (Net Kar Tutarı)</h3>
+          <h3><span class="material-icons-round">military_tech</span> ${t('topProfitableItems', 'admin')}</h3>
           <div class="top-sellers-list">
-            ${topProfitable.length === 0 ? `<p style="color:var(--text-muted);text-align:center;padding:20px;">Henüz satış verisi bulunmuyor.</p>` :
+            ${topProfitable.length === 0 ? `<p style="color:var(--text-muted);text-align:center;padding:20px;">${t('noSalesData', 'admin')}</p>` :
               topProfitable.map((p, i) => `
                 <div class="top-seller-row">
                   <span class="top-rank" style="background:rgba(0, 184, 148, 0.15); color:var(--success);">${i + 1}</span>
@@ -245,8 +245,8 @@ export function renderAnalyticsContent(orders, menuItems) {
                     </div>
                   </div>
                   <div class="top-stats">
-                    <span class="top-qty">${p.qty} Adet</span>
-                    <span class="top-rev" style="color: var(--success); font-weight:700;">+${formatCurrency(p.profit)} Kar</span>
+                    <span class="top-qty">${p.qty} ${t('pieces', 'admin')}</span>
+                    <span class="top-rev" style="color: var(--success); font-weight:700;">+${formatCurrency(p.profit)} ${t('profit', 'admin')}</span>
                   </div>
                 </div>
               `).join('')}
@@ -255,9 +255,9 @@ export function renderAnalyticsContent(orders, menuItems) {
 
         <!-- En Düşük Marjlı 5 Menü Ürünü -->
         <div class="analytics-panel">
-          <h3><span class="material-icons-round">trending_down</span> En Düşük Marjlı 5 Menü Ürünü</h3>
+          <h3><span class="material-icons-round">trending_down</span> ${t('leastProfitableItems', 'admin')}</h3>
           <div class="top-sellers-list">
-            ${leastProfitable.length === 0 ? `<p style="color:var(--text-muted);text-align:center;padding:20px;">Reçeteli ürün satışı bulunmuyor.</p>` :
+            ${leastProfitable.length === 0 ? `<p style="color:var(--text-muted);text-align:center;padding:20px;">${t('noRecipeSales', 'admin')}</p>` :
               leastProfitable.map((p, i) => `
                 <div class="top-seller-row">
                   <span class="top-rank" style="background:rgba(255, 118, 117, 0.15); color:var(--danger);">${i + 1}</span>
@@ -268,8 +268,8 @@ export function renderAnalyticsContent(orders, menuItems) {
                     </div>
                   </div>
                   <div class="top-stats">
-                    <span class="top-qty">%${p.marginPercent.toFixed(1)} Marj</span>
-                    <span class="top-rev" style="color: var(--text-secondary); font-size:0.8rem;">Maliyet: ${formatCurrency(p.cost / p.qty)}</span>
+                    <span class="top-qty">%${p.marginPercent.toFixed(1)} ${t('margin', 'admin')}</span>
+                    <span class="top-rev" style="color: var(--text-secondary); font-size:0.8rem;">${t('costAtOrder', 'admin')}: ${formatCurrency(p.cost / p.qty)}</span>
                   </div>
                 </div>
               `).join('')}

@@ -24,12 +24,12 @@ export function renderStockContent(stockItems) {
     <div class="stock-page-wrapper">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
         <div style="min-width:0;">
-          <h3 style="font-size:1.15rem; margin:0 0 2px 0; color:var(--text-primary); font-weight:700;">Stok Yönetimi</h3>
+          <h3 style="font-size:1.15rem; margin:0 0 2px 0; color:var(--text-primary); font-weight:700;">${t('stockManagement', 'admin')}</h3>
           <p style="color:var(--text-muted); font-size:0.82rem; margin:0;">${totalItems} ${t('items', 'admin')}</p>
         </div>
         <button class="btn btn-primary btn-sm" id="add-stock-btn" style="display:inline-flex !important; visibility:visible !important; opacity:1 !important; align-items:center; gap:6px; padding:8px 16px; font-size:0.85rem; white-space:nowrap; flex-shrink:0; z-index:10;">
           <span class="material-icons-round" style="font-size:1.1rem;">add</span>
-          Yeni Hammadde
+          ${t('addStock', 'admin')}
         </button>
       </div>
 
@@ -38,25 +38,25 @@ export function renderStockContent(stockItems) {
         <div class="analytics-card acard-purple">
           <div class="acard-icon"><span class="material-icons-round">inventory_2</span></div>
           <div class="acard-info">
-            <span class="acard-label">Toplam Kalem</span>
+            <span class="acard-label">${t('totalItems', 'admin')}</span>
             <span class="acard-value">${totalItems}</span>
-            <span class="acard-sub">Hammaddeler</span>
+            <span class="acard-sub">${t('ingredients', 'admin')}</span>
           </div>
         </div>
         <div class="analytics-card acard-green">
           <div class="acard-icon"><span class="material-icons-round">monetization_on</span></div>
           <div class="acard-info">
-            <span class="acard-label">Toplam Stok Değeri</span>
+            <span class="acard-label">${t('totalStockValue', 'admin')}</span>
             <span class="acard-value">${formatCurrency(totalValue)}</span>
-            <span class="acard-sub">Aktif Kalan Değer</span>
+            <span class="acard-sub">${t('remainingStockValue', 'admin')}</span>
           </div>
         </div>
         <div class="analytics-card acard-red">
           <div class="acard-icon"><span class="material-icons-round">report_problem</span></div>
           <div class="acard-info">
-            <span class="acard-label">Kritik Stok Uyarısı</span>
+            <span class="acard-label">${t('criticalStockAlert', 'admin')}</span>
             <span class="acard-value">${criticalCount}</span>
-            <span class="acard-sub">%20 Seviyesi Altındakiler</span>
+            <span class="acard-sub">${t('under20Percent', 'admin')}</span>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ export function renderStockContent(stockItems) {
               <th style="padding: 14px 16px; white-space: nowrap;">${t('remainingQty', 'admin')}</th>
               <th style="padding: 14px 16px; white-space: nowrap;">${t('unitCost', 'admin')}</th>
               <th style="padding: 14px 16px; white-space: nowrap;">${t('totalCost', 'admin')}</th>
-              <th style="padding: 14px 16px; text-align: right; white-space: nowrap;">İşlemler</th>
+              <th style="padding: 14px 16px; text-align: right; white-space: nowrap;">${t('actions', 'admin')}</th>
             </tr>
           </thead>
           <tbody>
@@ -80,7 +80,7 @@ export function renderStockContent(stockItems) {
               <tr>
                 <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted); white-space: nowrap;">
                   <span class="material-icons-round" style="font-size: 3rem; display:block; margin-bottom: 8px;">kitchen</span>
-                  Henüz stok kalemi eklenmemiş.
+                  ${t('noStockItems', 'admin')}
                 </td>
               </tr>
             ` : stockItems.map(item => {
@@ -103,7 +103,7 @@ export function renderStockContent(stockItems) {
                 <tr style="border-bottom: 1px solid var(--border); transition: background-color 0.2s; ${rowStyle}">
                   <td style="padding: 14px 16px; font-weight: 600; white-space: nowrap;">
                     ${item.name}
-                    ${ratio <= 0.05 ? '<span style="color:var(--danger);font-size:0.75rem;margin-left:8px;font-weight:700;">[BİTTİ]</span>' : ratio <= 0.20 ? '<span style="color:var(--warning);font-size:0.75rem;margin-left:8px;font-weight:700;">[KRİTİK]</span>' : ''}
+                    ${ratio <= 0.05 ? `<span style="color:var(--danger);font-size:0.75rem;margin-left:8px;font-weight:700;">${t('outOfStockBadge', 'admin')}</span>` : ratio <= 0.20 ? `<span style="color:var(--warning);font-size:0.75rem;margin-left:8px;font-weight:700;">${t('criticalStockBadge', 'admin')}</span>` : ''}
                   </td>
                   <td style="padding: 14px 16px; text-transform: capitalize; white-space: nowrap;">${item.unit}</td>
                   <td style="padding: 14px 16px; white-space: nowrap;">${item.totalQuantity}</td>
@@ -156,16 +156,16 @@ export function setupStockHandlers(userId, content, stockItems, menuItems) {
 
       if (referencedItems.length > 0) {
         const itemNames = referencedItems.map(m => m.name).join(', ');
-        alert(`UYARI: "${stockName}" hammaddesini kullanan menü ürünleri var: (${itemNames}).\nBu hammaddeyi silmeden önce reçetelerden kaldırmalısınız.`);
+        alert(t('deleteStockWarning', 'admin').replace('{name}', stockName).replace('{items}', itemNames));
         return;
       }
 
-      if (confirm(`"${stockName}" hammaddesini silmek istediğinize emin misiniz?`)) {
+      if (confirm(t('deleteStockConfirm', 'admin').replace('{name}', stockName))) {
         try {
           await deleteDoc(doc(db, 'users', userId, 'stock', stockId));
-          showToast('Hammadde silindi ✓', 'success');
+          showToast(t('stockDeleted', 'admin'), 'success');
         } catch (e) {
-          showToast('Hata: ' + e.message, 'error');
+          showToast(t('errorPrefix', 'admin') + e.message, 'error');
         }
       }
     });
@@ -184,7 +184,7 @@ function showAddStockModal(userId) {
       <div class="modal-body">
         <div class="input-group">
           <label>${t('stockName', 'admin')}</label>
-          <input type="text" class="input-field" id="stock-name" placeholder="Örn: Süt, Çikolata, Adet Ekmek" required>
+          <input type="text" class="input-field" id="stock-name" placeholder="${t('stockNamePlaceholder', 'admin')}" required>
         </div>
         <div class="input-group">
           <label>${t('unit', 'admin')}</label>
@@ -196,21 +196,21 @@ function showAddStockModal(userId) {
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="input-group">
-            <label>Miktar</label>
+            <label>${t('quantity', 'admin')}</label>
             <input type="number" class="input-field" id="stock-qty" placeholder="1000" min="1" required>
           </div>
           <div class="input-group">
-            <label>Alış Fiyatı (₺)</label>
+            <label>${t('addPrice', 'admin')}</label>
             <input type="number" class="input-field" id="stock-cost" placeholder="100.00" step="0.01" min="0" required>
           </div>
         </div>
         <div id="cost-preview" style="background:var(--bg-secondary); padding: 12px; border-radius: 8px; font-size:0.85rem; font-weight:600; color:var(--primary); text-align: center; margin-top: 10px;">
-          Birim Maliyet: 0.00 ₺ / g
+          ${t('unitCostFormat', 'admin').replace('{val}', '0.00').replace('{unit}', 'g')}
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="cancel-modal">İptal</button>
-        <button class="btn btn-primary" id="save-stock">Kaydet</button>
+        <button class="btn btn-secondary" id="cancel-modal">${t('cancel')}</button>
+        <button class="btn btn-primary" id="save-stock">${t('save')}</button>
       </div>
     </div>
   `;
@@ -230,9 +230,9 @@ function showAddStockModal(userId) {
     
     if (qty > 0) {
       const unitCost = cost / qty;
-      previewDiv.textContent = `Birim Maliyet: ${formatCurrency(unitCost)} / ${unit}`;
+      previewDiv.textContent = t('unitCostFormat', 'admin').replace('{val}', formatCurrency(unitCost)).replace('{unit}', unit);
     } else {
-      previewDiv.textContent = `Birim Maliyet: 0.00 ₺ / ${unit}`;
+      previewDiv.textContent = t('unitCostFormat', 'admin').replace('{val}', formatCurrency(0)).replace('{unit}', unit);
     }
   };
 
@@ -251,7 +251,7 @@ function showAddStockModal(userId) {
     const cost = parseFloat(costInput.value) || 0;
 
     if (!name || qty <= 0 || cost < 0) {
-      showToast('Lütfen tüm geçerli stok bilgilerini girin', 'warning');
+      showToast(t('invalidStockInfo', 'admin'), 'warning');
       return;
     }
 
@@ -268,10 +268,10 @@ function showAddStockModal(userId) {
         updatedAt: serverTimestamp()
       });
 
-      showToast('Hammadde stoklara eklendi ✓', 'success');
+      showToast(t('stockAdded', 'admin'), 'success');
       overlay.remove();
     } catch(e) {
-      showToast('Hata: ' + e.message, 'error');
+      showToast(t('errorPrefix', 'admin') + e.message, 'error');
     }
   });
 }
@@ -282,14 +282,14 @@ function showUpdateStockModal(userId, item) {
   overlay.innerHTML = `
     <div class="modal" style="max-width:400px;">
       <div class="modal-header">
-        <h3>Stok Güncelle</h3>
+        <h3>${t('updateStock', 'admin')}</h3>
         <button class="btn btn-ghost btn-icon" id="close-modal"><span class="material-icons-round">close</span></button>
       </div>
       <div class="modal-body">
-        <p style="margin-bottom:12px; font-weight:600; font-size:0.9rem;">Hammadde: <span style="color:var(--primary);">${item.name}</span></p>
+        <p style="margin-bottom:12px; font-weight:600; font-size:0.9rem;">${t('ingredientLabel', 'admin')}<span style="color:var(--primary);">${item.name}</span></p>
         <p style="margin-bottom:16px; font-size:0.8rem; color:var(--text-muted);">
-          Mevcut Kalan: ${item.remainingQuantity} ${item.unit} (Toplam: ${item.totalQuantity}) <br>
-          Mevcut Birim Maliyet: ${formatCurrency(item.unitCostPerGram)}
+          ${t('currentRemaining', 'admin')}: ${item.remainingQuantity} ${item.unit} (${t('total')}: ${item.totalQuantity}) <br>
+          ${t('currentUnitCost', 'admin')}: ${formatCurrency(item.unitCostPerGram)}
         </p>
 
         <div style="border-top:1px dashed var(--border); padding-top:14px; margin-top:10px;">
@@ -304,12 +304,12 @@ function showUpdateStockModal(userId, item) {
         </div>
 
         <div id="update-preview" style="background:var(--bg-secondary); padding: 12px; border-radius: 8px; font-size:0.85rem; font-weight:600; color:var(--primary); text-align: center; margin-top: 10px;">
-          Yeni Ortalama Maliyet: ${formatCurrency(item.unitCostPerGram)} / ${item.unit === 'gram' ? 'g' : item.unit === 'ml' ? 'ml' : 'adet'}
+          ${t('newAvgCost', 'admin')}: ${formatCurrency(item.unitCostPerGram)} / ${item.unit === 'gram' ? 'g' : item.unit === 'ml' ? 'ml' : 'adet'}
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="cancel-modal">İptal</button>
-        <button class="btn btn-primary" id="save-update-stock">Stoku Artır</button>
+        <button class="btn btn-secondary" id="cancel-modal">${t('cancel')}</button>
+        <button class="btn btn-primary" id="save-update-stock">${t('increaseStock', 'admin')}</button>
       </div>
     </div>
   `;
@@ -334,11 +334,11 @@ function showUpdateStockModal(userId, item) {
     if (nextTotalQty > 0) {
       const nextUnitCost = nextTotalCost / nextTotalQty;
       previewDiv.innerHTML = `
-        Yeni Ortalama Maliyet: ${formatCurrency(nextUnitCost)} / ${unit} <br>
+        ${t('newAvgCost', 'admin')}: ${formatCurrency(nextUnitCost)} / ${unit} <br>
         <span style="font-size:0.7rem; color:var(--text-muted);">(Eski: ${formatCurrency(item.unitCostPerGram)})</span>
       `;
     } else {
-      previewDiv.textContent = `Yeni Ortalama Maliyet: ${formatCurrency(item.unitCostPerGram)} / ${unit}`;
+      previewDiv.textContent = `${t('newAvgCost', 'admin')}: ${formatCurrency(item.unitCostPerGram)} / ${unit}`;
     }
   };
 
@@ -354,7 +354,7 @@ function showUpdateStockModal(userId, item) {
     const addCost = parseFloat(costInput.value) || 0;
 
     if (addQty <= 0 || addCost < 0) {
-      showToast('Lütfen geçerli miktar ve fiyat girin', 'warning');
+      showToast(t('invalidQtyCost', 'admin'), 'warning');
       return;
     }
 
@@ -372,10 +372,10 @@ function showUpdateStockModal(userId, item) {
         updatedAt: serverTimestamp()
       });
 
-      showToast('Stok başarıyla güncellendi ✓', 'success');
+      showToast(t('stockUpdated', 'admin'), 'success');
       overlay.remove();
     } catch(e) {
-      showToast('Hata: ' + e.message, 'error');
+      showToast(t('errorPrefix', 'admin') + e.message, 'error');
     }
   });
 }

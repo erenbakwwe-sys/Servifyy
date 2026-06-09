@@ -1,6 +1,7 @@
 import { db, collection, doc, addDoc, updateDoc, deleteDoc, getDocs, serverTimestamp, query, orderBy } from '../firebase.js';
 import { showToast } from '../utils.js';
 import { getBranches } from './admin-branches.js';
+import { t } from '../i18n.js';
 
 let staffList = [];
 
@@ -23,7 +24,7 @@ export async function loadStaff(userId) {
 
 export function getStaff() { return staffList; }
 
-const ROLE_LABELS = { branch_manager: 'Şube Müdürü', waiter: 'Garson' };
+const ROLE_LABELS = { branch_manager: t('branchManager', 'staff'), waiter: t('waiter', 'staff') };
 const ROLE_ICONS = { branch_manager: 'admin_panel_settings', waiter: 'person' };
 
 export function renderStaffContent(userId) {
@@ -34,42 +35,42 @@ export function renderStaffContent(userId) {
   return `
     <div class="section-header">
       <div>
-        <h3>Personel Yönetimi</h3>
-        <p style="color:var(--text-muted);font-size:0.85rem;">${staffList.length} personel kayıtlı</p>
+        <h3>${t('staffMgmt', 'admin')}</h3>
+        <p style="color:var(--text-muted);font-size:0.85rem;">${t('staffCountRegistered', 'admin').replace('{count}', staffList.length)}</p>
       </div>
       <div style="display:flex; gap:12px; align-items:center;">
         <div class="badge badge-primary" style="display:flex; align-items:center; gap:6px; padding:6px 12px; font-size:0.9rem;">
           <span class="material-icons-round" style="font-size:1.1rem;">key</span>
-          <span>İşletme Kodu: <strong style="letter-spacing:1px; user-select:all;">${userId}</strong></span>
+          <span>${t('businessCodeLabel', 'admin')}<strong style="letter-spacing:1px; user-select:all;">${userId}</strong></span>
         </div>
-        <button class="btn btn-primary" id="add-staff-btn"><span class="material-icons-round">person_add</span> Yeni Personel Ekle</button>
+        <button class="btn btn-primary" id="add-staff-btn"><span class="material-icons-round">person_add</span> ${t('addStaff', 'admin')}</button>
       </div>
     </div>
     <div class="staff-grid">
       ${staffList.length === 0 ? `
         <div class="empty-state">
           <span class="material-icons-round" style="font-size:4rem;color:var(--text-muted);">group</span>
-          <h4>Henüz personel eklenmemiş</h4>
-          <p>Personel ekleyerek şubelerinizi yönetmeye başlayın</p>
+          <h4>${t('noStaff', 'admin')}</h4>
+          <p>${t('noStaffSub', 'admin')}</p>
         </div>
       ` : staffList.map(s => `
         <div class="staff-card ${s.isActive ? '' : 'inactive'}">
           <div class="staff-card-header">
             <div class="staff-avatar"><span class="material-icons-round">${ROLE_ICONS[s.role] || 'person'}</span></div>
             <div class="staff-badges">
-              <span class="badge ${s.role === 'branch_manager' ? 'badge-primary' : 'badge-info'}">${ROLE_LABELS[s.role] || s.role}</span>
-              <span class="badge ${s.isActive ? 'badge-success' : 'badge-muted'}">${s.isActive ? 'Aktif' : 'Pasif'}</span>
+              <span class="badge ${s.role === 'branch_manager' ? 'badge-primary' : 'badge-info'}">${t(s.role === 'branch_manager' ? 'branchManager' : s.role === 'waiter' ? 'waiter' : s.role, 'staff')}</span>
+              <span class="badge ${s.isActive ? 'badge-success' : 'badge-muted'}">${s.isActive ? t('active', 'admin') : t('inactive', 'admin')}</span>
             </div>
           </div>
           <h4 class="staff-name">${s.username}</h4>
-          <p class="staff-branch"><span class="material-icons-round" style="font-size:0.85rem;">store</span> ${branchMap[s.assignedBranchId] || 'Atanmamış'}</p>
+          <p class="staff-branch"><span class="material-icons-round" style="font-size:0.85rem;">store</span> ${branchMap[s.assignedBranchId] || t('unassigned', 'admin')}</p>
           <div class="staff-actions">
             <label class="toggle-switch">
               <input type="checkbox" ${s.isActive ? 'checked' : ''} data-toggle-staff="${s.id}">
               <span class="toggle-slider"></span>
             </label>
-            <button class="btn btn-ghost btn-sm" data-edit-staff="${s.id}" title="Düzenle"><span class="material-icons-round">edit</span></button>
-            <button class="btn btn-ghost btn-sm btn-danger-text" data-delete-staff="${s.id}" title="Sil"><span class="material-icons-round">delete</span></button>
+            <button class="btn btn-ghost btn-sm" data-edit-staff="${s.id}" title="${t('edit')}"><span class="material-icons-round">edit</span></button>
+            <button class="btn btn-ghost btn-sm btn-danger-text" data-delete-staff="${s.id}" title="${t('delete')}"><span class="material-icons-round">delete</span></button>
           </div>
         </div>
       `).join('')}
@@ -83,47 +84,47 @@ function staffFormModal(staff = null) {
     <div class="modal-overlay active" id="staff-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3>${isEdit ? 'Personeli Düzenle' : 'Yeni Personel Ekle'}</h3>
+          <h3>${isEdit ? t('editStaff', 'admin') : t('addStaff', 'admin')}</h3>
           <button class="btn btn-ghost btn-icon modal-close" data-close-modal><span class="material-icons-round">close</span></button>
         </div>
         <div class="modal-body">
           <div class="input-group">
-            <label>Kullanıcı Adı *</label>
+            <label>${t('usernameLabel', 'admin')}</label>
             <input type="text" id="staff-username" class="input-field" placeholder="kullanici.adi" value="${staff?.username || ''}" ${isEdit ? 'readonly style="opacity:0.6"' : ''}>
           </div>
           ${isEdit ? `
             <div class="input-group">
-              <label>Yeni Şifre (değiştirmek istiyorsanız)</label>
-              <input type="password" id="staff-password" class="input-field" placeholder="Boş bırakırsanız değişmez">
+              <label>${t('newPasswordLabel', 'admin')}</label>
+              <input type="password" id="staff-password" class="input-field" placeholder="${t('newPasswordPlaceholder', 'admin')}">
             </div>
           ` : `
             <div class="input-group">
-              <label>Şifre *</label>
-              <input type="password" id="staff-password" class="input-field" placeholder="Şifre">
+              <label>${t('passwordLabel', 'admin')}</label>
+              <input type="password" id="staff-password" class="input-field" placeholder="${t('passwordLabel', 'admin').replace(' *', '')}">
             </div>
             <div class="input-group">
-              <label>Şifre Tekrar *</label>
-              <input type="password" id="staff-password2" class="input-field" placeholder="Şifre tekrar">
+              <label>${t('confirmPasswordLabel', 'admin')}</label>
+              <input type="password" id="staff-password2" class="input-field" placeholder="${t('confirmPasswordLabel', 'admin').replace(' *', '')}">
             </div>
           `}
           <div class="input-group">
-            <label>Rol *</label>
+            <label>${t('role')} *</label>
             <select id="staff-role" class="input-field">
-              <option value="branch_manager" ${staff?.role === 'branch_manager' ? 'selected' : ''}>Şube Müdürü</option>
-              <option value="waiter" ${staff?.role === 'waiter' ? 'selected' : ''}>Garson</option>
+              <option value="branch_manager" ${staff?.role === 'branch_manager' ? 'selected' : ''}>${t('branchManager', 'staff')}</option>
+              <option value="waiter" ${staff?.role === 'waiter' ? 'selected' : ''}>${t('waiter', 'staff')}</option>
             </select>
           </div>
           <div class="input-group">
-            <label>Atanacak Şube *</label>
+            <label>${t('branchLabel', 'admin')}</label>
             <select id="staff-branch" class="input-field">
-              <option value="">Şube seçin</option>
+              <option value="">${t('selectBranchOption', 'admin')}</option>
               ${branches.filter(b => b.isActive).map(b => `<option value="${b.id}" ${staff?.assignedBranchId === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}
             </select>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-close-modal>İptal</button>
-          <button class="btn btn-primary" id="save-staff-btn" data-staff-id="${staff?.id || ''}">${isEdit ? 'Güncelle' : 'Ekle'}</button>
+          <button class="btn btn-secondary" data-close-modal>${t('cancel')}</button>
+          <button class="btn btn-primary" id="save-staff-btn" data-staff-id="${staff?.id || ''}">${isEdit ? t('update', 'admin') : t('add', 'admin')}</button>
         </div>
       </div>
     </div>`;
@@ -144,14 +145,14 @@ export function setupStaffHandlers(userId, content) {
 
   content.querySelectorAll('[data-delete-staff]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      if (!confirm('Bu personeli silmek istediğinize emin misiniz?')) return;
+      if (!confirm(t('deleteStaffConfirm', 'admin'))) return;
       try {
         await deleteDoc(doc(db, 'users', userId, 'staff', btn.dataset.deleteStaff));
-        showToast('Personel silindi', 'success');
+        showToast(t('staffDeleted', 'admin'), 'success');
         await loadStaff(userId);
         document.getElementById('page-content').innerHTML = renderStaffContent(userId);
         setupStaffHandlers(userId, document.getElementById('page-content'));
-      } catch (e) { showToast('Hata: ' + e.message, 'error'); }
+      } catch (e) { showToast(t('errorPrefix', 'admin') + e.message, 'error'); }
     });
   });
 
@@ -159,9 +160,9 @@ export function setupStaffHandlers(userId, content) {
     toggle.addEventListener('change', async () => {
       try {
         await updateDoc(doc(db, 'users', userId, 'staff', toggle.dataset.toggleStaff), { isActive: toggle.checked });
-        showToast(toggle.checked ? 'Personel aktifleştirildi' : 'Personel pasifleştirildi', 'success');
+        showToast(toggle.checked ? t('staffActivated', 'admin') : t('staffDeactivated', 'admin'), 'success');
         await loadStaff(userId);
-      } catch (e) { showToast('Hata: ' + e.message, 'error'); }
+      } catch (e) { showToast(t('errorPrefix', 'admin') + e.message, 'error'); }
     });
   });
 }
@@ -181,18 +182,18 @@ function bindStaffModalEvents(userId) {
     const staffId = modal.querySelector('#save-staff-btn').dataset.staffId;
     const isEdit = !!staffId;
 
-    if (!username) { showToast('Kullanıcı adı zorunludur', 'warning'); return; }
-    if (!isEdit && !password) { showToast('Şifre zorunludur', 'warning'); return; }
+    if (!username) { showToast(t('usernameRequired', 'admin'), 'warning'); return; }
+    if (!isEdit && !password) { showToast(t('passwordRequired', 'admin'), 'warning'); return; }
     if (!isEdit) {
       const password2 = modal.querySelector('#staff-password2').value;
-      if (password !== password2) { showToast('Şifreler eşleşmiyor', 'warning'); return; }
+      if (password !== password2) { showToast(t('passwordsMismatch', 'admin'), 'warning'); return; }
     }
-    if (!assignedBranchId) { showToast('Şube seçimi zorunludur', 'warning'); return; }
+    if (!assignedBranchId) { showToast(t('branchRequired', 'admin'), 'warning'); return; }
 
     // Check unique username (only for new)
     if (!isEdit) {
       const existing = staffList.find(s => s.username.toLowerCase() === username.toLowerCase());
-      if (existing) { showToast('Bu kullanıcı adı zaten kullanılıyor', 'warning'); return; }
+      if (existing) { showToast(t('usernameExists', 'admin'), 'warning'); return; }
     }
 
     try {
@@ -201,18 +202,18 @@ function bindStaffModalEvents(userId) {
       if (isEdit) {
         if (password) data.passwordHash = await hashPassword(password);
         await updateDoc(doc(db, 'users', userId, 'staff', staffId), data);
-        showToast('Personel güncellendi ✓', 'success');
+        showToast(t('staffUpdated', 'admin'), 'success');
       } else {
         data.username = username;
         data.passwordHash = await hashPassword(password);
         data.createdAt = serverTimestamp();
         await addDoc(collection(db, 'users', userId, 'staff'), data);
-        showToast('Personel eklendi ✓', 'success');
+        showToast(t('staffAdded', 'admin'), 'success');
       }
       modal.remove();
       await loadStaff(userId);
       document.getElementById('page-content').innerHTML = renderStaffContent(userId);
       setupStaffHandlers(userId, document.getElementById('page-content'));
-    } catch (e) { showToast('Hata: ' + e.message, 'error'); }
+    } catch (e) { showToast(t('errorPrefix', 'admin') + e.message, 'error'); }
   });
 }

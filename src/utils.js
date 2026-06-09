@@ -1,3 +1,5 @@
+import { getLang } from './i18n.js';
+
 // ============================================
 // UTILS - Toast, helpers, notification sound
 // ============================================
@@ -44,7 +46,10 @@ export const CURRENCIES = [
 ];
 
 export function getCurrency() {
-  return localStorage.getItem('menu_currency') || 'TRY';
+  const lang = getLang();
+  if (lang === 'en') return 'USD';
+  if (lang === 'de') return 'EUR';
+  return 'TRY';
 }
 
 export function setCurrency(code) {
@@ -73,7 +78,9 @@ export function formatCurrency(amount, currencyOverride) {
 export function formatDate(date) {
   if (!date) return '-';
   const d = date.toDate ? date.toDate() : new Date(date);
-  return new Intl.DateTimeFormat('tr-TR', {
+  const lang = getLang();
+  const locale = lang === 'en' ? 'en-US' : (lang === 'de' ? 'de-DE' : 'tr-TR');
+  return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -87,11 +94,24 @@ export function timeAgo(date) {
   const d = date.toDate ? date.toDate() : new Date(date);
   const now = new Date();
   const diff = Math.floor((now - d) / 1000);
+  const lang = getLang();
 
-  if (diff < 60) return 'Az önce';
-  if (diff < 3600) return `${Math.floor(diff / 60)} dk önce`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} saat önce`;
-  return `${Math.floor(diff / 86400)} gün önce`;
+  if (lang === 'en') {
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
+    return `${Math.floor(diff / 86400)} days ago`;
+  } else if (lang === 'de') {
+    if (diff < 60) return 'Gerade eben';
+    if (diff < 3600) return `vor ${Math.floor(diff / 60)} Min.`;
+    if (diff < 86400) return `vor ${Math.floor(diff / 3600)} Std.`;
+    return `vor ${Math.floor(diff / 86400)} Tagen`;
+  } else {
+    if (diff < 60) return 'Az önce';
+    if (diff < 3600) return `${Math.floor(diff / 60)} dk önce`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} saat önce`;
+    return `${Math.floor(diff / 86400)} gün önce`;
+  }
 }
 
 export function generateId() {

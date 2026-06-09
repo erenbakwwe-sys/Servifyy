@@ -44,7 +44,7 @@ export async function generateAllQR(userId, tableCount) {
       const svg = await generateQRCode(url, 3);
       container.innerHTML = svg;
     } catch(e) {
-      container.innerHTML = '<span style="color:var(--danger);font-size:0.8rem;">Hata</span>';
+      container.innerHTML = `<span style="color:var(--danger);font-size:0.8rem;">${t('errorPrefix', 'admin').replace(':','').trim() || 'Hata'}</span>`;
     }
   }
 }
@@ -180,8 +180,8 @@ export function renderOrdersContent(orders) {
                 ${o.status === 'new' ? `<button class="btn btn-primary btn-sm update-order" data-id="${o.id}" data-status="preparing">${t('prepare', 'admin')}</button>` : ''}
                 ${o.status === 'preparing' ? `<button class="btn btn-success btn-sm update-order" data-id="${o.id}" data-status="completed">${t('complete', 'admin')}</button>` : ''}
                 ${o.status === 'completed' ? `
-                  <button class="btn btn-ghost btn-icon print-receipt" data-id="${o.id}" title="Yazdır/PDF"><span class="material-icons-round">print</span></button>
-                  <button class="btn btn-ghost btn-icon share-whatsapp" data-id="${o.id}" title="WhatsApp ile Gönder"><span class="material-icons-round" style="color:#25D366;">whatsapp</span></button>
+                  <button class="btn btn-ghost btn-icon print-receipt" data-id="${o.id}" title="${t('printPdf', 'admin') || 'Yazdır/PDF'}"><span class="material-icons-round">print</span></button>
+                  <button class="btn btn-ghost btn-icon share-whatsapp" data-id="${o.id}" title="${t('sendWhatsapp', 'admin') || 'WhatsApp ile Gönder'}"><span class="material-icons-round" style="color:#25D366;">whatsapp</span></button>
                 ` : ''}
               </div>
             </div>
@@ -203,7 +203,7 @@ export function renderHistoryContent(orders) {
       <div class="table-wrapper">
         <table class="history-table">
           <thead><tr>
-            <th>ID</th><th>${t('tables', 'admin')}</th><th>${t('items', 'admin')}</th><th>${t('total')}</th><th>Ödeme</th><th>Tarih</th>
+            <th>ID</th><th>${t('tables', 'admin')}</th><th>${t('items', 'admin')}</th><th>${t('total')}</th><th>${t('payment', 'admin') || 'Ödeme'}</th><th>${t('date')}</th>
           </tr></thead>
           <tbody>
             ${completed.length === 0 ? `<tr><td colspan="6" style="text-align:center;padding:40px;">${t('noHistory', 'admin')}</td></tr>` :
@@ -267,7 +267,7 @@ export function renderFinanceContent(orders, userData) {
         <div class="input-group">
           <label>${t('posProvider', 'admin')}</label>
           <select id="pos-provider" class="input-field">
-            <option value="none" ${(!userData?.paymentSettings?.provider || userData.paymentSettings.provider === 'none') ? 'selected' : ''}>Yok (Sadece Masada Ödeme)</option>
+            <option value="none" ${(!userData?.paymentSettings?.provider || userData.paymentSettings.provider === 'none') ? 'selected' : ''}>${t('paymentNone', 'admin') || 'Yok (Sadece Masada Ödeme)'}</option>
             <option value="iyzico" ${userData?.paymentSettings?.provider === 'iyzico' ? 'selected' : ''}>Iyzico</option>
             <option value="stripe" ${userData?.paymentSettings?.provider === 'stripe' ? 'selected' : ''}>Stripe</option>
             <option value="paytr" ${userData?.paymentSettings?.provider === 'paytr' ? 'selected' : ''}>PayTR</option>
