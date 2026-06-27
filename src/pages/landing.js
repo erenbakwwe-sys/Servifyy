@@ -16,11 +16,12 @@ export function renderLanding(container) {
         </a>
         <div class="nav-links" id="nav-links">
           <a href="#features">${t('features', 'landing')}</a>
+          <a href="#demos">${t('demoSectionTag', 'landing')}</a>
           <a href="#how-it-works">${t('howItWorks', 'landing')}</a>
           <a href="#pricing">${t('pricing', 'landing')}</a>
           <a href="#/auth" class="btn btn-ghost">${t('login', 'landing')}</a>
           <a href="#/personel-giris" class="btn btn-ghost" style="gap:4px;"><span class="material-icons-round" style="font-size:1rem;">badge</span>${t('staffLogin', 'landing')}</a>
-          <a href="#/auth?mode=register" class="btn btn-primary">${t('freeTrial', 'landing')}</a>
+          <a href="#demos" class="btn btn-primary">${t('freeTrial', 'landing')}</a>
           <select id="landing-lang-select" class="input-field" style="padding:4px 8px; font-size:0.85rem; border-radius:12px; width:auto; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary); margin-left:16px;">
             <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 TR</option>
             <option value="en" ${getLang() === 'en' ? 'selected' : ''}>🇬🇧 EN</option>
@@ -38,11 +39,12 @@ export function renderLanding(container) {
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
       <a href="#features" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('features', 'landing')}</a>
+      <a href="#demos" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('demoSectionTag', 'landing')}</a>
       <a href="#how-it-works" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('howItWorks', 'landing')}</a>
       <a href="#pricing" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('pricing', 'landing')}</a>
       <a href="#/auth" class="btn btn-ghost btn-block">${t('login', 'landing')}</a>
           <a href="#/personel-giris" class="btn btn-ghost btn-block" style="gap:4px;"><span class="material-icons-round" style="font-size:1rem;">badge</span>${t('staffLogin', 'landing')}</a>
-          <a href="#/auth?mode=register" class="btn btn-primary btn-block">${t('freeTrial', 'landing')}</a>
+          <a href="#demos" class="btn btn-primary btn-block">${t('freeTrial', 'landing')}</a>
       <div style="margin-top:16px;text-align:center;">
         <select id="mobile-lang-select" class="input-field" style="padding:8px 16px; font-size:1rem; border-radius:12px; width:100%; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
           <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
@@ -72,8 +74,8 @@ export function renderLanding(container) {
           ${t('heroSubtitle', 'landing')}
         </p>
         <div class="hero-actions">
-          <a href="#/auth?mode=register" class="btn btn-primary btn-lg animate-glow">
-            <span class="material-icons-round">rocket_launch</span>
+          <a href="#demos" class="btn btn-primary btn-lg animate-glow">
+            <span class="material-icons-round">visibility</span>
             ${t('freeStart', 'landing')}
           </a>
           <a href="#how-it-works" class="btn btn-secondary btn-lg">
@@ -192,6 +194,88 @@ export function renderLanding(container) {
       </div>
     </section>
 
+    <!-- Demo Showcase Section -->
+    <section class="demo-section" id="demos">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag">
+            <span class="material-icons-round">devices</span>
+            ${t('demoSectionTag', 'landing')}
+          </div>
+          <h2 class="section-title">${t('demoSectionTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('demoSectionSub', 'landing')}</p>
+        </div>
+        <div class="demo-grid stagger-children">
+          <div class="demo-card">
+            <div class="demo-card-preview">
+              <div class="demo-browser-bar">
+                <div class="demo-browser-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="demo-browser-url">cigerciapo.vercel.app</div>
+              </div>
+              <iframe src="https://cigerciapo.vercel.app/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="Ciğerci Apo Demo"></iframe>
+              <div class="demo-card-overlay">
+                <a href="https://cigerciapo.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+                  <span class="material-icons-round">open_in_new</span>
+                  ${t('demoVisit', 'landing')}
+                </a>
+              </div>
+            </div>
+            <div class="demo-card-info">
+              <div class="demo-card-badge">${t('demoRestaurant', 'landing')}</div>
+              <h3>${t('demoCard1Title', 'landing')}</h3>
+              <p>${t('demoCard1Desc', 'landing')}</p>
+            </div>
+          </div>
+          <div class="demo-card">
+            <div class="demo-card-preview">
+              <div class="demo-browser-bar">
+                <div class="demo-browser-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="demo-browser-url">izmirdenizrestaurant.vercel.app</div>
+              </div>
+              <iframe src="https://izmirdenizrestaurant.vercel.app/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="İzmir Deniz Restaurant Demo"></iframe>
+              <div class="demo-card-overlay">
+                <a href="https://izmirdenizrestaurant.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+                  <span class="material-icons-round">open_in_new</span>
+                  ${t('demoVisit', 'landing')}
+                </a>
+              </div>
+            </div>
+            <div class="demo-card-info">
+              <div class="demo-card-badge">${t('demoCafe', 'landing')}</div>
+              <h3>${t('demoCard2Title', 'landing')}</h3>
+              <p>${t('demoCard2Desc', 'landing')}</p>
+            </div>
+          </div>
+          <div class="demo-card">
+            <div class="demo-card-preview">
+              <div class="demo-browser-bar">
+                <div class="demo-browser-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="demo-browser-url">fatihbelediyesi.vercel.app</div>
+              </div>
+              <iframe src="https://fatihbelediyesi.vercel.app/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="Fatih Belediyesi Demo"></iframe>
+              <div class="demo-card-overlay">
+                <a href="https://fatihbelediyesi.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+                  <span class="material-icons-round">open_in_new</span>
+                  ${t('demoVisit', 'landing')}
+                </a>
+              </div>
+            </div>
+            <div class="demo-card-info">
+              <div class="demo-card-badge">${t('demoPublic', 'landing')}</div>
+              <h3>${t('demoCard3Title', 'landing')}</h3>
+              <p>${t('demoCard3Desc', 'landing')}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Pricing Section -->
     <section class="pricing-section" id="pricing">
       <div class="container">
@@ -216,7 +300,7 @@ export function renderLanding(container) {
               <li><span class="material-icons-round">check_circle</span> ${t('pf5', 'landing')}</li>
               <li><span class="material-icons-round">check_circle</span> ${t('pf6', 'landing')}</li>
             </ul>
-            <a href="#/auth?mode=register" class="btn btn-secondary btn-block btn-lg">${t('freeStart', 'landing')}</a>
+            <a href="#demos" class="btn btn-secondary btn-block btn-lg">${t('freeStart', 'landing')}</a>
           </div>
           <div class="pricing-card featured" data-badge="${t('popular', 'landing')}">
             <div class="pricing-name">${t('p2Name', 'landing')}</div>
@@ -242,8 +326,8 @@ export function renderLanding(container) {
         <div class="cta-box">
           <h2>${t('ctaTitle', 'landing')}</h2>
           <p>${t('ctaSub', 'landing')}</p>
-          <a href="#/auth?mode=register" class="btn btn-primary btn-lg animate-glow" style="position:relative;">
-            <span class="material-icons-round">rocket_launch</span>
+          <a href="#demos" class="btn btn-primary btn-lg animate-glow" style="position:relative;">
+            <span class="material-icons-round">visibility</span>
             ${t('ctaBtn', 'landing')}
           </a>
         </div>
@@ -262,6 +346,7 @@ export function renderLanding(container) {
           </div>
           <div class="footer-links">
             <a href="#features">${t('features', 'landing')}</a>
+            <a href="#demos">${t('demoSectionTag', 'landing')}</a>
             <a href="#pricing">${t('pricing', 'landing')}</a>
             <a href="#/personel-giris">${t('staffLogin', 'landing')}</a>
             <a href="#/auth">${t('login', 'landing')}</a>
@@ -328,7 +413,7 @@ export function renderLanding(container) {
     });
   }, { threshold: 0.1 });
 
-  container.querySelectorAll('.feature-card, .step-card, .pricing-card').forEach(el => {
+  container.querySelectorAll('.feature-card, .step-card, .pricing-card, .demo-card').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
