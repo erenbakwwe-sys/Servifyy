@@ -159,6 +159,14 @@ function renderAdminLayout(container, userId) {
         </div>
       </aside>
       <main class="admin-main">
+        ${userId === 'demo' ? `
+          <div class="demo-top-promo-bar" style="background: linear-gradient(90deg, #6c5ce7, #8e44ad); color: white; padding: 10px 16px; text-align: center; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; z-index: 100; position: relative; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); flex-wrap: wrap;">
+            <span>🔥 Kampanya: Bu ayki 4 ücretsiz kurulum kontenjanından yararlanın!</span>
+            <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20kurulum%20kampanyasından%20yararlanmak%20istiyorum." target="_blank" rel="noopener noreferrer" style="background: white; color: #6c5ce7; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: 800; transition: transform 0.2s;">
+              <span class="material-icons-round" style="font-size:0.85rem;">chat</span> Şimdi WhatsApp'tan Başvur
+            </a>
+          </div>
+        ` : ''}
         <header class="admin-topbar">
           <div class="topbar-left">
             <button class="btn btn-ghost btn-icon mobile-sidebar-toggle" id="sidebar-toggle">
@@ -1372,18 +1380,29 @@ function showDemoContactModal() {
     </style>
     
     <div class="demo-popup-card">
-      <div class="demo-popup-icon-box" style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 32px var(--primary-glow);">
+      <!-- Scarcity Badge (FOMO) -->
+      <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(235, 94, 40, 0.1); border: 1px solid rgba(235, 94, 40, 0.25); color: #eb5e28; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">
+        🔥 Bu Aya Özel: Son 4 Ücretsiz Kurulum Kontenjanı!
+      </div>
+      
+      <div class="demo-popup-icon-box" style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 8px 32px var(--primary-glow);">
         <span class="material-icons-round" style="font-size: 2.2rem; color: white;">rocket_launch</span>
       </div>
       
-      <h3 class="demo-popup-title" style="font-size: 1.5rem; font-weight: 800; margin: 0 0 12px 0; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.25;">Restoranınızın Satışlarını Artırmaya Hazır mısınız? 🚀</h3>
+      <h3 class="demo-popup-title" style="font-size: 1.45rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.25;">Restoranınızın Satışlarını Artırmaya Hazır mısınız?</h3>
       
-      <p class="demo-popup-text" style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.55; margin: 0 0 28px 0;">
+      <!-- Social Proof -->
+      <div style="font-size: 0.78rem; color: #fdcb6e; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+        <span>⭐⭐⭐⭐⭐</span>
+        <span style="color: var(--text-secondary);">Alsancak & Karşıyaka'da 40+ aktif restoran kullanıyor</span>
+      </div>
+      
+      <p class="demo-popup-text" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.55; margin: 0 0 24px 0;">
         Servify ile sipariş hızınızı artırabilir, cironuzu anlık <strong>%15 yükseltebilirsiniz</strong>. Kendi restoran menünüzü kurmak ve <strong>tamamen ücretsiz</strong> test etmek için hemen başvurun!
       </p>
       
-      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
-        <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20test%20kurulumu%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg demo-popup-btn pulse-btn" style="background: #25D366; border-color: #25D366; gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.92rem;">
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+        <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20kurulum%20kampanyasından%20yararlanmak%20ve%20menümüzü%20dijitalleştirmek%20istiyoruz." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg demo-popup-btn pulse-btn" style="background: #25D366; border-color: #25D366; gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.92rem;">
           <span class="material-icons-round">chat</span>
           WhatsApp ile Ücretsiz Kurulum Talebi
         </a>
@@ -1391,6 +1410,15 @@ function showDemoContactModal() {
           <span class="material-icons-round">phone</span>
           Hemen Bilgi Al: 0541 774 43 04
         </a>
+      </div>
+      
+      <!-- Risk Reversal Text -->
+      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+        <span>💳 Kredi Kartı Gerekmez</span>
+        <span>•</span>
+        <span>🤝 Taahhüt Yok</span>
+        <span>•</span>
+        <span>⚡ Kurulum Desteği Dahil</span>
       </div>
       
       <button class="btn btn-ghost" id="close-demo-contact" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-decoration: underline; background: none; border: none; cursor: pointer;">
