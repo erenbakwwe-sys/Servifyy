@@ -195,6 +195,11 @@ export function renderLanding(container) {
           </div>
           <h2 class="section-title">Sistemi Sayfada <span class="gradient-text">Deneyin</span></h2>
           <p class="section-subtitle">Soldaki müşteri telefonundan sepete ürün ekleyip sipariş verin, sağdaki yönetici ekranına anında düşüşünü izleyin!</p>
+          
+          <div style="background: rgba(108, 92, 231, 0.08); border: 1px solid rgba(108, 92, 231, 0.2); border-radius: 12px; padding: 12px 20px; max-width: 700px; margin: 24px auto 0; text-align: center; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span class="material-icons-round" style="color: var(--primary-light); font-size: 1.2rem; flex-shrink: 0;">info_outline</span>
+            <span><strong>💡 İnteraktif Demo:</strong> Bu alan Servify sisteminin anlık sipariş ve garson çağrı akışını test etmeniz için tasarlanmış bir simülatördür. Gerçek yönetim panelini denemek için yukarıdaki <strong>"Demoyu Gör"</strong> butonuna tıklayabilirsiniz.</span>
+          </div>
         </div>
         
         <div class="simulator-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; max-width: 1000px; margin: 0 auto; align-items: start;">
@@ -1023,6 +1028,9 @@ export function renderLanding(container) {
       const orderId = 'sim-o-' + Date.now();
       const orderTotal = simCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       const orderItemsStr = simCart.map(item => `${item.name} x${item.qty}`).join(', ');
+      
+      // Store current cart items for printing
+      const orderItemsJson = JSON.stringify(simCart);
 
       // Color coding for payment methods
       let payBadgeStyle = 'background: rgba(108, 92, 231, 0.15); color: var(--primary-light);';
@@ -1042,6 +1050,9 @@ export function renderLanding(container) {
       const orderCard = document.createElement('div');
       orderCard.className = 'sim-order-card';
       orderCard.id = orderId;
+      orderCard.dataset.items = orderItemsJson;
+      orderCard.dataset.total = orderTotal;
+      orderCard.dataset.payMethod = payLabel;
       orderCard.style.cssText = `
         background: var(--bg-secondary);
         border: 1px solid var(--border);
@@ -1064,10 +1075,22 @@ export function renderLanding(container) {
           <span style="font-size: 0.78rem; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display:block;">${orderItemsStr}</span>
           <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary-light);">${orderTotal} ₺</span>
         </div>
-        <button class="btn btn-primary btn-sm sim-status-btn" style="padding: 6px 12px; font-size: 0.72rem; font-weight:700; height:30px; border-radius:6px; flex-shrink:0;">Hazırla</button>
+        <div style="display: flex; gap: 6px; flex-shrink:0;">
+          <button class="btn btn-secondary btn-sm sim-print-btn" title="Mutfak Fişi Yazdır" style="padding: 6px 10px; font-size: 0.72rem; height:30px; border-radius:6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-primary); display:flex; align-items:center; justify-content:center;"><span class="material-icons-round" style="font-size: 0.95rem;">print</span></button>
+          <button class="btn btn-primary btn-sm sim-status-btn" style="padding: 6px 12px; font-size: 0.72rem; font-weight:700; height:30px; border-radius:6px;">Hazırla</button>
+        </div>
       `;
 
       simOrdersList.insertBefore(orderCard, simOrdersList.firstChild);
+
+      // Handle Print Button
+      orderCard.querySelector('.sim-print-btn').addEventListener('click', () => {
+        playPrinterSound();
+        const items = JSON.parse(orderCard.dataset.items);
+        const total = parseFloat(orderCard.dataset.total);
+        const method = orderCard.dataset.payMethod;
+        showPrintedReceipt(items, total, method);
+      });
 
       // Handle order card state changes
       const statusBtn = orderCard.querySelector('.sim-status-btn');
@@ -1111,4 +1134,102 @@ export function renderLanding(container) {
       updateSimCart();
     });
   }
+}
+
+// Thermal receipt printer simulator audio function
+function playPrinterSound() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const bufferSize = audioCtx.sampleRate * 0.8; // 0.8 seconds duration
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    
+    // Generate buzzing printer motor sound
+    for (let i = 0; i < bufferSize; i++) {
+      const noise = Math.random() * 2 - 1;
+      const freqMod = Math.sin(2 * Math.PI * 140 * (i / audioCtx.sampleRate));
+      data[i] = noise * 0.12 * (freqMod > 0.3 ? 1 : 0.15);
+    }
+    
+    const noiseNode = audioCtx.createBufferSource();
+    noiseNode.buffer = buffer;
+    
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+    
+    noiseNode.connect(filter);
+    filter.connect(audioCtx.destination);
+    noiseNode.start();
+  } catch (e) {}
+}
+
+// Thermal receipt modal viewer
+function showPrintedReceipt(items, total, payMethod) {
+  document.getElementById('sim-receipt-modal')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'sim-receipt-modal';
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  `;
+
+  const dateStr = new Date().toLocaleDateString('tr-TR');
+  const timeStr = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+  const itemsHtml = items.map(item => `
+    <div style="display:flex; justify-content:space-between; font-family: monospace; font-size:0.8rem; margin-bottom:4px;">
+      <span>${item.name} x${item.qty}</span>
+      <span>${(item.price * item.qty).toFixed(2)} ₺</span>
+    </div>
+  `).join('');
+
+  overlay.innerHTML = `
+    <div class="receipt-paper" style="width: 290px; background: #fbfbfb; color: #111; padding: 28px 20px 20px; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); font-family: monospace; position: relative; border-left: 1px solid #ddd; border-right: 1px solid #ddd;">
+      <!-- Jagged top edges to simulate thermal cut -->
+      <div style="position: absolute; top: -6px; left: 0; right: 0; height: 8px; background-image: linear-gradient(135deg, transparent 4px, #fbfbfb 4px), linear-gradient(-135deg, transparent 4px, #fbfbfb 4px); background-size: 8px 8px; background-repeat: repeat-x;"></div>
+      
+      <div style="text-align: center; margin-bottom: 14px; border-bottom: 1px dashed #333; padding-bottom: 10px;">
+        <h4 style="margin: 0 0 2px 0; font-size: 0.95rem; font-weight: 800; letter-spacing:-0.5px;">SERVIFY RESTORAN</h4>
+        <span style="font-size: 0.7rem; color:#555;">Masa 4 | Sipariş Fişi</span>
+      </div>
+
+      <div style="font-size:0.7rem; color:#444; margin-bottom:10px; line-height:1.3; border-bottom: 1px dashed #333; padding-bottom: 8px;">
+        Tarih: ${dateStr}<br>
+        Saat: ${timeStr}<br>
+        Ödeme: ${payMethod}
+      </div>
+
+      <div style="border-bottom: 1px dashed #333; padding-bottom: 8px; margin-bottom: 8px;">
+        ${itemsHtml}
+      </div>
+
+      <div style="display:flex; justify-content:space-between; font-weight: 800; font-size:0.85rem; margin-bottom: 14px;">
+        <span>TOPLAM</span>
+        <span>${total.toFixed(2)} ₺</span>
+      </div>
+
+      <div style="text-align: center; border-top: 1px dashed #333; padding-top: 10px; font-size: 0.7rem; color:#555; line-height:1.3;">
+        AFİYET OLSUN!<br>
+        Servify Entegrasyon Sistemi
+      </div>
+
+      <button id="close-receipt-btn" style="margin-top: 20px; width:100%; border:none; background:#111; color:#fff; font-family:monospace; padding:8px; font-size:0.75rem; cursor:pointer; font-weight:700;">Fişi Kapat</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('#close-receipt-btn').onclick = () => {
+    overlay.remove();
+  };
 }
