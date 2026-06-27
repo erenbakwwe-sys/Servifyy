@@ -205,14 +205,16 @@ export function renderLanding(container) {
               <div style="width: 140px; height: 18px; background: #1a1a1a; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 10;"></div>
               
               <!-- Phone Screen -->
-              <div class="phone-screen" style="flex: 1; background: #0d0d12; color: #fff; padding: 24px 16px 16px; overflow-y: auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 16px;">
+              <div class="phone-screen" style="flex: 1; background: #0d0d12; color: #fff; padding: 24px 16px 16px; overflow-y: auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 16px; position: relative;">
                 <!-- Header -->
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-top: 10px;">
                   <div>
                     <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #fff;">Servify Restaurant</h5>
                     <span style="font-size: 0.7rem; color: #a29bfe;">Masa 4</span>
                   </div>
-                  <span class="material-icons-round" style="color: #6c5ce7; font-size: 1.4rem;">qr_code_2</span>
+                  <button id="sim-waiter-btn" style="background: rgba(108, 92, 231, 0.2); border: 1px solid rgba(108, 92, 231, 0.4); color: #a29bfe; padding: 4px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s;">
+                    <span class="material-icons-round" style="font-size: 0.95rem;">notifications_active</span> Garson Çağır
+                  </button>
                 </div>
                 
                 <!-- Category Filter -->
@@ -250,7 +252,7 @@ export function renderLanding(container) {
                 </div>
                 
                 <!-- Cart Drawer -->
-                <div class="sim-cart-drawer" style="margin-top: auto; background: rgba(108, 92, 231, 0.1); border: 1px solid rgba(108, 92, 231, 0.2); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; gap: 10px;">
+                <div class="sim-cart-drawer" style="margin-top: auto; background: rgba(108, 92, 231, 0.1); border: 1px solid rgba(108, 92, 231, 0.2); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; gap: 10px; z-index:5;">
                   <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 600;">
                     <span style="color: #c7ecee;">Sepet (Masa 4)</span>
                     <span id="sim-cart-total" style="color: #fff; font-weight: 700;">0 ₺</span>
@@ -260,6 +262,54 @@ export function renderLanding(container) {
                   </div>
                   <button id="sim-order-btn" disabled style="background: #6c5ce7; border: none; color: white; padding: 10px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; width: 100%; cursor: not-allowed; opacity: 0.5; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
                     <span class="material-icons-round" style="font-size:1rem;">shopping_cart</span> Sipariş Ver
+                  </button>
+                </div>
+
+                <!-- Sleek Payment Method Drawer Overlay (initially hidden) -->
+                <div id="sim-payment-drawer" style="position: absolute; bottom: 0; left: 0; right: 0; height: 0%; background: #121218; border-top: 2px solid #6c5ce7; border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 100; transition: height 0.3s ease-out; overflow: hidden; display: flex; flex-direction: column; padding: 0 16px;">
+                  <div style="width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 10px auto; flex-shrink: 0;"></div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; flex-shrink: 0;">
+                    <h6 style="margin:0; font-size:0.9rem; font-weight:700; color:#fff;">Ödeme Yöntemi Seçin</h6>
+                    <button id="sim-cancel-pay-btn" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0;">İptal</button>
+                  </div>
+                  
+                  <div style="display:flex; flex-direction:column; gap:8px; overflow-y:auto; flex: 1; padding-bottom: 16px;">
+                    <!-- Nakit -->
+                    <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="material-icons-round" style="color: #00b894; font-size: 1.15rem;">payments</span>
+                        <span style="font-size:0.78rem;">Nakit</span>
+                      </div>
+                      <input type="radio" name="sim-pay-method" value="Nakit" checked style="accent-color:#6c5ce7;">
+                    </label>
+                    <!-- Kredi Kartı -->
+                    <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="material-icons-round" style="color: #0984e3; font-size: 1.15rem;">credit_card</span>
+                        <span style="font-size:0.78rem;">Kredi Kartı (Online Ödeme)</span>
+                      </div>
+                      <input type="radio" name="sim-pay-method" value="Kredi Kartı" style="accent-color:#6c5ce7;">
+                    </label>
+                    <!-- Fiziksel POS -->
+                    <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="material-icons-round" style="color: #e84393; font-size: 1.15rem;">point_of_sale</span>
+                        <span style="font-size:0.78rem;">Masada Fiziksel POS</span>
+                      </div>
+                      <input type="radio" name="sim-pay-method" value="Fiziksel POS" style="accent-color:#6c5ce7;">
+                    </label>
+                    <!-- Hesabı Bölüş -->
+                    <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="material-icons-round" style="color: #6c5ce7; font-size: 1.15rem;">call_split</span>
+                        <span style="font-size:0.78rem;">Hesabı Eşit Bölüş (4 Kişi)</span>
+                      </div>
+                      <input type="radio" name="sim-pay-method" value="Hesabı Bölüş" style="accent-color:#6c5ce7;">
+                    </label>
+                  </div>
+                  
+                  <button id="sim-confirm-order-btn" style="background:#6c5ce7; border:none; color:white; padding:12px; border-radius:10px; font-size:0.8rem; font-weight:700; width:100%; cursor:pointer; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0; box-shadow:0 4px 12px rgba(108,92,231,0.2);">
+                    Onayla ve Gönder
                   </button>
                 </div>
               </div>
@@ -856,11 +906,105 @@ export function renderLanding(container) {
     });
   });
 
-  if (simOrderBtn) {
+  // Garson Çağırma Logic
+  const simWaiterBtn = container.querySelector('#sim-waiter-btn');
+  if (simWaiterBtn) {
+    simWaiterBtn.addEventListener('click', () => {
+      // Audio cue
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 note
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+      } catch (e) {}
+
+      if (simAdminEmpty) simAdminEmpty.style.display = 'none';
+
+      const callId = 'sim-c-' + Date.now();
+      const callCard = document.createElement('div');
+      callCard.className = 'sim-order-card';
+      callCard.id = callId;
+      callCard.style.cssText = `
+        background: rgba(108, 92, 231, 0.05);
+        border: 1px dashed rgba(108, 92, 231, 0.3);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        animation: slideInUp 0.3s ease-out;
+      `;
+
+      callCard.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(108, 92, 231, 0.15); color: var(--primary-light); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.2rem;">notifications_active</span></div>
+          <div>
+            <h4 style="font-size: 0.85rem; font-weight: 700; margin: 0 0 2px 0; color: var(--text-primary);">Masa 4</h4>
+            <p style="font-size: 0.72rem; color: var(--text-secondary); margin: 0;">Garson Çağırıyor!</p>
+          </div>
+        </div>
+        <button class="btn btn-success btn-sm sim-resolve-btn" style="padding: 4px 10px; font-size: 0.72rem; font-weight:700; height:28px; border-radius:6px; flex-shrink:0;">Çöz</button>
+      `;
+
+      simOrdersList.insertBefore(callCard, simOrdersList.firstChild);
+
+      // Disable waiter button on phone temporarily to simulate wait
+      simWaiterBtn.disabled = true;
+      simWaiterBtn.style.opacity = '0.5';
+      simWaiterBtn.innerHTML = `<span class="material-icons-round" style="font-size: 0.95rem;">done</span> Çağrıldı`;
+
+      callCard.querySelector('.sim-resolve-btn').addEventListener('click', () => {
+        callCard.style.opacity = '0';
+        callCard.style.transform = 'translateY(-10px)';
+        callCard.style.transition = 'all 0.3s ease-out';
+        setTimeout(() => {
+          callCard.remove();
+          simWaiterBtn.disabled = false;
+          simWaiterBtn.style.opacity = '1';
+          simWaiterBtn.innerHTML = `<span class="material-icons-round" style="font-size: 0.95rem;">notifications_active</span> Garson Çağır`;
+          if (simOrdersList.children.length === 0 && simAdminEmpty) {
+            simAdminEmpty.style.display = 'block';
+          }
+        }, 300);
+      });
+    });
+  }
+
+  // Payment Drawer selectors
+  const simPaymentDrawer = container.querySelector('#sim-payment-drawer');
+  const simCancelPayBtn = container.querySelector('#sim-cancel-pay-btn');
+  const simConfirmOrderBtn = container.querySelector('#sim-confirm-order-btn');
+
+  if (simOrderBtn && simPaymentDrawer && simCancelPayBtn && simConfirmOrderBtn) {
+    // Open payment drawer
     simOrderBtn.addEventListener('click', () => {
       if (simCart.length === 0) return;
+      simPaymentDrawer.style.height = '68%';
+    });
 
-      // Play beep sound or alert
+    // Close payment drawer
+    simCancelPayBtn.addEventListener('click', () => {
+      simPaymentDrawer.style.height = '0%';
+    });
+
+    // Confirm and send order
+    simConfirmOrderBtn.addEventListener('click', () => {
+      if (simCart.length === 0) return;
+
+      // Close drawer
+      simPaymentDrawer.style.height = '0%';
+
+      // Get selected payment method
+      const selectedRadio = container.querySelector('input[name="sim-pay-method"]:checked');
+      const payMethod = selectedRadio ? selectedRadio.value : 'Nakit';
+
+      // Play chime sound
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
@@ -868,7 +1012,7 @@ export function renderLanding(container) {
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.15);
       } catch (e) {}
@@ -879,6 +1023,21 @@ export function renderLanding(container) {
       const orderId = 'sim-o-' + Date.now();
       const orderTotal = simCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       const orderItemsStr = simCart.map(item => `${item.name} x${item.qty}`).join(', ');
+
+      // Color coding for payment methods
+      let payBadgeStyle = 'background: rgba(108, 92, 231, 0.15); color: var(--primary-light);';
+      let payLabel = payMethod;
+      if (payMethod === 'Nakit') {
+        payBadgeStyle = 'background: rgba(0, 184, 148, 0.15); color: var(--success);';
+      } else if (payMethod === 'Kredi Kartı') {
+        payBadgeStyle = 'background: rgba(9, 132, 227, 0.15); color: #0984e3;';
+      } else if (payMethod === 'Fiziksel POS') {
+        payBadgeStyle = 'background: rgba(232, 67, 147, 0.15); color: #e84393;';
+      } else if (payMethod === 'Hesabı Bölüş') {
+        const perPerson = Math.round(orderTotal / 4);
+        payLabel = `Hesabı Bölüş (4 Kişi - Kişi Başı ${perPerson} ₺)`;
+        payBadgeStyle = 'background: rgba(108, 92, 231, 0.15); color: var(--primary-light);';
+      }
 
       const orderCard = document.createElement('div');
       orderCard.className = 'sim-order-card';
@@ -896,12 +1055,13 @@ export function renderLanding(container) {
       `;
 
       orderCard.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
-          <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex:1;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap:wrap;">
             <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary);">Masa 4</span>
             <span class="sim-status-badge" style="background: rgba(108, 92, 231, 0.15); color: var(--primary-light); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Yeni</span>
+            <span style="${payBadgeStyle} font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space:nowrap;">${payLabel}</span>
           </div>
-          <span style="font-size: 0.78rem; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${orderItemsStr}</span>
+          <span style="font-size: 0.78rem; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display:block;">${orderItemsStr}</span>
           <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary-light);">${orderTotal} ₺</span>
         </div>
         <button class="btn btn-primary btn-sm sim-status-btn" style="padding: 6px 12px; font-size: 0.72rem; font-weight:700; height:30px; border-radius:6px; flex-shrink:0;">Hazırla</button>
