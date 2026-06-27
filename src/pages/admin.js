@@ -228,6 +228,55 @@ function renderAdminLayout(container, userId) {
   });
 
   renderPage(userId);
+
+  // If in demo mode, show the floating CTA banner
+  if (userId === 'demo') {
+    // Avoid duplicates
+    document.querySelector('.demo-cta-banner')?.remove();
+    
+    const demoCta = document.createElement('div');
+    demoCta.className = 'demo-cta-banner';
+    demoCta.style.position = 'fixed';
+    demoCta.style.bottom = '24px';
+    demoCta.style.right = '24px';
+    demoCta.style.zIndex = '9999';
+    demoCta.style.background = 'var(--bg-card)';
+    demoCta.style.border = '1px solid rgba(108, 92, 231, 0.4)';
+    demoCta.style.borderRadius = '16px';
+    demoCta.style.padding = '16px 20px';
+    demoCta.style.boxShadow = '0 12px 40px rgba(108, 92, 231, 0.25)';
+    demoCta.style.maxWidth = '400px';
+    demoCta.style.width = 'calc(100% - 48px)';
+    
+    demoCta.innerHTML = `
+      <button class="demo-cta-close" style="position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--text-muted); cursor: pointer; padding:0;"><span class="material-icons-round" style="font-size: 1.1rem;">close</span></button>
+      <div class="demo-cta-content" style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(108, 92, 231, 0.15); color: var(--primary-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span class="material-icons-round" style="font-size: 1.5rem;">auto_awesome</span></div>
+        <div class="demo-cta-text" style="flex: 1; min-width: 200px;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 2px 0; color: var(--text-primary);">Sistemi Beğendiniz mi?</h4>
+          <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">Kendi restoranınız için ücretsiz kurup test etmek ister misiniz?</p>
+        </div>
+        <div class="demo-cta-actions" style="display: flex; gap: 8px; width: 100%; margin-top: 8px;">
+          <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20test%20kurulumu%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="background: #25D366; border-color: #25D366; color: white; flex: 1; justify-content: center; font-size: 0.78rem; font-weight:700; display:flex; align-items:center; gap:4px; padding:6px 12px; height:34px; border-radius:8px;">
+            <span class="material-icons-round" style="font-size: 1rem;">chat</span> WhatsApp
+          </a>
+          <a href="tel:+905417744304" class="btn btn-secondary btn-sm" style="flex: 1; justify-content: center; font-size: 0.78rem; font-weight:700; display:flex; align-items:center; gap:4px; padding:6px 12px; height:34px; border-radius:8px; border: 1px solid rgba(108, 92, 231, 0.3); color: var(--primary-light); background: rgba(108, 92, 231, 0.05);">
+            <span class="material-icons-round" style="font-size: 1rem;">phone</span> Hemen Ara
+          </a>
+        </div>
+      </div>
+    `;
+    container.appendChild(demoCta);
+    
+    demoCta.querySelector('.demo-cta-close').onclick = () => demoCta.remove();
+    
+    // Set a timer to trigger a beautiful popup modal after 20 seconds
+    setTimeout(() => {
+      if (document.querySelector('.demo-cta-banner')) { // still on admin page and not closed
+        showDemoContactModal();
+      }
+    }, 20000);
+  }
 }
 
 function renderPage(userId) {
@@ -1250,4 +1299,59 @@ function setupFinanceHandlers(userId, content) {
       }
     });
   }
+}
+
+function showDemoContactModal() {
+  if (document.getElementById('demo-contact-modal')) return;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'demo-contact-modal';
+  overlay.className = 'modal-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(10, 10, 15, 0.8)';
+  overlay.style.backdropFilter = 'blur(12px)';
+  overlay.style.webkitBackdropFilter = 'blur(12px)';
+  overlay.style.zIndex = '999999';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.padding = '20px';
+
+  overlay.innerHTML = `
+    <div class="modal tour-finish-modal" style="max-width: 480px; width: 100%; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(20, 20, 35, 0.95) 100%); border: 1px solid rgba(108, 92, 231, 0.3); border-radius: 24px; padding: 40px 32px; text-align: center; box-shadow: 0 24px 80px rgba(108, 92, 231, 0.25); transform: scale(0.9); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+      <div style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 32px var(--primary-glow);">
+        <span class="material-icons-round" style="font-size: 2.2rem; color: white;">auto_awesome</span>
+      </div>
+      <h3 style="font-size: 1.6rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em;">Sistemi Beğendiniz mi?</h3>
+      <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 32px 0;">
+        Kendi restoranınız veya kafeniz için bu yönetim panelini ve QR menüyü <strong>ücretsiz test etmek</strong> ve kurmak ister misiniz?
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+        <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20test%20kurulumu%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background: #25D366; border-color: #25D366; box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3); gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px;">
+          <span class="material-icons-round">chat</span>
+          WhatsApp ile Ücretsiz Kur & Test Et
+        </a>
+        <a href="tel:+905417744304" class="btn btn-secondary btn-lg" style="background: rgba(108, 92, 231, 0.1); border-color: rgba(108, 92, 231, 0.3); color: var(--primary-light); gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; text-decoration: none; border-radius: 12px;">
+          <span class="material-icons-round">phone</span>
+          Bizi Arayın: 0541 774 43 04
+        </a>
+      </div>
+      <button class="btn btn-ghost" id="close-demo-contact" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-decoration: underline;">
+        Demoyu İncelemeye Devam Et
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    const modal = overlay.querySelector('.tour-finish-modal');
+    if (modal) {
+      modal.style.transform = 'scale(1)';
+      modal.style.opacity = '1';
+    }
+  }, 50);
+
+  overlay.querySelector('#close-demo-contact').onclick = () => overlay.remove();
 }
