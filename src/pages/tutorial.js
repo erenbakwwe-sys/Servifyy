@@ -1,6 +1,8 @@
 import { t } from '../i18n.js';
 
 export function startTutorialTour() {
+  window.scrollTo(0, 0);
+
   const steps = [
     { target: '[data-page="dashboard"]', title: t('dashboardTitle', 'tutorial') || 'Kontrol Paneli', desc: t('dashboardDesc', 'tutorial') || 'Buradan restoranınızın genel durumunu görebilirsiniz. Günlük siparişler, gelir ve aktif çağrılar burada.' },
     { target: '[data-page="orders"]', title: t('ordersTitle', 'tutorial') || 'Siparişler', desc: t('ordersDesc', 'tutorial') || 'Müşterilerden gelen siparişleri gerçek zamanlı olarak burada takip edin. Yeni siparişler anında görünür.' },
@@ -18,6 +20,7 @@ export function startTutorialTour() {
   let currentStep = 0;
   
   function showStep(index) {
+    window.scrollTo(0, 0);
     // Clear previous highlights/tooltips
     document.querySelectorAll('.tour-overlay, .tour-highlight, .tour-tooltip').forEach(el => el.remove());
     
@@ -52,6 +55,8 @@ export function startTutorialTour() {
       const rect = activeTarget.getBoundingClientRect();
       const highlight = document.createElement('div');
       highlight.className = 'tour-highlight';
+      highlight.style.position = 'fixed';
+      highlight.style.zIndex = '100000';
       highlight.style.top = rect.top - 4 + 'px';
       highlight.style.left = rect.left - 4 + 'px';
       highlight.style.width = rect.width + 8 + 'px';
