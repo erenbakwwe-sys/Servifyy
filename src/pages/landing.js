@@ -559,6 +559,31 @@ export function renderLanding(container) {
 
     <!-- ROI Calculator Section -->
     <section class="roi-section" id="roi-calculator" style="padding: 100px 0; background: var(--bg-primary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <style>
+        .roi-wrapper {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 48px;
+          max-width: 1000px;
+          margin: 0 auto;
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          padding: 40px;
+          border-radius: 24px;
+          box-shadow: var(--shadow-lg);
+        }
+        @media (max-width: 768px) {
+          .roi-wrapper {
+            grid-template-columns: 1fr;
+            gap: 32px;
+            padding: 24px 16px;
+          }
+          .simulator-grid {
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+        }
+      </style>
       <div class="container">
         <div class="section-header">
           <div class="section-tag">
@@ -569,7 +594,7 @@ export function renderLanding(container) {
           <p class="section-subtitle">Masa sayınızı ve ortalama adisyon tutarınızı girerek aylık tahmini tasarrufunuzu ve ek gelirinizi hesaplayın.</p>
         </div>
         
-        <div class="roi-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 1000px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); padding: 40px; border-radius: 24px; box-shadow: var(--shadow-lg);">
+        <div class="roi-wrapper">
           <!-- Inputs Column -->
           <div class="roi-inputs" style="display: flex; flex-direction: column; gap: 28px;">
             <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">İşletme Bilgileri</h3>
