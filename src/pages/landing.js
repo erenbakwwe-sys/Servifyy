@@ -154,6 +154,37 @@ export function renderLanding(container) {
       </div>
     </section>
 
+    <!-- Why Choose Us Section -->
+    <section class="why-section" id="why-choose-us">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag">
+            <span class="material-icons-round">help_outline</span>
+            Neden Servify?
+          </div>
+          <h2 class="section-title">Restoranınızı Neden <span class="gradient-text">Bizimle</span> Büyütmelisiniz?</h2>
+          <p class="section-subtitle">Servify QR Menü ve Sipariş Yönetim Sistemi, rakiplerinden çok farklı bir hız ve stabilite sunar.</p>
+        </div>
+        <div class="why-grid stagger-children">
+          <div class="why-card">
+            <div class="why-icon"><span class="material-icons-round">bolt</span></div>
+            <h3>Yıldırım Hızında Kurulum</h3>
+            <p>Dakikalar içinde restoranınızı sisteme tanımlayın, QR kodlarınızı anında masalara yerleştirerek sipariş almaya başlayın.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-icon"><span class="material-icons-round">paid</span></div>
+            <h3>Sıfır Komisyon, Net Kazanç</h3>
+            <p>Sipariş başına komisyon ödemezsiniz. Aylık veya yıllık sabit lisans ücretiyle tüm kazancınız cebinizde kalır.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-icon"><span class="material-icons-round">support_agent</span></div>
+            <h3>7/24 Kesintisiz Destek</h3>
+            <p>Teknik sorunlarınızda veya sistem özelleştirmelerinizde WhatsApp veya telefon hattımız üzerinden anında bize ulaşabilirsiniz.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- How It Works -->
     <section class="how-section" id="how-it-works">
       <div class="container">
@@ -316,6 +347,135 @@ export function renderLanding(container) {
       </div>
     </section>
 
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag">
+            <span class="material-icons-round">forum</span>
+            Müşteri Yorumları
+          </div>
+          <h2 class="section-title">Bizi Kullananlar <span class="gradient-text">Ne Diyor?</span></h2>
+          <p class="section-subtitle">Servify ile restoranını dijitale taşıyan yüzlerce mutlu işletmenin başarı hikayelerini dinleyin.</p>
+        </div>
+        <div class="testimonials-grid stagger-children">
+          <div class="testimonial-card">
+            <div class="stars" style="display:flex; gap:2px; margin-bottom:12px; color:#FFD700;">
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+            </div>
+            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">"Kağıt menü maliyetlerinden tamamen kurtulduk. Müşterilerimiz garson çağırma butonuna bayıldı. Servis hızımız neredeyse iki katına çıktı!"</p>
+            <div class="testimonial-user" style="display:flex; align-items:center; gap:12px;">
+              <div class="t-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">AA</div>
+              <div class="t-info">
+                <h4 style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary);">Ali Aslan</h4>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Aslan Kebap & Izgara</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars" style="display:flex; gap:2px; margin-bottom:12px; color:#FFD700;">
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+            </div>
+            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">"AI Tema Tasarımı sayesinde kafemizin renklerine ve konseptine uygun harika bir menü hazırladık. Online ödeme özelliği işlerimizi çok kolaylaştırdı."</p>
+            <div class="testimonial-user" style="display:flex; align-items:center; gap:12px;">
+              <div class="t-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--secondary); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">SK</div>
+              <div class="t-info">
+                <h4 style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary);">Selin Kaya</h4>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Limon Cafe & Patisserie</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars" style="display:flex; gap:2px; margin-bottom:12px; color:#FFD700;">
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+              <span class="material-icons-round" style="font-size:1.2rem;">star</span>
+            </div>
+            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">"Masa siparişlerini mutfak ekranından anlık takip edebilmek garsonlarımızın işini çok rahatlattı. Servify restoranımızın dijital omurgası oldu."</p>
+            <div class="testimonial-user" style="display:flex; align-items:center; gap:12px;">
+              <div class="t-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--primary-dark); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">MY</div>
+              <div class="t-info">
+                <h4 style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary);">Murat Yıldız</h4>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Yıldız Steakhouse</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag">
+            <span class="material-icons-round">help</span>
+            Sıkça Sorulan Sorular
+          </div>
+          <h2 class="section-title">Aklınıza Takılan <span class="gradient-text">Sorular</span></h2>
+          <p class="section-subtitle">Sistemimiz hakkında en çok merak edilen konuları sizin için yanıtladık.</p>
+        </div>
+        <div class="faq-list" style="max-width:800px; margin:0 auto; display:flex; flex-direction:column; gap:16px;">
+          <details class="faq-item" style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all var(--transition-base);" open>
+            <summary class="faq-question" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none; outline:none; font-weight:700; color:var(--text-primary);">
+              <h4 style="margin:0; font-size:1rem; font-weight:700;">QR Menü kurulumu ne kadar sürer?</h4>
+              <span class="material-icons-round faq-arrow" style="transition:transform var(--transition-base); color:var(--text-secondary);">expand_more</span>
+            </summary>
+            <div class="faq-answer" style="margin-top:12px; font-size:0.88rem; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--border); padding-top:12px;">
+              <p style="margin:0;">Kurulum sadece dakikalar sürer. Restoran bilgilerinizi ve menünüzü girdikten sonra sistem otomatik olarak her masa için benzersiz QR kodlar üretir. Bu kodları masalara yerleştirdiğiniz an sistem kullanıma hazırdır.</p>
+            </div>
+          </details>
+          <details class="faq-item" style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all var(--transition-base);">
+            <summary class="faq-question" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none; outline:none; font-weight:700; color:var(--text-primary);">
+              <h4 style="margin:0; font-size:1rem; font-weight:700;">Sipariş veya ödemelerden komisyon alıyor musunuz?</h4>
+              <span class="material-icons-round faq-arrow" style="transition:transform var(--transition-base); color:var(--text-secondary);">expand_more</span>
+            </summary>
+            <div class="faq-answer" style="margin-top:12px; font-size:0.88rem; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--border); padding-top:12px;">
+              <p style="margin:0;">Hayır, kesinlikle komisyon almıyoruz. Servify tamamen sabit ücretli bir abonelik modelidir. Satışlarınız ve cirolarınız üzerinden hiçbir kesinti yapılmaz.</p>
+            </div>
+          </details>
+          <details class="faq-item" style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all var(--transition-base);">
+            <summary class="faq-question" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none; outline:none; font-weight:700; color:var(--text-primary);">
+              <h4 style="margin:0; font-size:1rem; font-weight:700;">Müşterilerimizin sipariş vermesi için uygulama yüklemesi gerekir mi?</h4>
+              <span class="material-icons-round faq-arrow" style="transition:transform var(--transition-base); color:var(--text-secondary);">expand_more</span>
+            </summary>
+            <div class="faq-answer" style="margin-top:12px; font-size:0.88rem; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--border); padding-top:12px;">
+              <p style="margin:0;">Hayır. Müşterileriniz masadaki QR kodu telefon kameralarıyla okuttuklarında menünüz direkt olarak web tarayıcılarında açılır. Herhangi bir App Store veya Google Play uygulaması indirmelerine gerek yoktur.</p>
+            </div>
+          </details>
+          <details class="faq-item" style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all var(--transition-base);">
+            <summary class="faq-question" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none; outline:none; font-weight:700; color:var(--text-primary);">
+              <h4 style="margin:0; font-size:1rem; font-weight:700;">Garson çağırma sistemi nasıl çalışır?</h4>
+              <span class="material-icons-round faq-arrow" style="transition:transform var(--transition-base); color:var(--text-secondary);">expand_more</span>
+            </summary>
+            <div class="faq-answer" style="margin-top:12px; font-size:0.88rem; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--border); padding-top:12px;">
+              <p style="margin:0;">Müşteriler telefonlarındaki dijital menü üzerinden tek bir tuşa basarak garson çağırabilir, hesap isteyebilir veya sipariş geçebilirler. Bu çağrılar anında sesli bildirimlerle yöneticinin ve garsonların yönetim paneline düşer.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Arrow Animation styles directly injected -->
+    <style>
+      details.faq-item[open] .faq-arrow {
+        transform: rotate(180deg);
+      }
+      details.faq-item summary::-webkit-details-marker {
+        display: none;
+      }
+    </style>
+
     <!-- CTA Section -->
     <section class="cta-section">
       <div class="container">
@@ -349,6 +509,16 @@ export function renderLanding(container) {
         </div>
       </div>
     </footer>
+
+    <!-- Floating Contact Widget -->
+    <div class="floating-contact-widget">
+      <a href="tel:+905417744304" class="floating-btn call-btn" title="Hemen Arayın">
+        <span class="material-icons-round">phone</span>
+      </a>
+      <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20QR%20Menü%20sistemi%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="floating-btn whatsapp-btn" title="WhatsApp Destek">
+        <span class="material-icons-round">chat</span>
+      </a>
+    </div>
   `;
 
   // Language selectors
@@ -407,7 +577,7 @@ export function renderLanding(container) {
     });
   }, { threshold: 0.1 });
 
-  container.querySelectorAll('.feature-card, .step-card, .pricing-card, .demo-card').forEach(el => {
+  container.querySelectorAll('.feature-card, .step-card, .pricing-card, .demo-card, .why-card, .testimonial-card, .faq-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';

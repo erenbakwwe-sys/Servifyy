@@ -57,31 +57,15 @@ app.innerHTML = `
 // Routes
 router
   .on('/', () => {
-    if (currentUser) {
-      router.navigate('/admin');
-    } else {
-      renderLanding(app);
-    }
+    renderLanding(app);
   })
   .on('/auth', (params) => {
-    if (currentUser) {
-      router.navigate('/admin');
-      return;
-    }
     renderAuth(app, params);
   })
   .on('/onboarding', () => {
-    if (!currentUser) {
-      router.navigate('/auth?mode=register');
-      return;
-    }
     renderOnboarding(app);
   })
   .on('/admin', () => {
-    if (!currentUser) {
-      router.navigate('/auth');
-      return;
-    }
     renderAdmin(app);
   })
   .on('/menu/:userId', (params) => {
@@ -110,31 +94,6 @@ onAuthStateChanged(auth, async (user) => {
     isAuthReady = true;
     router.start();
     return;
-  }
-
-  if (user) {
-    // Check if onboarding is complete
-    try {
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists() && !userDoc.data().onboardingComplete) {
-        router.navigate('/onboarding');
-      } else {
-        const hash = window.location.hash.slice(1);
-        // Don't redirect if on staff/customer pages
-        if (!hash || hash === '/' || hash === '/auth' || hash.startsWith('/auth')) {
-          router.navigate('/admin');
-        }
-      }
-    } catch (e) {
-      router.navigate('/admin');
-    }
-  } else {
-    cleanupAdmin?.();
-    const hash = window.location.hash.slice(1);
-    // Don't redirect staff/customer pages to landing
-    if (hash.startsWith('/admin') || hash.startsWith('/onboarding')) {
-      router.navigate('/');
-    }
   }
 });
 

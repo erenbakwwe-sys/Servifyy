@@ -846,3 +846,168 @@
 .mobile-menu a:hover {
   background: rgba(255, 255, 255, 0.05);
 }
+
+/* WHY CHOOSE US SECTION */
+.why-section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.why-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 40px 32px;
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.why-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.why-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(162, 155, 254, 0.15));
+  color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.why-icon span {
+  font-size: 2rem;
+}
+
+.why-card h3 {
+  font-size: 1.25rem;
+  font-weight: 750;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.why-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* TESTIMONIALS SECTION */
+.testimonials-section {
+  padding: 100px 0;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.testimonial-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  transition: all var(--transition-base);
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--secondary);
+  box-shadow: 0 12px 30px rgba(162, 155, 254, 0.1);
+}
+
+/* FAQ SECTION */
+.faq-section {
+  padding: 100px 0;
+  background: var(--bg-secondary);
+}
+
+.faq-item {
+  transition: all var(--transition-base);
+}
+
+.faq-item:hover {
+  border-color: var(--primary) !important;
+}
+
+/* FLOATING CONTACT WIDGET */
+.floating-contact-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 9999;
+  animation: slideUp 0.5s ease-out;
+}
+
+.floating-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.floating-btn span {
+  font-size: 1.8rem;
+}
+
+.floating-btn:hover {
+  transform: scale(1.1) translateY(-4px);
+}
+
+.call-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.whatsapp-btn {
+  background: linear-gradient(135deg, #25d366, #128c7e);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .floating-contact-widget {
+    bottom: 16px;
+    right: 16px;
+    gap: 8px;
+  }
+  
+  .floating-btn {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .floating-btn span {
+    font-size: 1.5rem;
+  }
+}
+

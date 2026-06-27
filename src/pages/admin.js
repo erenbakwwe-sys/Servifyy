@@ -30,11 +30,11 @@ let unsubStock = null;
 
 export function renderAdmin(container) {
   const user = auth.currentUser;
-  if (!user) { window.location.hash = '/auth'; return; }
+  const userId = user ? user.uid : 'demo';
 
   container.innerHTML = `<div class="loading-screen"><div class="spinner"></div><div class="loading-logo">${t('loading')}</div></div>`;
 
-  loadAdminData(user.uid, container);
+  loadAdminData(userId, container);
 }
 
 async function loadAdminData(userId, container) {
@@ -52,7 +52,7 @@ async function loadAdminData(userId, container) {
       console.warn('Could not load secure payment keys:', keyErr);
     }
 
-    if (!userData.onboardingComplete) {
+    if (userId !== 'demo' && !userData.onboardingComplete) {
       window.location.hash = '/onboarding';
       return;
     }
@@ -66,13 +66,16 @@ async function loadAdminData(userId, container) {
 
     // Show tutorial for first time
     setTimeout(() => {
-      if (!localStorage.getItem('tourCompleted')) {
+      if (userId === 'demo') {
+        localStorage.removeItem('tourCompleted');
+        startTutorialTour();
+      } else if (!localStorage.getItem('tourCompleted')) {
         startTutorialTour();
       }
     }, 1000);
   } catch (e) {
     console.error('Admin load error:', e);
-    showToast(t('admin').errorPrefix + (e.message || e), 'error');
+    showToast((t('admin')?.errorPrefix || 'Hata: ') + (e.message || e), 'error');
   }
 }
 
@@ -134,14 +137,25 @@ function renderAdminLayout(container, userId) {
           </div>
         </nav>
         <div class="sidebar-footer">
-          <div class="sidebar-user" id="logout-btn" onclick="if(window.logoutAdmin) window.logoutAdmin(); else alert(\`\${t('admin').logoutErrorPrefix}\`);">
-            <div class="sidebar-user-avatar">${(userData?.name || 'U')[0].toUpperCase()}</div>
-            <div class="sidebar-user-info">
-              <div class="user-name">${userData?.name || t('user')}</div>
-              <div class="user-email">${userData?.email || ''}</div>
+          ${userId === 'demo' ? `
+            <div class="sidebar-user" id="logout-btn" onclick="window.location.hash = '/';">
+              <div class="sidebar-user-avatar" style="background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;"><span class="material-icons-round" style="font-size:1.2rem;">home</span></div>
+              <div class="sidebar-user-info">
+                <div class="user-name">Demo Sürüm</div>
+                <div class="user-email">Ana Sayfaya Dön</div>
+              </div>
+              <span class="material-icons-round" style="color:var(--text-muted);font-size:1.1rem;">arrow_back</span>
             </div>
-            <span class="material-icons-round" style="color:var(--text-muted);font-size:1.1rem;">logout</span>
-          </div>
+          ` : `
+            <div class="sidebar-user" id="logout-btn" onclick="if(window.logoutAdmin) window.logoutAdmin(); else alert(\`\${t('admin').logoutErrorPrefix}\`);">
+              <div class="sidebar-user-avatar">${(userData?.name || 'U')[0].toUpperCase()}</div>
+              <div class="sidebar-user-info">
+                <div class="user-name">${userData?.name || t('user')}</div>
+                <div class="user-email">${userData?.email || ''}</div>
+              </div>
+              <span class="material-icons-round" style="color:var(--text-muted);font-size:1.1rem;">logout</span>
+            </div>
+          `}
         </div>
       </aside>
       <main class="admin-main">
