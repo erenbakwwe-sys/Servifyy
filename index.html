@@ -10,6 +10,40 @@
 
     gtag('config', 'AW-18190235610');
   </script>
+  
+  <!-- Event snippet for Kontakt conversion page -->
+  <script>
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-18190235610/uRUECNa-oLQcENrv4-FD',
+          'event_callback': callback
+      });
+      return false;
+    }
+
+    // Auto-track WhatsApp and phone calls globally
+    document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && link.href) {
+          const url = link.href;
+          if (url.includes('wa.me') || url.startsWith('tel:')) {
+            if (typeof gtag === 'function') {
+              gtag('event', 'conversion', {
+                'send_to': 'AW-18190235610/uRUECNa-oLQcENrv4-FD'
+              });
+              console.log('Conversion tracked for: ', url);
+            }
+          }
+        }
+      });
+    });
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="QR Menü - Restoranınız için dijital menü ve sipariş yönetim sistemi. 14 gün ücretsiz deneyin!" />
