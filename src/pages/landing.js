@@ -185,6 +185,120 @@ export function renderLanding(container) {
       </div>
     </section>
 
+    <!-- Interactive Simulator Section -->
+    <section class="simulator-section" id="simulator" style="padding: 100px 0; background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag">
+            <span class="material-icons-round">play_circle_filled</span>
+            Canlı Simülatör
+          </div>
+          <h2 class="section-title">Sistemi Sayfada <span class="gradient-text">Deneyin</span></h2>
+          <p class="section-subtitle">Soldaki müşteri telefonundan sepete ürün ekleyip sipariş verin, sağdaki yönetici ekranına anında düşüşünü izleyin!</p>
+        </div>
+        
+        <div class="simulator-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; max-width: 1000px; margin: 0 auto; align-items: start;">
+          <!-- Left: Phone Simulator -->
+          <div class="phone-simulator-wrapper" style="display: flex; justify-content: center; position: relative;">
+            <div class="phone-frame" style="width: 320px; height: 580px; background: #000; border: 12px solid #1a1a1a; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(108, 92, 231, 0.2); position: relative; overflow: hidden; display: flex; flex-direction: column;">
+              <!-- Phone notch -->
+              <div style="width: 140px; height: 18px; background: #1a1a1a; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 10;"></div>
+              
+              <!-- Phone Screen -->
+              <div class="phone-screen" style="flex: 1; background: #0d0d12; color: #fff; padding: 24px 16px 16px; overflow-y: auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 16px;">
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-top: 10px;">
+                  <div>
+                    <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #fff;">Servify Restaurant</h5>
+                    <span style="font-size: 0.7rem; color: #a29bfe;">Masa 4</span>
+                  </div>
+                  <span class="material-icons-round" style="color: #6c5ce7; font-size: 1.4rem;">qr_code_2</span>
+                </div>
+                
+                <!-- Category Filter -->
+                <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">
+                  <span style="background: #6c5ce7; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; cursor: pointer;">Popülerler</span>
+                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">Kebaplar</span>
+                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">İçecekler</span>
+                </div>
+                
+                <!-- Food Items -->
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <div class="sim-food-item" data-id="sim-f1" data-name="Adana Kebap" data-price="280" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🍢 Adana Kebap</h6>
+                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">280 ₺</span>
+                    </div>
+                    <button class="sim-add-btn" data-id="sim-f1" data-name="Adana Kebap" data-price="280" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                  </div>
+                  
+                  <div class="sim-food-item" data-id="sim-f2" data-name="Lahmacun" data-price="80" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🍕 Lahmacun</h6>
+                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">80 ₺</span>
+                    </div>
+                    <button class="sim-add-btn" data-id="sim-f2" data-name="Lahmacun" data-price="80" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                  </div>
+                  
+                  <div class="sim-food-item" data-id="sim-f3" data-name="Künefe" data-price="140" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🧁 Künefe</h6>
+                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">140 ₺</span>
+                    </div>
+                    <button class="sim-add-btn" data-id="sim-f3" data-name="Künefe" data-price="140" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                  </div>
+                </div>
+                
+                <!-- Cart Drawer -->
+                <div class="sim-cart-drawer" style="margin-top: auto; background: rgba(108, 92, 231, 0.1); border: 1px solid rgba(108, 92, 231, 0.2); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; gap: 10px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 600;">
+                    <span style="color: #c7ecee;">Sepet (Masa 4)</span>
+                    <span id="sim-cart-total" style="color: #fff; font-weight: 700;">0 ₺</span>
+                  </div>
+                  <div id="sim-cart-items" style="font-size: 0.72rem; color: #a29bfe; max-height: 80px; overflow-y: auto; display:flex; flex-direction:column; gap:4px;">
+                    <i>Sepetiniz boş. Yukarıdan ekleyin!</i>
+                  </div>
+                  <button id="sim-order-btn" disabled style="background: #6c5ce7; border: none; color: white; padding: 10px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; width: 100%; cursor: not-allowed; opacity: 0.5; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span class="material-icons-round" style="font-size:1rem;">shopping_cart</span> Sipariş Ver
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right: Admin Panel Mockup -->
+          <div class="admin-simulator-wrapper" style="display: flex; flex-direction: column; gap: 20px; background: var(--bg-card); border: 1px solid var(--border); padding: 32px; border-radius: 24px; box-shadow: var(--shadow-lg); height: 580px; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+              <div>
+                <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 2px 0;">Yönetici & Mutfak Paneli</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Gelen masa siparişleri buraya anlık yansır.</p>
+              </div>
+              <div style="background: rgba(0, 184, 148, 0.1); color: var(--success); font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; white-space:nowrap;">
+                <span class="material-icons-round" style="font-size:0.95rem;">wifi</span> Realtime Aktif
+              </div>
+            </div>
+            
+            <!-- Orders Simulator Board -->
+            <div class="sim-orders-board" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 4px 0;">
+              <!-- Empty state initially -->
+              <div id="sim-admin-empty" style="text-align: center; margin: auto 0; padding: 40px 20px; color: var(--text-muted);">
+                <span class="material-icons-round" style="font-size: 3rem; margin-bottom: 12px; opacity: 0.5;">receipt_long</span>
+                <p style="font-size: 0.85rem; margin: 0; font-weight:600;">Sipariş Bekleniyor...</p>
+                <p style="font-size: 0.75rem; margin: 4px 0 0 0; opacity: 0.7;">Soldaki telefondan sipariş vererek akışı test edin!</p>
+              </div>
+              
+              <div id="sim-orders-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+            </div>
+            
+            <div style="border-top: 1px solid var(--border); padding-top: 16px; font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; display:flex; align-items:center; gap:8px;">
+              <span class="material-icons-round" style="color: var(--primary-light); font-size: 1.1rem; flex-shrink:0;">info</span>
+              <span>Gerçek sistemde siparişler mutfak ekranına anlık düşer, sesli uyarı verir ve mutfak fişi çıktısı otomatik alınabilir.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- How It Works -->
     <section class="how-section" id="how-it-works">
       <div class="container">
@@ -686,5 +800,155 @@ export function renderLanding(container) {
     tablesInput.addEventListener('input', calculateROI);
     ticketInput.addEventListener('input', calculateROI);
     calculateROI(); // initialize values
+  }
+
+  // Interactive Live Ordering Simulator Logic
+  let simCart = [];
+  const simAddBtns = container.querySelectorAll('.sim-add-btn');
+  const simCartItems = container.querySelector('#sim-cart-items');
+  const simCartTotal = container.querySelector('#sim-cart-total');
+  const simOrderBtn = container.querySelector('#sim-order-btn');
+  const simOrdersList = container.querySelector('#sim-orders-list');
+  const simAdminEmpty = container.querySelector('#sim-admin-empty');
+
+  const updateSimCart = () => {
+    if (simCart.length === 0) {
+      simCartItems.innerHTML = `<i>Sepetiniz boş. Yukarıdan ekleyin!</i>`;
+      simCartTotal.textContent = '0 ₺';
+      simOrderBtn.disabled = true;
+      simOrderBtn.style.opacity = '0.5';
+      simOrderBtn.style.cursor = 'not-allowed';
+      return;
+    }
+
+    simCartItems.innerHTML = simCart.map(item => `
+      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 4px 8px; border-radius: 6px; margin-bottom: 2px;">
+        <span>${item.name} x${item.qty}</span>
+        <span>${item.price * item.qty} ₺</span>
+      </div>
+    `).join('');
+
+    const total = simCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    simCartTotal.textContent = total + ' ₺';
+    simOrderBtn.disabled = false;
+    simOrderBtn.style.opacity = '1';
+    simOrderBtn.style.cursor = 'pointer';
+  };
+
+  simAddBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const name = btn.dataset.name;
+      const price = parseInt(btn.dataset.price);
+
+      const existing = simCart.find(item => item.id === id);
+      if (existing) {
+        existing.qty++;
+      } else {
+        simCart.push({ id, name, price, qty: 1 });
+      }
+
+      // Micro-animation for button
+      btn.style.transform = 'scale(0.8)';
+      setTimeout(() => btn.style.transform = 'scale(1)', 100);
+
+      updateSimCart();
+    });
+  });
+
+  if (simOrderBtn) {
+    simOrderBtn.addEventListener('click', () => {
+      if (simCart.length === 0) return;
+
+      // Play beep sound or alert
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      } catch (e) {}
+
+      // Create admin panel order item
+      if (simAdminEmpty) simAdminEmpty.style.display = 'none';
+
+      const orderId = 'sim-o-' + Date.now();
+      const orderTotal = simCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const orderItemsStr = simCart.map(item => `${item.name} x${item.qty}`).join(', ');
+
+      const orderCard = document.createElement('div');
+      orderCard.className = 'sim-order-card';
+      orderCard.id = orderId;
+      orderCard.style.cssText = `
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        animation: slideInUp 0.3s ease-out;
+      `;
+
+      orderCard.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary);">Masa 4</span>
+            <span class="sim-status-badge" style="background: rgba(108, 92, 231, 0.15); color: var(--primary-light); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Yeni</span>
+          </div>
+          <span style="font-size: 0.78rem; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${orderItemsStr}</span>
+          <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary-light);">${orderTotal} ₺</span>
+        </div>
+        <button class="btn btn-primary btn-sm sim-status-btn" style="padding: 6px 12px; font-size: 0.72rem; font-weight:700; height:30px; border-radius:6px; flex-shrink:0;">Hazırla</button>
+      `;
+
+      simOrdersList.insertBefore(orderCard, simOrdersList.firstChild);
+
+      // Handle order card state changes
+      const statusBtn = orderCard.querySelector('.sim-status-btn');
+      const statusBadge = orderCard.querySelector('.sim-status-badge');
+      let status = 'new';
+
+      statusBtn.addEventListener('click', () => {
+        if (status === 'new') {
+          status = 'preparing';
+          statusBadge.textContent = 'Hazırlanıyor';
+          statusBadge.style.background = 'rgba(254, 190, 46, 0.15)';
+          statusBadge.style.color = '#febd2e';
+          statusBtn.textContent = 'Tamamla';
+          statusBtn.style.background = 'var(--success)';
+          statusBtn.style.borderColor = 'var(--success)';
+        } else if (status === 'preparing') {
+          status = 'completed';
+          statusBadge.textContent = 'Tamamlandı';
+          statusBadge.style.background = 'rgba(0, 184, 148, 0.15)';
+          statusBadge.style.color = 'var(--success)';
+          statusBtn.textContent = 'Arşivle';
+          statusBtn.style.background = 'rgba(255,255,255,0.05)';
+          statusBtn.style.borderColor = 'var(--border)';
+          statusBtn.style.color = 'var(--text-muted)';
+        } else {
+          // Archive (remove)
+          orderCard.style.opacity = '0';
+          orderCard.style.transform = 'translateY(-10px)';
+          orderCard.style.transition = 'all 0.3s ease-out';
+          setTimeout(() => {
+            orderCard.remove();
+            if (simOrdersList.children.length === 0 && simAdminEmpty) {
+              simAdminEmpty.style.display = 'block';
+            }
+          }, 300);
+        }
+      });
+
+      // Clear Cart
+      simCart = [];
+      updateSimCart();
+    });
   }
 }
