@@ -96,6 +96,91 @@ export function renderLanding(container) {
       </div>
     </section>
 
+    <!-- Marquee Partners & Integrations Ticker -->
+    <style>
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      .marquee-wrapper {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+        background: rgba(108, 92, 231, 0.02);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 24px 0;
+        position: relative;
+      }
+      .marquee-wrapper::before, .marquee-wrapper::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100px;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .marquee-wrapper::before {
+        left: 0;
+        background: linear-gradient(to right, var(--bg-primary) 0%, transparent 100%);
+      }
+      .marquee-wrapper::after {
+        right: 0;
+        background: linear-gradient(to left, var(--bg-primary) 0%, transparent 100%);
+      }
+      .marquee-track {
+        display: inline-flex;
+        gap: 60px;
+        animation: marquee 30s linear infinite;
+      }
+      .marquee-track:hover {
+        animation-play-state: paused;
+      }
+      .marquee-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        opacity: 0.55;
+        cursor: pointer;
+        transition: opacity 0.2s, color 0.2s;
+      }
+      .marquee-item:hover {
+        opacity: 1;
+        color: var(--primary-light);
+      }
+      .marquee-item .material-icons-round {
+        font-size: 1.2rem;
+      }
+    </style>
+    
+    <div class="marquee-wrapper">
+      <div class="marquee-track">
+        <!-- Loop 1 -->
+        <div class="marquee-item"><span class="material-icons-round" style="color: #00b894;">payments</span> iyzico POS</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #0984e3;">credit_card</span> PayTR Ödeme</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #6c5ce7;">account_balance</span> Stripe Global</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #fdcb6e;">print</span> Epson Yazıcılar</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #d63031;">restaurant</span> Yemeksepeti Sync</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #e67e22;">delivery_dining</span> Trendyol Yemek</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #9b59b6;">shopping_bag</span> Getir Yemek</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #25D366;">chat</span> WhatsApp Notifications</div>
+        
+        <!-- Loop 2 (Duplicates for loop continuity) -->
+        <div class="marquee-item"><span class="material-icons-round" style="color: #00b894;">payments</span> iyzico POS</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #0984e3;">credit_card</span> PayTR Ödeme</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #6c5ce7;">account_balance</span> Stripe Global</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #fdcb6e;">print</span> Epson Yazıcılar</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #d63031;">restaurant</span> Yemeksepeti Sync</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #e67e22;">delivery_dining</span> Trendyol Yemek</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #9b59b6;">shopping_bag</span> Getir Yemek</div>
+        <div class="marquee-item"><span class="material-icons-round" style="color: #25D366;">chat</span> WhatsApp Notifications</div>
+      </div>
+    </div>
+
     <!-- Features Section -->
     <section class="features-section" id="features">
       <div class="container">
@@ -541,6 +626,70 @@ export function renderLanding(container) {
               Hemen Demoyu İncele
             </a>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Table Section -->
+    <section class="comparison-section" id="comparison" style="padding: 100px 0; background: var(--bg-primary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag">
+            <span class="material-icons-round">compare_arrows</span>
+            Karşılaştırma
+          </div>
+          <h2 class="section-title">Neden <span class="gradient-text">Servify</span> Tercih Etmelisiniz?</h2>
+          <p class="section-subtitle">Servify, klasik yöntemlerin kısıtlamalarını ortadan kaldırır ve yüksek komisyon masraflarından sizi kurtarır.</p>
+        </div>
+        
+        <div class="comparison-table-wrapper" style="overflow-x: auto; max-width: 900px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-lg); padding: 8px;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 600px;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <th style="padding: 20px 24px; font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">Sistem Özellikleri</th>
+                <th style="padding: 20px 24px; font-weight: 800; color: var(--primary-light); background: rgba(108, 92, 231, 0.05); border-left: 1px solid rgba(108, 92, 231, 0.2); border-right: 1px solid rgba(108, 92, 231, 0.2); font-size: 0.95rem; text-align:center;">✨ Servify QR Menü</th>
+                <th style="padding: 20px 24px; font-weight: 600; color: var(--text-secondary); text-align:center;">Klasik PDF Menü</th>
+                <th style="padding: 20px 24px; font-weight: 600; color: var(--text-secondary); text-align:center;">Diğer Sipariş Web Siteleri</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1 -->
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Anlık Fiyat & Ürün Güncelleme</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet (Anında)</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır (Tekrar Yüklenmeli)</td>
+                <td style="padding: 18px 24px; text-align: center; color: #febd2e; font-weight:600;"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">pending</span> Karmaşık & Yavaş</td>
+              </tr>
+              <!-- Row 2 -->
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Masadan Doğrudan Sipariş Verilmesi</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet (Masadan)</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır (Sadece Görsel)</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet (Komisyonlu)</td>
+              </tr>
+              <!-- Row 3 -->
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Garson Çağırma & Hesap İsteme</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır</td>
+              </tr>
+              <!-- Row 4 -->
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Sipariş Başı Komisyon Kesintisi</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 800; color: var(--success);">💸 %0 Komisyon (Sabit Ücret)</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--text-secondary);">%0 (Sipariş alınamaz)</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger); font-weight:700;">📈 %5 ila %15 Arası Komisyon</td>
+              </tr>
+              <!-- Row 5 -->
+              <tr>
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Otomatik Dil Çevirileri (i18n)</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet (tr, en, de, vb.)</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır</td>
+                <td style="padding: 18px 24px; text-align: center; color: #febd2e; font-weight:600;"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">pending</span> Manuel / Ekstra Ücretli</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
