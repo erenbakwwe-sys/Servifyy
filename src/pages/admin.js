@@ -1309,7 +1309,7 @@ function showDemoContactModal() {
   overlay.className = 'modal-overlay';
   overlay.style.position = 'fixed';
   overlay.style.inset = '0';
-  overlay.style.background = 'rgba(10, 10, 15, 0.8)';
+  overlay.style.background = 'rgba(10, 10, 15, 0.85)'; // Slightly darker background for better focus
   overlay.style.backdropFilter = 'blur(12px)';
   overlay.style.webkitBackdropFilter = 'blur(12px)';
   overlay.style.zIndex = '999999';
@@ -1320,28 +1320,36 @@ function showDemoContactModal() {
 
   overlay.innerHTML = `
     <style>
+      @keyframes pulse-glow {
+        0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+        70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+      }
       .demo-popup-card {
         position: relative;
         max-width: 450px;
         width: 100%;
         background: linear-gradient(135deg, var(--bg-card) 0%, rgba(20, 20, 35, 0.98) 100%);
-        border: 1px solid rgba(108, 92, 231, 0.3);
+        border: 1px solid rgba(108, 92, 231, 0.35);
         border-radius: 24px;
-        padding: 36px 28px;
+        padding: 40px 32px;
         text-align: center;
-        box-shadow: 0 24px 80px rgba(108, 92, 231, 0.25);
+        box-shadow: 0 24px 80px rgba(108, 92, 231, 0.3);
         transform: scale(0.9);
         opacity: 0;
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
+      .pulse-btn {
+        animation: pulse-glow 2s infinite;
+      }
       @media (max-width: 480px) {
         .demo-popup-card {
-          padding: 28px 20px;
+          padding: 32px 24px;
           border-radius: 20px;
           margin: 12px;
         }
         .demo-popup-title {
-          font-size: 1.3rem !important;
+          font-size: 1.35rem !important;
         }
         .demo-popup-text {
           font-size: 0.88rem !important;
@@ -1349,47 +1357,44 @@ function showDemoContactModal() {
           line-height: 1.5 !important;
         }
         .demo-popup-btn {
-          height: 46px !important;
-          font-size: 0.82rem !important;
+          height: 48px !important;
+          font-size: 0.85rem !important;
         }
         .demo-popup-icon-box {
-          width: 60px !important;
-          height: 60px !important;
+          width: 64px !important;
+          height: 64px !important;
           margin-bottom: 16px !important;
         }
         .demo-popup-icon-box span {
-          font-size: 1.8rem !important;
+          font-size: 1.9rem !important;
         }
       }
     </style>
     
     <div class="demo-popup-card">
-      <!-- Close button on top right -->
-      <button id="modal-close-x" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; display:flex; align-items:center; justify-content:center; opacity:0.7; transition:opacity 0.2s;"><span class="material-icons-round" style="font-size: 1.25rem;">close</span></button>
-      
       <div class="demo-popup-icon-box" style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 32px var(--primary-glow);">
         <span class="material-icons-round" style="font-size: 2.2rem; color: white;">rocket_launch</span>
       </div>
       
-      <h3 class="demo-popup-title" style="font-size: 1.5rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.25;">Restoranınızın Satışlarını Artırmaya Hazır mısınız? 🚀</h3>
+      <h3 class="demo-popup-title" style="font-size: 1.5rem; font-weight: 800; margin: 0 0 12px 0; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.25;">Restoranınızın Satışlarını Artırmaya Hazır mısınız? 🚀</h3>
       
       <p class="demo-popup-text" style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.55; margin: 0 0 28px 0;">
         Servify ile sipariş hızınızı artırabilir, cironuzu anlık <strong>%15 yükseltebilirsiniz</strong>. Kendi restoran menünüzü kurmak ve <strong>tamamen ücretsiz</strong> test etmek için hemen başvurun!
       </p>
       
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-        <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20test%20kurulumu%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg demo-popup-btn" style="background: #25D366; border-color: #25D366; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.25); gap: 8px; justify-content: center; font-weight: 700; height: 48px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.9rem;">
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+        <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20test%20kurulumu%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg demo-popup-btn pulse-btn" style="background: #25D366; border-color: #25D366; gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.92rem;">
           <span class="material-icons-round">chat</span>
           WhatsApp ile Ücretsiz Kurulum Talebi
         </a>
-        <a href="tel:+905417744304" class="btn btn-secondary btn-lg demo-popup-btn" style="background: rgba(108, 92, 231, 0.08); border-color: rgba(108, 92, 231, 0.25); color: var(--primary-light); gap: 8px; justify-content: center; font-weight: 700; height: 48px; display: flex; align-items: center; text-decoration: none; border-radius: 12px; font-size: 0.9rem;">
+        <a href="tel:+905417744304" class="btn btn-secondary btn-lg demo-popup-btn" style="background: rgba(108, 92, 231, 0.08); border-color: rgba(108, 92, 231, 0.25); color: var(--primary-light); gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; text-decoration: none; border-radius: 12px; font-size: 0.92rem;">
           <span class="material-icons-round">phone</span>
           Hemen Bilgi Al: 0541 774 43 04
         </a>
       </div>
       
-      <button class="btn btn-ghost" id="close-demo-contact" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-decoration: underline;">
-        Demoyu İncelemeye Devam Et
+      <button class="btn btn-ghost" id="close-demo-contact" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-decoration: underline; background: none; border: none; cursor: pointer;">
+        Daha Sonra İncele (Demoya Geri Dön)
       </button>
     </div>
   `;
@@ -1415,12 +1420,4 @@ function showDemoContactModal() {
   };
 
   overlay.querySelector('#close-demo-contact').onclick = closeModal;
-  overlay.querySelector('#modal-close-x').onclick = closeModal;
-  
-  // Close when clicking outside on overlay background (friction reduction)
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      closeModal();
-    }
-  });
 }
