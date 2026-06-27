@@ -46,65 +46,72 @@ export function startTutorialTour() {
       const activeTarget = document.querySelector(step.target);
       if (!activeTarget) return;
 
-      // Overlay
-      const overlay = document.createElement('div');
-      overlay.className = 'tour-overlay';
-      document.body.appendChild(overlay);
+      // Scroll the target into view to make sure it's on screen (especially in scrollable sidebar)
+      activeTarget.scrollIntoView({ block: 'nearest', behavior: 'instant' });
 
-      // Highlight
-      const rect = activeTarget.getBoundingClientRect();
-      const highlight = document.createElement('div');
-      highlight.className = 'tour-highlight';
-      highlight.style.position = 'fixed';
-      highlight.style.zIndex = '100000';
-      highlight.style.top = rect.top - 4 + 'px';
-      highlight.style.left = rect.left - 4 + 'px';
-      highlight.style.width = rect.width + 8 + 'px';
-      highlight.style.height = rect.height + 8 + 'px';
-      document.body.appendChild(highlight);
+      // Small delay for scroll position to update and settle
+      setTimeout(() => {
+        const rect = activeTarget.getBoundingClientRect();
+        
+        // Overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'tour-overlay';
+        document.body.appendChild(overlay);
 
-      // Tooltip
-      const tooltip = document.createElement('div');
-      tooltip.className = 'tour-tooltip';
-      tooltip.innerHTML = `
-        <h4 style="margin: 0 0 6px 0; font-size: 1rem; color: var(--primary-light); font-weight: 700;">${step.title}</h4>
-        <p style="margin: 0 0 16px 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">${step.desc}</p>
-        <div class="tour-actions" style="display:flex; justify-content:space-between; align-items:center;">
-          <span class="tour-steps" style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">${index + 1} / ${steps.length}</span>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-ghost btn-sm" id="tour-skip" style="padding: 4px 10px; font-size: 0.8rem;">${t('skip', 'tutorial') || 'Atla'}</button>
-            <button class="btn btn-primary btn-sm" id="tour-next" style="padding: 4px 12px; font-size: 0.8rem; font-weight: 600;">
-              ${index === steps.length - 1 ? (t('finish', 'tutorial') || 'Bitir') : (t('next', 'tutorial') || 'İleri')}
-            </button>
+        // Highlight
+        const highlight = document.createElement('div');
+        highlight.className = 'tour-highlight';
+        highlight.style.position = 'fixed';
+        highlight.style.zIndex = '100000';
+        highlight.style.top = rect.top - 4 + 'px';
+        highlight.style.left = rect.left - 4 + 'px';
+        highlight.style.width = rect.width + 8 + 'px';
+        highlight.style.height = rect.height + 8 + 'px';
+        document.body.appendChild(highlight);
+
+        // Tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tour-tooltip';
+        tooltip.innerHTML = `
+          <h4 style="margin: 0 0 6px 0; font-size: 1rem; color: var(--primary-light); font-weight: 700;">${step.title}</h4>
+          <p style="margin: 0 0 16px 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">${step.desc}</p>
+          <div class="tour-actions" style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="tour-steps" style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">${index + 1} / ${steps.length}</span>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-ghost btn-sm" id="tour-skip" style="padding: 4px 10px; font-size: 0.8rem;">${t('skip', 'tutorial') || 'Atla'}</button>
+              <button class="btn btn-primary btn-sm" id="tour-next" style="padding: 4px 12px; font-size: 0.8rem; font-weight: 600;">
+                ${index === steps.length - 1 ? (t('finish', 'tutorial') || 'Bitir') : (t('next', 'tutorial') || 'İleri')}
+              </button>
+            </div>
           </div>
-        </div>
-      `;
+        `;
 
-      // Position tooltip
-      let tooltipTop = rect.bottom + 12;
-      let tooltipLeft = Math.max(16, Math.min(rect.left, window.innerWidth - 376));
-      tooltip.style.position = 'fixed';
-      tooltip.style.zIndex = '100001';
-      tooltip.style.top = tooltipTop + 'px';
-      tooltip.style.left = tooltipLeft + 'px';
-      
-      if (tooltipTop + 200 > window.innerHeight) {
-        tooltip.style.top = (rect.top - 160) + 'px';
-      }
+        // Position tooltip
+        let tooltipTop = rect.bottom + 12;
+        let tooltipLeft = Math.max(16, Math.min(rect.left, window.innerWidth - 376));
+        tooltip.style.position = 'fixed';
+        tooltip.style.zIndex = '100001';
+        tooltip.style.top = tooltipTop + 'px';
+        tooltip.style.left = tooltipLeft + 'px';
+        
+        if (tooltipTop + 200 > window.innerHeight) {
+          tooltip.style.top = (rect.top - 160) + 'px';
+        }
 
-      document.body.appendChild(tooltip);
+        document.body.appendChild(tooltip);
 
-      tooltip.querySelector('#tour-skip').addEventListener('click', () => {
-        document.querySelectorAll('.tour-overlay, .tour-highlight, .tour-tooltip').forEach(el => el.remove());
-        localStorage.setItem('tourCompleted', 'true');
-        showContactModal();
-      });
+        tooltip.querySelector('#tour-skip').addEventListener('click', () => {
+          document.querySelectorAll('.tour-overlay, .tour-highlight, .tour-tooltip').forEach(el => el.remove());
+          localStorage.setItem('tourCompleted', 'true');
+          showContactModal();
+        });
 
-      tooltip.querySelector('#tour-next').addEventListener('click', () => {
-        currentStep++;
-        showStep(currentStep);
-      });
-    }, 100);
+        tooltip.querySelector('#tour-next').addEventListener('click', () => {
+          currentStep++;
+          showStep(currentStep);
+        });
+      }, 50);
+    }, 150);
   }
 
   function showContactModal() {

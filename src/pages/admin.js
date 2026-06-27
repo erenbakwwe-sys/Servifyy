@@ -113,7 +113,7 @@ function renderAdminLayout(container, userId) {
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('management')}</div>
             <div class="sidebar-nav-item" data-page="branches"><span class="material-icons-round">store</span>${t('branches')}</div>
-            <div class="sidebar-nav-item" data-page="staff"><span class="material-icons-round">group</span>${t('staff')}</div>
+            <div class="sidebar-nav-item" data-page="staff"><span class="material-icons-round">group</span>${t('staffLabel')}</div>
             <div class="sidebar-nav-item" data-page="stock"><span class="material-icons-round">inventory_2</span>${t('stock')}</div>
           </div>
           <div class="sidebar-nav-group">
