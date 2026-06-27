@@ -46,13 +46,30 @@ if (!localStorage.getItem('appLang')) {
   };
 }
 
-// Show loading until auth is ready
-app.innerHTML = `
-  <div class="loading-screen">
-    <div class="spinner"></div>
-    <div class="loading-logo">QR Menü</div>
-  </div>
-`;
+// Check if we can start immediately (Landing page or Customer menu)
+const currentHash = window.location.hash;
+const isLandingOrCustomerMenu = currentHash === '' || currentHash === '#/' || currentHash.startsWith('#/menu/');
+
+if (isLandingOrCustomerMenu) {
+  isAuthReady = true;
+  router.start();
+} else {
+  // Show loading screen only for admin/onboarding pages
+  app.innerHTML = `
+    <div class="loading-screen">
+      <div class="spinner"></div>
+      <div class="loading-logo">QR Menü</div>
+    </div>
+  `;
+  
+  // Safety timeout: start router after 1.2s if Firebase auth hangs
+  setTimeout(() => {
+    if (!isAuthReady) {
+      isAuthReady = true;
+      router.start();
+    }
+  }, 1200);
+}
 
 // Routes
 router
@@ -93,7 +110,6 @@ onAuthStateChanged(auth, async (user) => {
   if (!isAuthReady) {
     isAuthReady = true;
     router.start();
-    return;
   }
 });
 
