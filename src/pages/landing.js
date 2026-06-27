@@ -646,9 +646,9 @@ export function renderLanding(container) {
               </div>
             </div>
             
-            <a href="#/admin" class="btn btn-primary btn-block btn-lg" style="height: 50px; justify-content: center; font-weight: 700; margin-top: 10px;">
-              <span class="material-icons-round">rocket_launch</span>
-              Hemen Demoyu İncele
+            <a id="roi-whatsapp-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block btn-lg" style="height: 52px; background: #25D366; border-color: #25D366; color: white; justify-content: center; font-weight: 700; margin-top: 10px; display:flex; align-items:center; gap:8px; box-shadow: 0 8px 24px rgba(37,211,102,0.25); text-decoration:none; border-radius:12px;">
+              <span class="material-icons-round">chat</span>
+              Bu Tasarrufu Sağla (Ücretsiz Başlat)
             </a>
           </div>
         </div>
@@ -1024,6 +1024,13 @@ export function renderLanding(container) {
       profitVal.textContent = revIncrease.toLocaleString('tr-TR') + ' ₺';
       hoursVal.textContent = hoursSaved + ' Saat';
       printVal.textContent = printingSaved.toLocaleString('tr-TR') + ' ₺';
+
+      // Update WhatsApp Link dynamically
+      const roiWhatsappBtn = container.querySelector('#roi-whatsapp-btn');
+      if (roiWhatsappBtn) {
+        const text = `Merhaba, ${tables} masalı ve ortalama ${ticket} ₺ adisyonlu restoranımız için aylık tahmini ${revIncrease.toLocaleString('tr-TR')} ₺ gelir artışı sağlayan Servify QR menü sistemini ücretsiz kurdurmak ve test etmek istiyoruz.`;
+        roiWhatsappBtn.href = `https://wa.me/905417744304?text=${encodeURIComponent(text)}`;
+      }
     };
     
     tablesInput.addEventListener('input', calculateROI);
