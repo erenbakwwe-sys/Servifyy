@@ -303,6 +303,79 @@ export function renderLanding(container) {
       </div>
     </section>
 
+    <!-- ROI Calculator Section -->
+    <section class="roi-section" id="roi-calculator" style="padding: 100px 0; background: var(--bg-primary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag">
+            <span class="material-icons-round">calculate</span>
+            Kazanç Hesaplayıcı
+          </div>
+          <h2 class="section-title">Servify ile Ne Kadar <span class="gradient-text">Kazanabilirsiniz?</span></h2>
+          <p class="section-subtitle">Masa sayınızı ve ortalama adisyon tutarınızı girerek aylık tahmini tasarrufunuzu ve ek gelirinizi hesaplayın.</p>
+        </div>
+        
+        <div class="roi-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 1000px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); padding: 40px; border-radius: 24px; box-shadow: var(--shadow-lg);">
+          <!-- Inputs Column -->
+          <div class="roi-inputs" style="display: flex; flex-direction: column; gap: 28px;">
+            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">İşletme Bilgileri</h3>
+            
+            <div class="input-group">
+              <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">
+                <label style="color: var(--text-secondary);">Masa Sayısı</label>
+                <span id="roi-tables-lbl" style="color: var(--primary-light);">30</span>
+              </div>
+              <input type="range" id="roi-tables" min="5" max="150" value="30" step="5" style="width: 100%; accent-color: var(--primary); cursor: pointer; height: 6px; border-radius: 3px; background: var(--border);">
+            </div>
+            
+            <div class="input-group">
+              <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">
+                <label style="color: var(--text-secondary);">Ortalama Adisyon Tutarı</label>
+                <span id="roi-ticket-lbl" style="color: var(--primary-light);">200 ₺</span>
+              </div>
+              <input type="range" id="roi-ticket" min="50" max="1000" value="250" step="50" style="width: 100%; accent-color: var(--primary); cursor: pointer; height: 6px; border-radius: 3px; background: var(--border);">
+            </div>
+            
+            <div style="background: rgba(108, 92, 231, 0.05); border: 1px dashed rgba(108, 92, 231, 0.2); padding: 16px; border-radius: 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-top: 10px;">
+              💡 <strong>Nasıl Hesaplıyoruz?</strong> Dijital QR menü, sipariş hızını %15 artırır, basılı menü güncelleme masraflarını sıfırlar ve garsonların iş yükünü azaltarak zamandan tasarruf sağlar.
+            </div>
+          </div>
+          
+          <!-- Outputs Column -->
+          <div class="roi-outputs" style="display: flex; flex-direction: column; justify-content: center; gap: 20px;">
+            <div class="roi-output-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 16px;">
+              <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(0, 184, 148, 0.15); color: var(--success); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.5rem;">trending_up</span></div>
+              <div>
+                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Aylık Ek Gelir Artışı</span>
+                <span id="roi-profit-val" style="font-size: 1.5rem; font-weight: 800; color: var(--success);">40.500 ₺</span>
+              </div>
+            </div>
+            
+            <div class="roi-output-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 16px;">
+              <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(108, 92, 231, 0.15); color: var(--primary-light); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.5rem;">schedule</span></div>
+              <div>
+                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Aylık Kazanılan Zaman</span>
+                <span id="roi-hours-val" style="font-size: 1.5rem; font-weight: 800; color: var(--primary-light);">45 Saat</span>
+              </div>
+            </div>
+            
+            <div class="roi-output-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 16px;">
+              <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 118, 117, 0.15); color: #ff7675; display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.5rem;">print_disabled</span></div>
+              <div>
+                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Aylık Menü Baskı Tasarrufu</span>
+                <span id="roi-print-val" style="font-size: 1.5rem; font-weight: 800; color: #ff7675;">1.050 ₺</span>
+              </div>
+            </div>
+            
+            <a href="#/admin" class="btn btn-primary btn-block btn-lg" style="height: 50px; justify-content: center; font-weight: 700; margin-top: 10px;">
+              <span class="material-icons-round">rocket_launch</span>
+              Hemen Demoyu İncele
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Pricing Section -->
     <section class="pricing-section" id="pricing">
       <div class="container">
@@ -583,4 +656,35 @@ export function renderLanding(container) {
     el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
     observer.observe(el);
   });
+
+  // ROI Calculator Logic
+  const tablesInput = container.querySelector('#roi-tables');
+  const ticketInput = container.querySelector('#roi-ticket');
+  const profitVal = container.querySelector('#roi-profit-val');
+  const hoursVal = container.querySelector('#roi-hours-val');
+  const printVal = container.querySelector('#roi-print-val');
+
+  if (tablesInput && ticketInput && profitVal && hoursVal && printVal) {
+    const calculateROI = () => {
+      const tables = parseInt(tablesInput.value) || 0;
+      const ticket = parseInt(ticketInput.value) || 0;
+      
+      // Update range labels
+      container.querySelector('#roi-tables-lbl').textContent = tables;
+      container.querySelector('#roi-ticket-lbl').textContent = ticket + ' ₺';
+      
+      // Calculate
+      const revIncrease = Math.round(3 * tables * ticket * 30 * 0.15); // 15% order conversion increase
+      const hoursSaved = Math.round(tables * 1.5); // 1.5 hours per table per month
+      const printingSaved = Math.round(tables * 35); // 35 TL printing saved per table per month
+      
+      profitVal.textContent = revIncrease.toLocaleString('tr-TR') + ' ₺';
+      hoursVal.textContent = hoursSaved + ' Saat';
+      printVal.textContent = printingSaved.toLocaleString('tr-TR') + ' ₺';
+    };
+    
+    tablesInput.addEventListener('input', calculateROI);
+    ticketInput.addEventListener('input', calculateROI);
+    calculateROI(); // initialize values
+  }
 }
