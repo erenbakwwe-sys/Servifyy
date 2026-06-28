@@ -73,6 +73,11 @@ service cloud.firestore {
         allow read: if isOwner(userId);
         allow write: if isOwner(userId);
       }
+
+      // Tabs / POS (Only the authenticated restaurant owner can manage tabs)
+      match /tabs/{tabId} {
+        allow read, write: if isOwner(userId);
+      }
     }
   }
 }

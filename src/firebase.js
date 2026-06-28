@@ -86,6 +86,11 @@ const mockCollections = {
     { id: 'f1', rating: 5, comment: 'Hizmet çok hızlı, lahmacunlar çıtır çıtırdı!', userName: 'Emin A.', createdAt: Date.now() - 3600000 },
     { id: 'f2', rating: 4, comment: 'Gavurdağı salatasının porsiyonu biraz daha büyük olabilirdi ama tadı harikaydı.', userName: 'Meltem K.', createdAt: Date.now() - 7200000 },
     { id: 'f3', rating: 5, comment: 'Künefe sıcak geldi ve peyniri mükemmel uzuyordu. Servis çok kibar.', userName: 'Ahmet T.', createdAt: Date.now() - 86400000 }
+  ],
+  'users/demo/tabs': [
+    { id: 'tab1', tableNo: 3, status: 'open', waiterName: 'Ahmet', items: [{ name: 'Adana Kebap', price: 280, qty: 2, note: 'Acılı' }, { name: 'Ayran', price: 35, qty: 2, note: '' }], subtotal: 630, discount: { type: 'none', value: 0 }, tip: 0, total: 630, paymentMethod: '', createdAt: Date.now() - 1200000 },
+    { id: 'tab2', tableNo: 7, status: 'open', waiterName: 'Ahmet', items: [{ name: 'Lahmacun', price: 80, qty: 3, note: '' }, { name: 'Künefe', price: 140, qty: 1, note: 'Az şerbetli' }], subtotal: 380, discount: { type: 'none', value: 0 }, tip: 0, total: 380, paymentMethod: '', createdAt: Date.now() - 600000 },
+    { id: 'tab3', tableNo: 1, status: 'closed', waiterName: 'Ahmet', items: [{ name: 'Gavurdağı Salatası', price: 120, qty: 2, note: '' }, { name: 'Adana Kebap', price: 280, qty: 1, note: '' }], subtotal: 520, discount: { type: 'percent', value: 10 }, tip: 20, total: 488, paymentMethod: 'cash', createdAt: Date.now() - 7200000, closedAt: Date.now() - 3600000 }
   ]
 };
 

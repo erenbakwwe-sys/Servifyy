@@ -235,6 +235,11 @@ export function renderLanding(container) {
             <h3>${t('f6T', 'landing')}</h3>
             <p>${t('f6D', 'landing')}</p>
           </div>
+          <div class="feature-card">
+            <div class="feature-icon"><span class="material-icons-round">point_of_sale</span></div>
+            <h3>${t('f7T', 'landing')}</h3>
+            <p>${t('f7D', 'landing')}</p>
+          </div>
         </div>
       </div>
     </section>

@@ -13,6 +13,8 @@ import { startTutorialTour } from './tutorial.js';
 import { t, getLang, setLang } from '../i18n.js';
 // Add stock imports
 import { renderStockContent, setupStockHandlers } from './admin-stock.js';
+// Add POS / Adisyon imports
+import { renderPOSContent, setupPOSHandlers } from './admin-pos.js';
 
 let currentPage = 'dashboard';
 let userData = null;
@@ -27,6 +29,9 @@ let prevCallCount = 0;
 // Add stock module variables
 let stockItems = [];
 let unsubStock = null;
+// POS / Adisyon
+let tabs = [];
+let unsubTabs = null;
 
 export function renderAdmin(container) {
   const user = auth.currentUser;
@@ -109,6 +114,7 @@ function renderAdminLayout(container, userId) {
             <div class="sidebar-nav-item" data-page="menu"><span class="material-icons-round">menu_book</span>${t('menu')}</div>
             <div class="sidebar-nav-item" data-page="qr"><span class="material-icons-round">qr_code_2</span>${t('qr')}</div>
             <div class="sidebar-nav-item" data-page="calls"><span class="material-icons-round">notifications_active</span>${t('calls')}<span class="nav-badge" id="calls-badge" style="display:none;">0</span></div>
+            <div class="sidebar-nav-item" data-page="pos"><span class="material-icons-round">point_of_sale</span>${t('pos')}<span class="nav-badge" id="pos-badge" style="display:none;">0</span></div>
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('management')}</div>
@@ -297,7 +303,8 @@ function renderPage(userId) {
     qr: t('qr'), calls: t('calls'), 'ai-theme': t('aiTheme'),
     branches: t('branches'), staff: t('staff'),
     history: t('history'), finance: t('finance'),
-    analytics: t('analytics'), coupons: t('coupons'), feedback: t('feedback'), stock: t('stock')
+    analytics: t('analytics'), coupons: t('coupons'), feedback: t('feedback'), stock: t('stock'),
+    pos: t('pos')
   };
   if (title) title.textContent = titles[currentPage] || t('dashboard');
 
@@ -354,6 +361,10 @@ function renderPage(userId) {
       break;
     case 'feedback':
       renderFeedbackPage(content, userId);
+      break;
+    case 'pos':
+      content.innerHTML = renderPOSContent(tabs, menuItems, userData);
+      setupPOSHandlers(userId, content, menuItems);
       break;
     case '_kitchen':
       // Opens kitchen in new tab, revert to dashboard
@@ -423,6 +434,23 @@ function setupRealtimeListeners(userId) {
       stockItems = [];
       snapshot.forEach(d => stockItems.push({ id: d.id, ...d.data() }));
       if (currentPage === 'stock') renderPage(userId);
+    }
+  );
+
+  // Tabs (POS / Adisyon) listener
+  unsubTabs = onSnapshot(
+    query(collection(db, 'users', userId, 'tabs'), orderBy('createdAt', 'desc')),
+    (snapshot) => {
+      tabs = [];
+      snapshot.forEach(d => tabs.push({ id: d.id, ...d.data() }));
+      // Update POS badge
+      const openTabCount = tabs.filter(tb => tb.status === 'open').length;
+      const posBadge = document.getElementById('pos-badge');
+      if (posBadge) {
+        posBadge.textContent = openTabCount;
+        posBadge.style.display = openTabCount > 0 ? 'flex' : 'none';
+      }
+      if (currentPage === 'pos') renderPage(userId);
     }
   );
 }
@@ -1143,6 +1171,7 @@ function cleanup() {
   if (unsubCalls) unsubCalls();
   if (unsubMenu) unsubMenu();
   if (unsubStock) unsubStock();
+  if (unsubTabs) unsubTabs();
 }
 
 function renderExpiredTrialScreen(container) {
