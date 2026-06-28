@@ -173,8 +173,29 @@ function renderTabModal(modal, userId, tableNo, content) {
   const categories = [...new Set(tabMenuItems.map(m => m.category || 'Genel'))];
 
   modal.innerHTML = `
+    <style>
+      @media (max-width: 768px) {
+        .pos-modal-card {
+          padding: 16px 12px !important;
+          margin-top: 10px !important;
+          margin-bottom: 10px !important;
+        }
+        .pos-modal-overlay {
+          padding: 10px !important;
+        }
+        .pos-tab-item {
+          flex-direction: column;
+          align-items: flex-start !important;
+          gap: 8px;
+        }
+        .pos-tab-item > div {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    </style>
     <div class="pos-modal-overlay" style="position:fixed; inset:0; background:rgba(10,10,15,0.85); backdrop-filter:blur(10px); z-index:99999; display:flex; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto;">
-      <div class="pos-modal-card" style="width:100%; max-width:700px; background:var(--bg-card); border:1px solid var(--border); border-radius:20px; padding:28px; box-shadow:0 24px 80px rgba(0,0,0,0.4); margin-top:20px; margin-bottom:20px;">
+      <div class="pos-modal-card" style="width:100%; max-width:700px; background:var(--bg-card); border:1px solid var(--border); border-radius:20px; padding:28px; box-shadow:0 24px 80px rgba(0,0,0,0.4); margin-top:20px; margin-bottom:20px; position:relative;">
         
         <!-- Header -->
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
@@ -204,7 +225,7 @@ function renderTabModal(modal, userId, tableNo, content) {
           </div>
         ` : `
           <!-- Tab exists -> Show details -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
             
             <!-- Left: Menu Quick Add -->
             <div style="min-height:200px;">
@@ -499,9 +520,9 @@ function showPaymentModal(parentModal, userId, tableNo, content) {
 
       <div style="border-top:1px solid var(--border); padding-top:16px; margin-bottom:16px;">
         <h4 style="font-size:0.85rem; font-weight:700; margin-bottom:10px;">${t('splitBill', 'admin')}</h4>
-        <div style="display:flex; gap:8px; justify-content:center;">
+        <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
           ${[2, 3, 4].map(n => `
-            <button class="pos-split-btn btn btn-ghost" data-split="${n}" style="border:1px solid var(--border); border-radius:10px; padding:8px 16px; font-weight:700; font-size:0.82rem;">
+            <button class="pos-split-btn btn btn-ghost" data-split="${n}" style="border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-weight:700; font-size:0.8rem; flex:1; min-width:80px; text-align:center;">
               ${n} ${t('splitCount', 'admin').toLowerCase()}<br>
               <span style="font-size:0.75rem; color:var(--primary-light);">${formatCurrency(Math.ceil(total / n))}</span>
             </button>
