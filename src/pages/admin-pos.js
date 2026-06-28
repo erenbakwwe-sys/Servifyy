@@ -54,7 +54,7 @@ export function renderPOSContent(tabs, menuItems, userData) {
                 ${isEmpty ? t('tableEmpty', 'admin') : t('tableOccupied', 'admin')}
               </div>
               ${tab ? `<div style="font-size:0.85rem; font-weight:800; color:var(--text-primary); margin-top:6px;">${formatCurrency(tab.total || tab.subtotal || 0)}</div>` : ''}
-              ${tab ? `<div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">${tab.items?.length || 0} ürün</div>` : ''}
+              ${tab ? `<div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">${tab.items?.length || 0} ${t('items', 'admin')}</div>` : ''}
             </div>
           `;
         }).join('')}
@@ -80,12 +80,12 @@ export function renderPOSContent(tabs, menuItems, userData) {
                   </div>
                   <div style="text-align:right;">
                     <div style="font-weight:800; font-size:1.1rem; color:var(--text-primary);">${formatCurrency(tb.total || tb.subtotal || 0)}</div>
-                    <div style="font-size:0.68rem; color:var(--text-muted);">${tb.items?.length || 0} kalem</div>
+                    <div style="font-size:0.68rem; color:var(--text-muted);">${tb.items?.length || 0} ${t('items', 'admin')}</div>
                   </div>
                 </div>
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                   ${(tb.items || []).slice(0, 3).map(it => `<span style="font-size:0.7rem; background:var(--bg-secondary); padding:2px 8px; border-radius:6px; color:var(--text-secondary);">${escapeHtml(it.name)} x${it.qty}</span>`).join('')}
-                  ${(tb.items || []).length > 3 ? `<span style="font-size:0.7rem; padding:2px 8px; color:var(--text-muted);">+${(tb.items || []).length - 3} daha</span>` : ''}
+                  ${(tb.items || []).length > 3 ? `<span style="font-size:0.7rem; padding:2px 8px; color:var(--text-muted);">+${(tb.items || []).length - 3} ${t('moreLabel', 'admin')}</span>` : ''}
                 </div>
               </div>
             `).join('')}
@@ -259,7 +259,7 @@ function renderTabModal(modal, userId, tableNo, content) {
                     <div class="pos-tab-item" style="display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:var(--bg-secondary); border-radius:8px; font-size:0.82rem;">
                       <div style="display:flex; align-items:center; gap:8px; flex:1;">
                         <span style="font-weight:600; color:var(--text-primary);">${escapeHtml(it.name)}</span>
-                        ${it.isComp ? '<span style="font-size:0.65rem; background:rgba(0,184,148,0.15); color:var(--success); padding:1px 6px; border-radius:4px; font-weight:700;">İKRAM</span>' : ''}
+                        ${it.isComp ? `<span style="font-size:0.65rem; background:rgba(0,184,148,0.15); color:var(--success); padding:1px 6px; border-radius:4px; font-weight:700;">${t('compItem', 'admin').toUpperCase()}</span>` : ''}
                         ${it.note ? `<span style="font-size:0.65rem; color:var(--text-muted);">(${escapeHtml(it.note)})</span>` : ''}
                       </div>
                       <div style="display:flex; align-items:center; gap:8px;">
@@ -600,25 +600,25 @@ function printReceipt(tab, tableNo) {
         <div style="font-size:10px; color:#666;">Dijital Restoran Yönetimi</div>
         <div style="font-size:10px; color:#666; margin-top:4px;">${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}</div>
       </div>
-      <div style="text-align:center; margin-bottom:8px; font-weight:bold;">MASA ${tableNo} — ADİSYON</div>
+      <div style="text-align:center; margin-bottom:8px; font-weight:bold;">${t('tables', 'admin').toUpperCase()} ${tableNo} — ${t('pos', 'admin').toUpperCase()}</div>
       <div style="border-bottom:1px dashed #ccc; padding-bottom:8px; margin-bottom:8px;">
         ${items.map(it => `
           <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-            <span>${it.qty}x ${it.name}${it.isComp ? ' (İKRAM)' : ''}</span>
+            <span>${it.qty}x ${it.name}${it.isComp ? ' (' + t('compItem', 'admin').toUpperCase() + ')' : ''}</span>
             <span>${it.isComp ? '0,00' : (it.price * it.qty).toFixed(2)}</span>
           </div>
         `).join('')}
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-        <span>Ara Toplam:</span><span>${subtotal.toFixed(2)} ₺</span>
+        <span>${t('subtotalLabel', 'admin')}:</span><span>${subtotal.toFixed(2)} ₺</span>
       </div>
-      ${discountVal > 0 ? `<div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#27ae60;"><span>İndirim:</span><span>-${discountVal.toFixed(2)} ₺</span></div>` : ''}
-      ${(tab.tip || 0) > 0 ? `<div style="display:flex; justify-content:space-between; margin-bottom:2px;"><span>Bahşiş:</span><span>+${tab.tip.toFixed(2)} ₺</span></div>` : ''}
+      ${discountVal > 0 ? `<div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#27ae60;"><span>${t('discountLabel', 'admin')}:</span><span>-${discountVal.toFixed(2)} ₺</span></div>` : ''}
+      ${(tab.tip || 0) > 0 ? `<div style="display:flex; justify-content:space-between; margin-bottom:2px;"><span>${t('tipLabel', 'admin')}:</span><span>+${tab.tip.toFixed(2)} ₺</span></div>` : ''}
       <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px; border-top:2px solid #111; padding-top:6px; margin-top:6px;">
-        <span>TOPLAM:</span><span>${total.toFixed(2)} ₺</span>
+        <span>${t('grandTotal', 'admin').toUpperCase()}:</span><span>${total.toFixed(2)} ₺</span>
       </div>
       <div style="text-align:center; margin-top:16px; font-size:10px; color:#888; border-top:1px dashed #ccc; padding-top:8px;">
-        Bizi tercih ettiğiniz için teşekkürler!<br>
+        ${t('thankYou', 'admin')}<br>
         servifysaas.com
       </div>
     </div>
