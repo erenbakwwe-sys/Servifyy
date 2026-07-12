@@ -520,11 +520,11 @@ export function renderLanding(container) {
                 <div class="demo-browser-dots">
                   <span></span><span></span><span></span>
                 </div>
-                <div class="demo-browser-url">izmirdenizrestaurant.vercel.app</div>
+                <div class="demo-browser-url">fluxzonecoffee.vercel.app</div>
               </div>
-              <iframe src="https://izmirdenizrestaurant.vercel.app/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="İzmir Deniz Restaurant Demo"></iframe>
+              <iframe src="https://fluxzonecoffee.vercel.app/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="Flux Zone Coffee Demo"></iframe>
               <div class="demo-card-overlay">
-                <a href="https://izmirdenizrestaurant.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+                <a href="https://fluxzonecoffee.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
                   <span class="material-icons-round">open_in_new</span>
                   ${t('demoVisit', 'landing')}
                 </a>
