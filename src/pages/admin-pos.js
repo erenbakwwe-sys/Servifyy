@@ -339,7 +339,7 @@ function renderTabModal(modal, userId, tableNo, content) {
     const newTab = {
       tableNo,
       status: 'open',
-      waiterName: 'Garson',
+      waiterName: t('waiterLabel', 'admin'),
       items: [],
       subtotal: 0,
       discount: { type: 'none', value: 0 },
@@ -353,7 +353,7 @@ function renderTabModal(modal, userId, tableNo, content) {
       showToast(t('tabOpened', 'admin'), 'success');
       modal.style.display = 'none';
     } catch (err) {
-      showToast('Hata: ' + err.message, 'error');
+      showToast(t('errorPrefix', 'admin') + err.message, 'error');
     }
   });
 
@@ -552,7 +552,7 @@ function showPaymentModal(parentModal, userId, tableNo, content) {
         parentModal.style.display = 'none';
         currentTab = null;
       } catch (err) {
-        showToast('Hata: ' + err.message, 'error');
+        showToast(t('errorPrefix', 'admin') + err.message, 'error');
       }
     });
   });

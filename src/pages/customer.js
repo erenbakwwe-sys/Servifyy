@@ -867,7 +867,7 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
       const responseData = await fetchResponse.json();
 
       if (!fetchResponse.ok) {
-        throw new Error(responseData.error || 'Ödeme linki alınamadı.');
+        throw new Error(responseData.error || t('paymentLinkError', 'customer'));
       }
 
       if (responseData && responseData.paymentUrl) {
@@ -907,7 +907,7 @@ async function placeOrder(panel, tipAmount = 0, couponDiscount = 0, appliedCoupo
         window.location.href = responseData.paymentUrl;
         return;
       } else {
-        throw new Error(responseData.error || 'Ödeme linki alınamadı.');
+        throw new Error(responseData.error || t('paymentLinkError', 'customer'));
       }
     } catch (err) {
       console.error('Payment Error:', err);

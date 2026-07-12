@@ -6,6 +6,7 @@ import './customer.css';
 
 import { getLang, setLang, t } from './i18n.js';
 import Router from './router.js';
+
 import { auth, db, doc, getDoc, onAuthStateChanged, signOut } from './firebase.js';
 import { renderLanding } from './pages/landing.js';
 import { renderAuth } from './pages/auth.js';
@@ -15,6 +16,16 @@ import { renderCustomerMenu } from './pages/customer.js';
 import { renderStaffLogin, getStaffSession } from './pages/staff-login.js';
 import { renderStaffPanel, cleanupStaffPanel } from './pages/staff-panel.js';
 import { renderKitchen, cleanupKitchen } from './pages/kitchen.js';
+
+// Headless testing helpers
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('testLang')) {
+  localStorage.setItem('appLang', urlParams.get('testLang'));
+  localStorage.setItem('adminLang', urlParams.get('testLang'));
+}
+if (urlParams.has('testPage')) {
+  localStorage.setItem('adminCurrentPage', urlParams.get('testPage'));
+}
 
 const app = document.getElementById('app');
 const router = new Router();
@@ -41,34 +52,13 @@ if (!localStorage.getItem('appLang')) {
   document.body.appendChild(langModal);
   
   window.selectAppLang = (lang) => {
-    setLang(lang);
-    window.location.reload();
-  };
-}
-
-// Check if we can start immediately (Landing page or Customer menu)
-const currentHash = window.location.hash;
-const isLandingOrCustomerMenu = currentHash === '' || currentHash === '#/' || currentHash.startsWith('#/menu/');
-
-if (isLandingOrCustomerMenu) {
-  isAuthReady = true;
-  router.start();
-} else {
-  // Show loading screen only for admin/onboarding pages
-  app.innerHTML = `
-    <div class="loading-screen">
-      <div class="spinner"></div>
-      <div class="loading-logo">QR Menü</div>
-    </div>
-  `;
-  
-  // Safety timeout: start router after 1.2s if Firebase auth hangs
-  setTimeout(() => {
-    if (!isAuthReady) {
-      isAuthReady = true;
-      router.start();
+    if (lang !== getLang()) {
+      setLang(lang);
+      setTimeout(() => {
+        window.location.reload();
+      }, 150);
     }
-  }, 1200);
+  };
 }
 
 // Routes
@@ -135,3 +125,28 @@ window.logoutStaff = () => {
     setTimeout(() => window.location.reload(), 100);
   }
 };
+
+// Check if we can start immediately (Landing page or Customer menu)
+const currentHash = window.location.hash;
+const isLandingOrCustomerMenu = currentHash === '' || currentHash === '#/' || currentHash.startsWith('#/menu/');
+
+if (isLandingOrCustomerMenu) {
+  isAuthReady = true;
+  router.start();
+} else {
+  // Show loading screen only for admin/onboarding pages
+  app.innerHTML = `
+    <div class="loading-screen">
+      <div class="spinner"></div>
+      <div class="loading-logo">QR Menü</div>
+    </div>
+  `;
+  
+  // Safety timeout: start router after 1.2s if Firebase auth hangs
+  setTimeout(() => {
+    if (!isAuthReady) {
+      isAuthReady = true;
+      router.start();
+    }
+  }, 1200);
+}

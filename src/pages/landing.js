@@ -20,7 +20,7 @@ export function renderLanding(container) {
           <a href="#how-it-works">${t('howItWorks', 'landing')}</a>
           <a href="#pricing">${t('pricing', 'landing')}</a>
           <a href="#/admin" class="btn btn-primary">${t('freeTrial', 'landing')}</a>
-          <select id="landing-lang-select" class="input-field" style="padding:4px 8px; font-size:0.85rem; border-radius:12px; width:auto; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary); margin-left:16px;">
+          <select id="landing-lang-select" autocomplete="off" class="input-field" style="padding:4px 8px; font-size:0.85rem; border-radius:12px; width:auto; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary); margin-left:16px;">
             <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 TR</option>
             <option value="en" ${getLang() === 'en' ? 'selected' : ''}>🇬🇧 EN</option>
             <option value="de" ${getLang() === 'de' ? 'selected' : ''}>🇩🇪 DE</option>
@@ -42,7 +42,7 @@ export function renderLanding(container) {
       <a href="#pricing" onclick="document.getElementById('mobile-menu').classList.remove('active')">${t('pricing', 'landing')}</a>
           <a href="#/admin" class="btn btn-primary btn-block">${t('freeTrial', 'landing')}</a>
       <div style="margin-top:16px;text-align:center;">
-        <select id="mobile-lang-select" class="input-field" style="padding:8px 16px; font-size:1rem; border-radius:12px; width:100%; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
+        <select id="mobile-lang-select" autocomplete="off" class="input-field" style="padding:8px 16px; font-size:1rem; border-radius:12px; width:100%; background:var(--bg-secondary); border:1px solid var(--border); color:var(--text-primary);">
           <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
           <option value="en" ${getLang() === 'en' ? 'selected' : ''}>🇬🇧 English</option>
           <option value="de" ${getLang() === 'de' ? 'selected' : ''}>🇩🇪 Deutsch</option>
@@ -250,26 +250,26 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">help_outline</span>
-            Neden Servify?
+            ${t('whyTag', 'landing')}
           </div>
-          <h2 class="section-title">Restoranınızı Neden <span class="gradient-text">Bizimle</span> Büyütmelisiniz?</h2>
-          <p class="section-subtitle">Servify QR Menü ve Sipariş Yönetim Sistemi, rakiplerinden çok farklı bir hız ve stabilite sunar.</p>
+          <h2 class="section-title">${t('whyTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('whySub', 'landing')}</p>
         </div>
         <div class="why-grid stagger-children">
           <div class="why-card">
             <div class="why-icon"><span class="material-icons-round">bolt</span></div>
-            <h3>Yıldırım Hızında Kurulum</h3>
-            <p>Dakikalar içinde restoranınızı sisteme tanımlayın, QR kodlarınızı anında masalara yerleştirerek sipariş almaya başlayın.</p>
+            <h3>${t('whyCard1Title', 'landing')}</h3>
+            <p>${t('whyCard1Desc', 'landing')}</p>
           </div>
           <div class="why-card">
             <div class="why-icon"><span class="material-icons-round">paid</span></div>
-            <h3>Sıfır Komisyon, Net Kazanç</h3>
-            <p>Sipariş başına komisyon ödemezsiniz. Aylık veya yıllık sabit lisans ücretiyle tüm kazancınız cebinizde kalır.</p>
+            <h3>${t('whyCard2Title', 'landing')}</h3>
+            <p>${t('whyCard2Desc', 'landing')}</p>
           </div>
           <div class="why-card">
-            <div class="why-icon"><span class="material-icons-round">support_agent</span></div>
-            <h3>7/24 Kesintisiz Destek</h3>
-            <p>Teknik sorunlarınızda veya sistem özelleştirmelerinizde WhatsApp veya telefon hattımız üzerinden anında bize ulaşabilirsiniz.</p>
+            <div class="why-icon"><span class="material-icons-round">calendar_month</span></div>
+            <h3>${t('whyCard3Title', 'landing')}</h3>
+            <p>${t('whyCard3Desc', 'landing')}</p>
           </div>
         </div>
       </div>
@@ -281,14 +281,14 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">play_circle_filled</span>
-            Canlı Simülatör
+            ${t('simTag', 'landing')}
           </div>
-          <h2 class="section-title">Sistemi Sayfada <span class="gradient-text">Deneyin</span></h2>
-          <p class="section-subtitle">Soldaki müşteri telefonundan sepete ürün ekleyip sipariş verin, sağdaki yönetici ekranına anında düşüşünü izleyin!</p>
+          <h2 class="section-title">${t('simTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('simSub', 'landing')}</p>
           
           <div style="background: rgba(108, 92, 231, 0.08); border: 1px solid rgba(108, 92, 231, 0.2); border-radius: 12px; padding: 12px 20px; max-width: 700px; margin: 24px auto 0; text-align: center; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <span class="material-icons-round" style="color: var(--primary-light); font-size: 1.2rem; flex-shrink: 0;">info_outline</span>
-            <span><strong>💡 İnteraktif Demo:</strong> Bu alan Servify sisteminin anlık sipariş ve garson çağrı akışını test etmeniz için tasarlanmış bir simülatördür. Gerçek yönetim panelini denemek için yukarıdaki <strong>"Demoyu Gör"</strong> butonuna tıklayabilirsiniz.</span>
+            <span>${t('simInfo', 'landing')}</span>
           </div>
         </div>
         
@@ -305,18 +305,18 @@ export function renderLanding(container) {
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-top: 10px;">
                   <div>
                     <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #fff;">Servify Restaurant</h5>
-                    <span style="font-size: 0.7rem; color: #a29bfe;">Masa 4</span>
+                    <span style="font-size: 0.7rem; color: #a29bfe;">${t('tables', 'admin')} 4</span>
                   </div>
                   <button id="sim-waiter-btn" style="background: rgba(108, 92, 231, 0.2); border: 1px solid rgba(108, 92, 231, 0.4); color: #a29bfe; padding: 4px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s;">
-                    <span class="material-icons-round" style="font-size: 0.95rem;">notifications_active</span> Garson Çağır
+                    <span class="material-icons-round" style="font-size: 0.95rem;">notifications_active</span> ${t('simWaiterBtn', 'landing')}
                   </button>
                 </div>
                 
                 <!-- Category Filter -->
                 <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">
-                  <span style="background: #6c5ce7; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; cursor: pointer;">Popülerler</span>
-                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">Kebaplar</span>
-                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">İçecekler</span>
+                  <span style="background: #6c5ce7; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; cursor: pointer;">${t('simPopular', 'landing')}</span>
+                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">${t('simKebabs', 'landing')}</span>
+                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">${t('simDrinks', 'landing')}</span>
                 </div>
                 
                 <!-- Food Items -->
@@ -349,14 +349,14 @@ export function renderLanding(container) {
                 <!-- Cart Drawer -->
                 <div class="sim-cart-drawer" style="margin-top: auto; background: rgba(108, 92, 231, 0.1); border: 1px solid rgba(108, 92, 231, 0.2); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; gap: 10px; z-index:5;">
                   <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 600;">
-                    <span style="color: #c7ecee;">Sepet (Masa 4)</span>
+                    <span style="color: #c7ecee;">${t('simCartTitle', 'landing')}</span>
                     <span id="sim-cart-total" style="color: #fff; font-weight: 700;">0 ₺</span>
                   </div>
                   <div id="sim-cart-items" style="font-size: 0.72rem; color: #a29bfe; max-height: 80px; overflow-y: auto; display:flex; flex-direction:column; gap:4px;">
-                    <i>Sepetiniz boş. Yukarıdan ekleyin!</i>
+                    <i>${t('simCartEmpty', 'landing')}</i>
                   </div>
                   <button id="sim-order-btn" disabled style="background: #6c5ce7; border: none; color: white; padding: 10px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; width: 100%; cursor: not-allowed; opacity: 0.5; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                    <span class="material-icons-round" style="font-size:1rem;">shopping_cart</span> Sipariş Ver
+                    <span class="material-icons-round" style="font-size:1rem;">shopping_cart</span> ${t('simOrderBtn', 'landing')}
                   </button>
                 </div>
 
@@ -364,8 +364,8 @@ export function renderLanding(container) {
                 <div id="sim-payment-drawer" style="position: absolute; bottom: 0; left: 0; right: 0; height: 0%; background: #121218; border-top: 2px solid #6c5ce7; border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 100; transition: height 0.3s ease-out; overflow: hidden; display: flex; flex-direction: column; padding: 0 16px;">
                   <div style="width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 10px auto; flex-shrink: 0;"></div>
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; flex-shrink: 0;">
-                    <h6 style="margin:0; font-size:0.9rem; font-weight:700; color:#fff;">Ödeme Yöntemi Seçin</h6>
-                    <button id="sim-cancel-pay-btn" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0;">İptal</button>
+                    <h6 style="margin:0; font-size:0.9rem; font-weight:700; color:#fff;">${t('simPaymentTitle', 'landing')}</h6>
+                    <button id="sim-cancel-pay-btn" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.75rem; text-decoration:underline; padding:0;">${t('simCancel', 'landing')}</button>
                   </div>
                   
                   <div style="display:flex; flex-direction:column; gap:8px; overflow-y:auto; flex: 1; padding-bottom: 16px;">
@@ -373,7 +373,7 @@ export function renderLanding(container) {
                     <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span class="material-icons-round" style="color: #00b894; font-size: 1.15rem;">payments</span>
-                        <span style="font-size:0.78rem;">Nakit</span>
+                        <span style="font-size:0.78rem;">${t('simCash', 'landing')}</span>
                       </div>
                       <input type="radio" name="sim-pay-method" value="Nakit" checked style="accent-color:#6c5ce7;">
                     </label>
@@ -381,7 +381,7 @@ export function renderLanding(container) {
                     <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span class="material-icons-round" style="color: #0984e3; font-size: 1.15rem;">credit_card</span>
-                        <span style="font-size:0.78rem;">Kredi Kartı (Online Ödeme)</span>
+                        <span style="font-size:0.78rem;">${t('simCard', 'landing')}</span>
                       </div>
                       <input type="radio" name="sim-pay-method" value="Kredi Kartı" style="accent-color:#6c5ce7;">
                     </label>
@@ -389,7 +389,7 @@ export function renderLanding(container) {
                     <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span class="material-icons-round" style="color: #e84393; font-size: 1.15rem;">point_of_sale</span>
-                        <span style="font-size:0.78rem;">Masada Fiziksel POS</span>
+                        <span style="font-size:0.78rem;">${t('simPos', 'landing')}</span>
                       </div>
                       <input type="radio" name="sim-pay-method" value="Fiziksel POS" style="accent-color:#6c5ce7;">
                     </label>
@@ -397,14 +397,14 @@ export function renderLanding(container) {
                     <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span class="material-icons-round" style="color: #6c5ce7; font-size: 1.15rem;">call_split</span>
-                        <span style="font-size:0.78rem;">Hesabı Eşit Bölüş (4 Kişi)</span>
+                        <span style="font-size:0.78rem;">${t('simSplit', 'landing')}</span>
                       </div>
                       <input type="radio" name="sim-pay-method" value="Hesabı Bölüş" style="accent-color:#6c5ce7;">
                     </label>
                   </div>
                   
                   <button id="sim-confirm-order-btn" style="background:#6c5ce7; border:none; color:white; padding:12px; border-radius:10px; font-size:0.8rem; font-weight:700; width:100%; cursor:pointer; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0; box-shadow:0 4px 12px rgba(108,92,231,0.2);">
-                    Onayla ve Gönder
+                    ${t('simConfirmBtn', 'landing')}
                   </button>
                 </div>
               </div>
@@ -415,11 +415,11 @@ export function renderLanding(container) {
           <div class="admin-simulator-wrapper" style="display: flex; flex-direction: column; gap: 20px; background: var(--bg-card); border: 1px solid var(--border); padding: 32px; border-radius: 24px; box-shadow: var(--shadow-lg); height: 580px; display: flex; flex-direction: column;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
               <div>
-                <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 2px 0;">Yönetici & Mutfak Paneli</h4>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Gelen masa siparişleri buraya anlık yansır.</p>
+                <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 2px 0;">${t('simAdminTitle', 'landing')}</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">${t('simAdminSub', 'landing')}</p>
               </div>
               <div style="background: rgba(0, 184, 148, 0.1); color: var(--success); font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; white-space:nowrap;">
-                <span class="material-icons-round" style="font-size:0.95rem;">wifi</span> Realtime Aktif
+                <span class="material-icons-round" style="font-size:0.95rem;">wifi</span> ${t('simAdminActive', 'landing')}
               </div>
             </div>
             
@@ -428,8 +428,8 @@ export function renderLanding(container) {
               <!-- Empty state initially -->
               <div id="sim-admin-empty" style="text-align: center; margin: auto 0; padding: 40px 20px; color: var(--text-muted);">
                 <span class="material-icons-round" style="font-size: 3rem; margin-bottom: 12px; opacity: 0.5;">receipt_long</span>
-                <p style="font-size: 0.85rem; margin: 0; font-weight:600;">Sipariş Bekleniyor...</p>
-                <p style="font-size: 0.75rem; margin: 4px 0 0 0; opacity: 0.7;">Soldaki telefondan sipariş vererek akışı test edin!</p>
+                <p style="font-size: 0.85rem; margin: 0; font-weight:600;">${t('simAdminEmptyTitle', 'landing')}</p>
+                <p style="font-size: 0.75rem; margin: 4px 0 0 0; opacity: 0.7;">${t('simAdminEmptyDesc', 'landing')}</p>
               </div>
               
               <div id="sim-orders-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -437,7 +437,7 @@ export function renderLanding(container) {
             
             <div style="border-top: 1px solid var(--border); padding-top: 16px; font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; display:flex; align-items:center; gap:8px;">
               <span class="material-icons-round" style="color: var(--primary-light); font-size: 1.1rem; flex-shrink:0;">info</span>
-              <span>Gerçek sistemde siparişler mutfak ekranına anlık düşer, sesli uyarı verir ve mutfak fişi çıktısı otomatik alınabilir.</span>
+              <span>${t('simAdminFooter', 'landing')}</span>
             </div>
           </div>
         </div>
@@ -593,20 +593,20 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">calculate</span>
-            Kazanç Hesaplayıcı
+            ${t('roiTag', 'landing')}
           </div>
-          <h2 class="section-title">Servify ile Ne Kadar <span class="gradient-text">Kazanabilirsiniz?</span></h2>
-          <p class="section-subtitle">Masa sayınızı ve ortalama adisyon tutarınızı girerek aylık tahmini tasarrufunuzu ve ek gelirinizi hesaplayın.</p>
+          <h2 class="section-title">${t('roiTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('roiSub', 'landing')}</p>
         </div>
         
         <div class="roi-wrapper">
           <!-- Inputs Column -->
           <div class="roi-inputs" style="display: flex; flex-direction: column; gap: 28px;">
-            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">İşletme Bilgileri</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">${t('roiInputsTitle', 'landing')}</h3>
             
             <div class="input-group">
               <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">
-                <label style="color: var(--text-secondary);">Masa Sayısı</label>
+                <label style="color: var(--text-secondary);">${t('roiTablesLabel', 'landing')}</label>
                 <span id="roi-tables-lbl" style="color: var(--primary-light);">30</span>
               </div>
               <input type="range" id="roi-tables" min="5" max="150" value="30" step="5" style="width: 100%; accent-color: var(--primary); cursor: pointer; height: 6px; border-radius: 3px; background: var(--border);">
@@ -614,14 +614,14 @@ export function renderLanding(container) {
             
             <div class="input-group">
               <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">
-                <label style="color: var(--text-secondary);">Ortalama Adisyon Tutarı</label>
+                <label style="color: var(--text-secondary);">${t('roiTicketLabel', 'landing')}</label>
                 <span id="roi-ticket-lbl" style="color: var(--primary-light);">200 ₺</span>
               </div>
               <input type="range" id="roi-ticket" min="50" max="1000" value="250" step="50" style="width: 100%; accent-color: var(--primary); cursor: pointer; height: 6px; border-radius: 3px; background: var(--border);">
             </div>
             
             <div style="background: rgba(108, 92, 231, 0.05); border: 1px dashed rgba(108, 92, 231, 0.2); padding: 16px; border-radius: 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-top: 10px;">
-              💡 <strong>Nasıl Hesaplıyoruz?</strong> Dijital QR menü, sipariş hızını %15 artırır, basılı menü güncelleme masraflarını sıfırlar ve garsonların iş yükünü azaltarak zamandan tasarruf sağlar.
+              ${t('roiHowCalc', 'landing')}
             </div>
           </div>
           
@@ -630,7 +630,7 @@ export function renderLanding(container) {
             <div class="roi-output-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 16px;">
               <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(0, 184, 148, 0.15); color: var(--success); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.5rem;">trending_up</span></div>
               <div>
-                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Aylık Ek Gelir Artışı</span>
+                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">${t('roiProfitLabel', 'landing')}</span>
                 <span id="roi-profit-val" style="font-size: 1.5rem; font-weight: 800; color: var(--success);">40.500 ₺</span>
               </div>
             </div>
@@ -638,7 +638,7 @@ export function renderLanding(container) {
             <div class="roi-output-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 16px;">
               <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(108, 92, 231, 0.15); color: var(--primary-light); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.5rem;">schedule</span></div>
               <div>
-                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Aylık Kazanılan Zaman</span>
+                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">${t('roiHoursLabel', 'landing')}</span>
                 <span id="roi-hours-val" style="font-size: 1.5rem; font-weight: 800; color: var(--primary-light);">45 Saat</span>
               </div>
             </div>
@@ -646,14 +646,14 @@ export function renderLanding(container) {
             <div class="roi-output-card" style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 16px;">
               <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 118, 117, 0.15); color: #ff7675; display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.5rem;">print_disabled</span></div>
               <div>
-                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Aylık Menü Baskı Tasarrufu</span>
+                <span style="display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">${t('roiPrintLabel', 'landing')}</span>
                 <span id="roi-print-val" style="font-size: 1.5rem; font-weight: 800; color: #ff7675;">1.050 ₺</span>
               </div>
             </div>
             
-            <a id="roi-whatsapp-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block btn-lg" style="height: 52px; background: #25D366; border-color: #25D366; color: white; justify-content: center; font-weight: 700; margin-top: 10px; display:flex; align-items:center; gap:8px; box-shadow: 0 8px 24px rgba(37,211,102,0.25); text-decoration:none; border-radius:12px;">
-              <span class="material-icons-round">chat</span>
-              Bu Tasarrufu Sağla (Ücretsiz Başlat)
+            <a id="roi-whatsapp-btn" href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block btn-lg" style="height: 52px; background: linear-gradient(135deg, #6c5ce7, #8e44ad); border-color: transparent; color: white; justify-content: center; font-weight: 700; margin-top: 10px; display:flex; align-items:center; gap:8px; box-shadow: 0 8px 24px rgba(108,92,231,0.25); text-decoration:none; border-radius:12px;">
+              <span class="material-icons-round">calendar_month</span>
+              ${t('roiBtn', 'landing')}
             </a>
           </div>
         </div>
@@ -666,57 +666,57 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">compare_arrows</span>
-            Karşılaştırma
+            ${t('compTag', 'landing')}
           </div>
-          <h2 class="section-title">Neden <span class="gradient-text">Servify</span> Tercih Etmelisiniz?</h2>
-          <p class="section-subtitle">Servify, klasik yöntemlerin kısıtlamalarını ortadan kaldırır ve yüksek komisyon masraflarından sizi kurtarır.</p>
+          <h2 class="section-title">${t('compTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('compSub', 'landing')}</p>
         </div>
         
         <div class="comparison-table-wrapper" style="overflow-x: auto; max-width: 900px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-lg); padding: 8px;">
           <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 600px;">
             <thead>
               <tr style="border-bottom: 1px solid var(--border);">
-                <th style="padding: 20px 24px; font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">Sistem Özellikleri</th>
-                <th style="padding: 20px 24px; font-weight: 800; color: var(--primary-light); background: rgba(108, 92, 231, 0.05); border-left: 1px solid rgba(108, 92, 231, 0.2); border-right: 1px solid rgba(108, 92, 231, 0.2); font-size: 0.95rem; text-align:center;">✨ Servify QR Menü</th>
-                <th style="padding: 20px 24px; font-weight: 600; color: var(--text-secondary); text-align:center;">Klasik PDF Menü</th>
-                <th style="padding: 20px 24px; font-weight: 600; color: var(--text-secondary); text-align:center;">Diğer Sipariş Web Siteleri</th>
+                <th style="padding: 20px 24px; font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">${t('compHeadFeatures', 'landing')}</th>
+                <th style="padding: 20px 24px; font-weight: 800; color: var(--primary-light); background: rgba(108, 92, 231, 0.05); border-left: 1px solid rgba(108, 92, 231, 0.2); border-right: 1px solid rgba(108, 92, 231, 0.2); font-size: 0.95rem; text-align:center;">${t('compHeadServify', 'landing')}</th>
+                <th style="padding: 20px 24px; font-weight: 600; color: var(--text-secondary); text-align:center;">${t('compHeadClassic', 'landing')}</th>
+                <th style="padding: 20px 24px; font-weight: 600; color: var(--text-secondary); text-align:center;">${t('compHeadOthers', 'landing')}</th>
               </tr>
             </thead>
             <tbody>
               <!-- Row 1 -->
               <tr style="border-bottom: 1px solid var(--border);">
-                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Anlık Fiyat & Ürün Güncelleme</td>
-                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet (Anında)</td>
-                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır (Tekrar Yüklenmeli)</td>
-                <td style="padding: 18px 24px; text-align: center; color: #febd2e; font-weight:600;"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">pending</span> Karmaşık & Yavaş</td>
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">${t('compRow1Name', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> ${t('compRow1Yes', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> ${t('compRow1No', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: #febd2e; font-weight:600;"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">pending</span> ${t('compRow1Pending', 'landing')}</td>
               </tr>
               <!-- Row 2 -->
               <tr style="border-bottom: 1px solid var(--border);">
-                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Masadan Doğrudan Sipariş Verilmesi</td>
-                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet (Masadan)</td>
-                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır (Sadece Görsel)</td>
-                <td style="padding: 18px 24px; text-align: center; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet (Komisyonlu)</td>
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">${t('compRow2Name', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> ${t('compRow2Yes', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> ${t('compRow2No', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> ${t('compRow2Others', 'landing')}</td>
               </tr>
               <!-- Row 3 -->
               <tr style="border-bottom: 1px solid var(--border);">
-                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Garson Çağırma & Hesap İsteme</td>
-                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet</td>
-                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır</td>
-                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır</td>
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">${t('compRow3Name', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> ${t('compRow1Yes', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> ${t('compRow3No', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> ${t('compRow3No', 'landing')}</td>
               </tr>
               <!-- Row 4 -->
               <tr style="border-bottom: 1px solid var(--border);">
-                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Sipariş Başı Komisyon Kesintisi</td>
-                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 800; color: var(--success);">💸 %0 Komisyon (Sabit Ücret)</td>
-                <td style="padding: 18px 24px; text-align: center; color: var(--text-secondary);">%0 (Sipariş alınamaz)</td>
-                <td style="padding: 18px 24px; text-align: center; color: var(--danger); font-weight:700;">📈 %5 ila %15 Arası Komisyon</td>
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">${t('compRow4Name', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 800; color: var(--success);">${t('compRow4Yes', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--text-secondary);">${t('compRow4No', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger); font-weight:700;">${t('compRow4Others', 'landing')}</td>
               </tr>
               <!-- Row 5 -->
               <tr>
-                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">Otomatik Dil Çevirileri (i18n)</td>
-                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> Evet (tr, en, de, vb.)</td>
-                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> Hayır</td>
-                <td style="padding: 18px 24px; text-align: center; color: #febd2e; font-weight:600;"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">pending</span> Manuel / Ekstra Ücretli</td>
+                <td style="padding: 18px 24px; font-weight: 600; color: var(--text-primary);">${t('compRow5Name', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; background: rgba(108, 92, 231, 0.02); border-left: 1px solid rgba(108, 92, 231, 0.15); border-right: 1px solid rgba(108, 92, 231, 0.15); font-weight: 700; color: var(--success);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">check_circle</span> ${t('compRow5Yes', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: var(--danger);"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">cancel</span> ${t('compRow5No', 'landing')}</td>
+                <td style="padding: 18px 24px; text-align: center; color: #febd2e; font-weight:600;"><span class="material-icons-round" style="vertical-align:middle; margin-right:4px;">pending</span> ${t('compRow5Pending', 'landing')}</td>
               </tr>
             </tbody>
           </table>
@@ -774,10 +774,10 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">forum</span>
-            Müşteri Yorumları
+            ${t('testiTag', 'landing')}
           </div>
-          <h2 class="section-title">Bizi Kullananlar <span class="gradient-text">Ne Diyor?</span></h2>
-          <p class="section-subtitle">Servify ile restoranını dijitale taşıyan yüzlerce mutlu işletmenin başarı hikayelerini dinleyin.</p>
+          <h2 class="section-title">${t('testiTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('testiSub', 'landing')}</p>
         </div>
         <div class="testimonials-grid stagger-children">
           <div class="testimonial-card">
@@ -788,12 +788,12 @@ export function renderLanding(container) {
               <span class="material-icons-round" style="font-size:1.2rem;">star</span>
               <span class="material-icons-round" style="font-size:1.2rem;">star</span>
             </div>
-            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">"Kağıt menü maliyetlerinden tamamen kurtulduk. Müşterilerimiz garson çağırma butonuna bayıldı. Servis hızımız neredeyse iki katına çıktı!"</p>
+            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">${t('testi1Text', 'landing')}</p>
             <div class="testimonial-user" style="display:flex; align-items:center; gap:12px;">
               <div class="t-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">AA</div>
               <div class="t-info">
                 <h4 style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary);">Ali Aslan</h4>
-                <span style="font-size:0.75rem; color:var(--text-muted);">Aslan Kebap & Izgara</span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">${t('testi1Restaurant', 'landing')}</span>
               </div>
             </div>
           </div>
@@ -805,12 +805,12 @@ export function renderLanding(container) {
               <span class="material-icons-round" style="font-size:1.2rem;">star</span>
               <span class="material-icons-round" style="font-size:1.2rem;">star</span>
             </div>
-            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">"AI Tema Tasarımı sayesinde kafemizin renklerine ve konseptine uygun harika bir menü hazırladık. Online ödeme özelliği işlerimizi çok kolaylaştırdı."</p>
+            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">${t('testi2Text', 'landing')}</p>
             <div class="testimonial-user" style="display:flex; align-items:center; gap:12px;">
               <div class="t-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--secondary); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">SK</div>
               <div class="t-info">
                 <h4 style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary);">Selin Kaya</h4>
-                <span style="font-size:0.75rem; color:var(--text-muted);">Limon Cafe & Patisserie</span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">${t('testi2Restaurant', 'landing')}</span>
               </div>
             </div>
           </div>
@@ -822,12 +822,12 @@ export function renderLanding(container) {
               <span class="material-icons-round" style="font-size:1.2rem;">star</span>
               <span class="material-icons-round" style="font-size:1.2rem;">star</span>
             </div>
-            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">"Masa siparişlerini mutfak ekranından anlık takip edebilmek garsonlarımızın işini çok rahatlattı. Servify restoranımızın dijital omurgası oldu."</p>
+            <p class="testimonial-text" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; font-style:italic;">${t('testi3Text', 'landing')}</p>
             <div class="testimonial-user" style="display:flex; align-items:center; gap:12px;">
               <div class="t-avatar" style="width:40px; height:40px; border-radius:50%; background:var(--primary-dark); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">MY</div>
               <div class="t-info">
                 <h4 style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary);">Murat Yıldız</h4>
-                <span style="font-size:0.75rem; color:var(--text-muted);">Yıldız Steakhouse</span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">${t('testi3Restaurant', 'landing')}</span>
               </div>
             </div>
           </div>
@@ -841,46 +841,46 @@ export function renderLanding(container) {
         <div class="section-header">
           <div class="section-tag">
             <span class="material-icons-round">help</span>
-            Sıkça Sorulan Sorular
+            ${t('faqTag', 'landing')}
           </div>
-          <h2 class="section-title">Aklınıza Takılan <span class="gradient-text">Sorular</span></h2>
-          <p class="section-subtitle">Sistemimiz hakkında en çok merak edilen konuları sizin için yanıtladık.</p>
+          <h2 class="section-title">${t('faqTitle', 'landing')}</h2>
+          <p class="section-subtitle">${t('faqSub', 'landing')}</p>
         </div>
         <div class="faq-list" style="max-width:800px; margin:0 auto; display:flex; flex-direction:column; gap:16px;">
           <details class="faq-item" style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all var(--transition-base);" open>
             <summary class="faq-question" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none; outline:none; font-weight:700; color:var(--text-primary);">
-              <h4 style="margin:0; font-size:1rem; font-weight:700;">QR Menü kurulumu ne kadar sürer?</h4>
+              <h4 style="margin:0; font-size:1rem; font-weight:700;">${t('faq1Q', 'landing')}</h4>
               <span class="material-icons-round faq-arrow" style="transition:transform var(--transition-base); color:var(--text-secondary);">expand_more</span>
             </summary>
             <div class="faq-answer" style="margin-top:12px; font-size:0.88rem; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--border); padding-top:12px;">
-              <p style="margin:0;">Kurulum sadece dakikalar sürer. Restoran bilgilerinizi ve menünüzü girdikten sonra sistem otomatik olarak her masa için benzersiz QR kodlar üretir. Bu kodları masalara yerleştirdiğiniz an sistem kullanıma hazırdır.</p>
+              <p style="margin:0;">${t('faq1A', 'landing')}</p>
             </div>
           </details>
           <details class="faq-item" style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all var(--transition-base);">
             <summary class="faq-question" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none; outline:none; font-weight:700; color:var(--text-primary);">
-              <h4 style="margin:0; font-size:1rem; font-weight:700;">Sipariş veya ödemelerden komisyon alıyor musunuz?</h4>
+              <h4 style="margin:0; font-size:1rem; font-weight:700;">${t('faq2Q', 'landing')}</h4>
               <span class="material-icons-round faq-arrow" style="transition:transform var(--transition-base); color:var(--text-secondary);">expand_more</span>
             </summary>
             <div class="faq-answer" style="margin-top:12px; font-size:0.88rem; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--border); padding-top:12px;">
-              <p style="margin:0;">Hayır, kesinlikle komisyon almıyoruz. Servify tamamen sabit ücretli bir abonelik modelidir. Satışlarınız ve cirolarınız üzerinden hiçbir kesinti yapılmaz.</p>
+              <p style="margin:0;">${t('faq2A', 'landing')}</p>
             </div>
           </details>
           <details class="faq-item" style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all var(--transition-base);">
             <summary class="faq-question" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none; outline:none; font-weight:700; color:var(--text-primary);">
-              <h4 style="margin:0; font-size:1rem; font-weight:700;">Müşterilerimizin sipariş vermesi için uygulama yüklemesi gerekir mi?</h4>
+              <h4 style="margin:0; font-size:1rem; font-weight:700;">${t('faq3Q', 'landing')}</h4>
               <span class="material-icons-round faq-arrow" style="transition:transform var(--transition-base); color:var(--text-secondary);">expand_more</span>
             </summary>
             <div class="faq-answer" style="margin-top:12px; font-size:0.88rem; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--border); padding-top:12px;">
-              <p style="margin:0;">Hayır. Müşterileriniz masadaki QR kodu telefon kameralarıyla okuttuklarında menünüz direkt olarak web tarayıcılarında açılır. Herhangi bir App Store veya Google Play uygulaması indirmelerine gerek yoktur.</p>
+              <p style="margin:0;">${t('faq3A', 'landing')}</p>
             </div>
           </details>
           <details class="faq-item" style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all var(--transition-base);">
             <summary class="faq-question" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; list-style:none; outline:none; font-weight:700; color:var(--text-primary);">
-              <h4 style="margin:0; font-size:1rem; font-weight:700;">Garson çağırma sistemi nasıl çalışır?</h4>
+              <h4 style="margin:0; font-size:1rem; font-weight:700;">${t('faq4Q', 'landing')}</h4>
               <span class="material-icons-round faq-arrow" style="transition:transform var(--transition-base); color:var(--text-secondary);">expand_more</span>
             </summary>
             <div class="faq-answer" style="margin-top:12px; font-size:0.88rem; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--border); padding-top:12px;">
-              <p style="margin:0;">Müşteriler telefonlarındaki dijital menü üzerinden tek bir tuşa basarak garson çağırabilir, hesap isteyebilir veya sipariş geçebilirler. Bu çağrılar anında sesli bildirimlerle yöneticinin ve garsonların yönetim paneline düşer.</p>
+              <p style="margin:0;">${t('faq4A', 'landing')}</p>
             </div>
           </details>
         </div>
@@ -933,24 +933,31 @@ export function renderLanding(container) {
 
     <!-- Floating Contact Widget -->
     <div class="floating-contact-widget">
-      <a href="tel:+905417744304" class="floating-btn call-btn" title="Hemen Arayın">
-        <span class="material-icons-round">phone</span>
-      </a>
-      <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20QR%20Menü%20sistemi%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="floating-btn whatsapp-btn" title="WhatsApp Destek">
-        <span class="material-icons-round">chat</span>
+      <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="floating-btn whatsapp-btn" title="Termin Buchen">
+        <span class="material-icons-round">calendar_month</span>
       </a>
     </div>
   `;
 
   // Language selectors
   container.querySelector('#landing-lang-select')?.addEventListener('change', (e) => {
-    setLang(e.target.value);
-    window.location.reload();
+    const newLang = e.target.value;
+    if (newLang !== getLang()) {
+      setLang(newLang);
+      setTimeout(() => {
+        window.location.reload();
+      }, 150);
+    }
   });
   
   container.querySelector('#mobile-lang-select')?.addEventListener('change', (e) => {
-    setLang(e.target.value);
-    window.location.reload();
+    const newLang = e.target.value;
+    if (newLang !== getLang()) {
+      setLang(newLang);
+      setTimeout(() => {
+        window.location.reload();
+      }, 150);
+    }
   });
 
   // Scroll-based navbar styling
@@ -1027,14 +1034,14 @@ export function renderLanding(container) {
       const printingSaved = Math.round(tables * 35); // 35 TL printing saved per table per month
       
       profitVal.textContent = revIncrease.toLocaleString('tr-TR') + ' ₺';
-      hoursVal.textContent = hoursSaved + ' Saat';
+      hoursVal.textContent = hoursSaved + ' ' + t('roiHoursUnit', 'landing');
       printVal.textContent = printingSaved.toLocaleString('tr-TR') + ' ₺';
 
       // Update WhatsApp Link dynamically
       const roiWhatsappBtn = container.querySelector('#roi-whatsapp-btn');
       if (roiWhatsappBtn) {
         const text = `Merhaba, ${tables} masalı ve ortalama ${ticket} ₺ adisyonlu restoranımız için aylık tahmini ${revIncrease.toLocaleString('tr-TR')} ₺ gelir artışı sağlayan Servify QR menü sistemini ücretsiz kurdurmak ve test etmek istiyoruz.`;
-        roiWhatsappBtn.href = `https://wa.me/905417744304?text=${encodeURIComponent(text)}`;
+        roiWhatsappBtn.href = `https://calendly.com/bendeehshd/neues-meeting`;
       }
     };
     

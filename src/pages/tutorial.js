@@ -7,14 +7,14 @@ export function startTutorialTour() {
     { target: '[data-page="dashboard"]', title: t('dashboardTitle', 'tutorial') || 'Kontrol Paneli', desc: t('dashboardDesc', 'tutorial') || 'Buradan restoranınızın genel durumunu görebilirsiniz. Günlük siparişler, gelir ve aktif çağrılar burada.' },
     { target: '[data-page="orders"]', title: t('ordersTitle', 'tutorial') || 'Siparişler', desc: t('ordersDesc', 'tutorial') || 'Müşterilerden gelen siparişleri gerçek zamanlı olarak burada takip edin. Yeni siparişler anında görünür.' },
     { target: '[data-page="menu"]', title: t('menuTitle', 'tutorial') || 'Menü Yönetimi', desc: t('menuDesc', 'tutorial') || 'Menünüzü buradan yönetin. Kategori ve ürün ekleyin, fiyatları güncelleyin, ürünleri düzenleyin.' },
-    { target: '[data-page="stock"]', title: 'Stok Yönetimi', desc: 'Hammadde stoklarınızı tanımlayarak kritik seviyeleri izleyin, ürün maliyetlerinizi otomatik hesaplayın.' },
+    { target: '[data-page="stock"]', title: t('stockTitle', 'tutorial') || 'Stok Yönetimi', desc: t('stockDesc', 'tutorial') || 'Hammadde stoklarınızı tanımlayarak kritik seviyeleri izleyin, ürün maliyetlerinizi otomatik hesaplayın.' },
     { target: '[data-page="calls"]', title: t('callsTitle', 'tutorial') || 'Garson Çağrıları', desc: t('callsDesc', 'tutorial') || 'Müşteriler garson çağırdığında sesli bildirim alırsınız. Çağrıları buradan yönetin.' },
     { target: '[data-page="qr"]', title: t('qrTitle', 'tutorial') || 'QR Kodlar', desc: t('qrDesc', 'tutorial') || 'Her masanız için benzersiz QR kod oluşturun. İndirip yazdırarak masalara yerleştirin.' },
     { target: '[data-page="ai-theme"]', title: t('aiThemeTitle', 'tutorial') || 'AI Tema Tasarımı', desc: t('aiThemeDesc', 'tutorial') || 'Yapay zeka ile restoranınızın konseptine uygun profesyonel menü tasarımı oluşturun.' },
-    { target: '[data-page="coupons"]', title: 'Kampanya & Kuponlar', desc: 'Müşterilerinize özel indirim kuponları ve Happy Hour kampanyaları oluşturarak satışlarınızı artırın.' },
-    { target: '[data-page="analytics"]', title: 'Gelişmiş Analitik', desc: 'En çok satan ürünleri, yoğun saatleri ve kategori bazlı gelir dağılımlarını anlık grafiklerle izleyin.' },
+    { target: '[data-page="coupons"]', title: t('couponsTitle', 'tutorial') || 'Kampanya & Kuponlar', desc: t('couponsDesc', 'tutorial') || 'Müşterilerinize özel indirim kuponları ve Happy Hour kampanyaları oluşturarak satışlarınızı artırın.' },
+    { target: '[data-page="analytics"]', title: t('analyticsTitle', 'tutorial') || 'Gelişmiş Analitik', desc: t('analyticsDesc', 'tutorial') || 'En çok satan ürünleri, yoğun saatleri ve kategori bazlı gelir dağılımlarını anlık grafiklerle izleyin.' },
     { target: '[data-page="finance"]', title: t('financeTitle', 'tutorial') || 'Finans Raporları', desc: t('financeDesc', 'tutorial') || 'Gelir raporları, ödeme yöntemlerine göre ayrım ve finansal özet burada.' },
-    { target: '[data-page="feedback"]', title: 'Müşteri Geri Bildirimleri', desc: 'Müşterilerinizin menünüz ve hizmetiniz hakkında yaptığı değerlendirmeleri ve puanları takip edin.' }
+    { target: '[data-page="feedback"]', title: t('feedbackTitle', 'tutorial') || 'Müşteri Geri Bildirimleri', desc: t('feedbackDesc', 'tutorial') || 'Müşterilerinizin menünüz ve hizmetiniz hakkında yaptığı değerlendirmeleri ve puanları takip edin.' }
   ];
 
   let currentStep = 0;
@@ -137,22 +137,18 @@ export function startTutorialTour() {
         <div style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 32px var(--primary-glow);">
           <span class="material-icons-round" style="font-size: 2.2rem; color: white;">thumb_up</span>
         </div>
-        <h3 style="font-size: 1.6rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em;">Sistemi Beğendiniz mi?</h3>
+        <h3 style="font-size: 1.6rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em;">${t('demoPopupTitle', 'admin')}</h3>
         <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 32px 0;">
-          Restoranınız veya işletmeniz için hemen kendinize özel profesyonel QR Menü ve Sipariş Yönetim sisteminizi kuralım!
+          ${t('demoPopupDesc', 'admin')}
         </p>
         <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
-          <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20QR%20Menü%20sistemi%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background: #25D366; border-color: #25D366; box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3); gap: 8px; justify-content: center; font-weight: 700; height: 50px;">
-            <span class="material-icons-round">chat</span>
-            WhatsApp Destek Hattı
-          </a>
-          <a href="tel:+905417744304" class="btn btn-secondary btn-lg" style="background: rgba(108, 92, 231, 0.1); border-color: rgba(108, 92, 231, 0.3); color: var(--primary-light); gap: 8px; justify-content: center; font-weight: 700; height: 50px;">
-            <span class="material-icons-round">phone</span>
-            Bizi Arayın: 0541 774 43 04
+          <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #6c5ce7, #8e44ad); border-color: transparent; box-shadow: 0 8px 24px rgba(108, 92, 231, 0.3); gap: 8px; justify-content: center; font-weight: 700; height: 50px;">
+            <span class="material-icons-round">calendar_month</span>
+            ${t('demoPopupCalendly', 'admin')}
           </a>
         </div>
         <button class="btn btn-ghost" id="close-finish-modal" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-decoration: underline;">
-          Kapat ve Demoyu İncelemeye Devam Et
+          ${t('demoPopupDismiss', 'admin')}
         </button>
       </div>
     `;

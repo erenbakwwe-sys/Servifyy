@@ -16,7 +16,7 @@ import { renderStockContent, setupStockHandlers } from './admin-stock.js';
 // Add POS / Adisyon imports
 import { renderPOSContent, setupPOSHandlers } from './admin-pos.js';
 
-let currentPage = 'dashboard';
+let currentPage = localStorage.getItem('adminCurrentPage') || 'dashboard';
 let userData = null;
 let menuItems = [];
 let orders = [];
@@ -109,37 +109,37 @@ function renderAdminLayout(container, userId) {
         <nav class="sidebar-nav">
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('mainMenu')}</div>
-            <div class="sidebar-nav-item active" data-page="dashboard"><span class="material-icons-round">dashboard</span>${t('dashboard')}</div>
-            <div class="sidebar-nav-item" data-page="orders"><span class="material-icons-round">receipt_long</span>${t('orders')}<span class="nav-badge" id="orders-badge" style="display:none;">0</span></div>
-            <div class="sidebar-nav-item" data-page="menu"><span class="material-icons-round">menu_book</span>${t('menu')}</div>
-            <div class="sidebar-nav-item" data-page="qr"><span class="material-icons-round">qr_code_2</span>${t('qr')}</div>
-            <div class="sidebar-nav-item" data-page="calls"><span class="material-icons-round">notifications_active</span>${t('calls')}<span class="nav-badge" id="calls-badge" style="display:none;">0</span></div>
-            <div class="sidebar-nav-item" data-page="pos"><span class="material-icons-round">point_of_sale</span>${t('pos')}<span class="nav-badge" id="pos-badge" style="display:none;">0</span></div>
+            <div class="sidebar-nav-item ${currentPage === 'dashboard' ? 'active' : ''}" data-page="dashboard"><span class="material-icons-round">dashboard</span>${t('dashboard')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'orders' ? 'active' : ''}" data-page="orders"><span class="material-icons-round">receipt_long</span>${t('orders')}<span class="nav-badge" id="orders-badge" style="display:none;">0</span></div>
+            <div class="sidebar-nav-item ${currentPage === 'menu' ? 'active' : ''}" data-page="menu"><span class="material-icons-round">menu_book</span>${t('menu')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'qr' ? 'active' : ''}" data-page="qr"><span class="material-icons-round">qr_code_2</span>${t('qr')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'calls' ? 'active' : ''}" data-page="calls"><span class="material-icons-round">notifications_active</span>${t('calls')}<span class="nav-badge" id="calls-badge" style="display:none;">0</span></div>
+            <div class="sidebar-nav-item ${currentPage === 'pos' ? 'active' : ''}" data-page="pos"><span class="material-icons-round">point_of_sale</span>${t('pos')}<span class="nav-badge" id="pos-badge" style="display:none;">0</span></div>
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('management')}</div>
-            <div class="sidebar-nav-item" data-page="branches"><span class="material-icons-round">store</span>${t('branches')}</div>
-            <div class="sidebar-nav-item" data-page="staff"><span class="material-icons-round">group</span>${t('staffLabel')}</div>
-            <div class="sidebar-nav-item" data-page="stock"><span class="material-icons-round">inventory_2</span>${t('stock')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'branches' ? 'active' : ''}" data-page="branches"><span class="material-icons-round">store</span>${t('branches')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'staff' ? 'active' : ''}" data-page="staff"><span class="material-icons-round">group</span>${t('staffLabel')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'stock' ? 'active' : ''}" data-page="stock"><span class="material-icons-round">inventory_2</span>${t('stock')}</div>
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('design')}</div>
-            <div class="sidebar-nav-item" data-page="ai-theme"><span class="material-icons-round">auto_awesome</span>${t('aiTheme')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'ai-theme' ? 'active' : ''}" data-page="ai-theme"><span class="material-icons-round">auto_awesome</span>${t('aiTheme')}</div>
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('marketing')}</div>
-            <div class="sidebar-nav-item" data-page="coupons"><span class="material-icons-round">confirmation_number</span>${t('coupons')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'coupons' ? 'active' : ''}" data-page="coupons"><span class="material-icons-round">confirmation_number</span>${t('coupons')}</div>
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('reports')}</div>
-            <div class="sidebar-nav-item" data-page="analytics"><span class="material-icons-round">insights</span>${t('analytics')}</div>
-            <div class="sidebar-nav-item" data-page="history"><span class="material-icons-round">history</span>${t('history')}</div>
-            <div class="sidebar-nav-item" data-page="finance"><span class="material-icons-round">account_balance</span>${t('finance')}</div>
-            <div class="sidebar-nav-item" data-page="feedback"><span class="material-icons-round">rate_review</span>${t('feedback')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'analytics' ? 'active' : ''}" data-page="analytics"><span class="material-icons-round">insights</span>${t('analytics')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'history' ? 'active' : ''}" data-page="history"><span class="material-icons-round">history</span>${t('history')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'finance' ? 'active' : ''}" data-page="finance"><span class="material-icons-round">account_balance</span>${t('finance')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'feedback' ? 'active' : ''}" data-page="feedback"><span class="material-icons-round">rate_review</span>${t('feedback')}</div>
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('kitchenLabel')}</div>
-            <div class="sidebar-nav-item" id="open-kitchen-btn" data-page="_kitchen"><span class="material-icons-round">soup_kitchen</span>${t('kitchen')} ↗</div>
+            <div class="sidebar-nav-item ${currentPage === '_kitchen' ? 'active' : ''}" id="open-kitchen-btn" data-page="_kitchen"><span class="material-icons-round">soup_kitchen</span>${t('kitchen')} ↗</div>
           </div>
         </nav>
         <div class="sidebar-footer">
@@ -147,8 +147,8 @@ function renderAdminLayout(container, userId) {
             <div class="sidebar-user" id="logout-btn" onclick="window.location.hash = '/';">
               <div class="sidebar-user-avatar" style="background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;"><span class="material-icons-round" style="font-size:1.2rem;">home</span></div>
               <div class="sidebar-user-info">
-                <div class="user-name">Demo Sürüm</div>
-                <div class="user-email">Ana Sayfaya Dön</div>
+                <div class="user-name">${t('demoMode', 'admin')}</div>
+                <div class="user-email">${t('backToHome', 'admin')}</div>
               </div>
               <span class="material-icons-round" style="color:var(--text-muted);font-size:1.1rem;">arrow_back</span>
             </div>
@@ -167,9 +167,9 @@ function renderAdminLayout(container, userId) {
       <main class="admin-main">
         ${userId === 'demo' ? `
           <div class="demo-top-promo-bar" style="background: linear-gradient(90deg, #6c5ce7, #8e44ad); color: white; padding: 10px 16px; text-align: center; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; z-index: 100; position: relative; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); flex-wrap: wrap;">
-            <span>🔥 Kampanya: Bu ayki 4 ücretsiz kurulum kontenjanından yararlanın!</span>
-            <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20kurulum%20kampanyasından%20yararlanmak%20istiyorum." target="_blank" rel="noopener noreferrer" style="background: white; color: #6c5ce7; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: 800; transition: transform 0.2s;">
-              <span class="material-icons-round" style="font-size:0.85rem;">chat</span> Şimdi WhatsApp'tan Başvur
+            <span>🔥 ${t('demoPromoText', 'admin')}</span>
+            <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" style="background: white; color: #6c5ce7; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: 800; transition: transform 0.2s;">
+              <span class="material-icons-round" style="font-size:0.85rem;">calendar_month</span> ${t('demoPromoBtn', 'admin')}
             </a>
           </div>
         ` : ''}
@@ -181,7 +181,7 @@ function renderAdminLayout(container, userId) {
             <h2 id="page-title">${t('dashboard')}</h2>
           </div>
           <div class="topbar-right" style="display:flex; align-items:center; gap:16px;">
-            <select id="admin-lang-select" class="input-field" style="padding:4px 8px; font-size:0.85rem; height:32px; width:auto; background:var(--bg-secondary);">
+            <select id="admin-lang-select" autocomplete="off" class="input-field" style="padding:4px 8px; font-size:0.85rem; height:32px; width:auto; background:var(--bg-secondary);">
               <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>TR</option>
               <option value="en" ${getLang() === 'en' ? 'selected' : ''}>EN</option>
               <option value="de" ${getLang() === 'de' ? 'selected' : ''}>DE</option>
@@ -215,6 +215,7 @@ function renderAdminLayout(container, userId) {
   document.querySelectorAll('.sidebar-nav-item').forEach(item => {
     item.addEventListener('click', () => {
       currentPage = item.dataset.page;
+      localStorage.setItem('adminCurrentPage', currentPage);
       document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
       renderPage(userId);
@@ -237,8 +238,13 @@ function renderAdminLayout(container, userId) {
 
   // Language switcher
   document.getElementById('admin-lang-select')?.addEventListener('change', (e) => {
-    setLang(e.target.value);
-    renderAdminLayout(container, userId);
+    const newLang = e.target.value;
+    if (newLang !== getLang()) {
+      setLang(newLang);
+      setTimeout(() => {
+        window.location.reload();
+      }, 150);
+    }
   });
 
   renderPage(userId);
@@ -267,15 +273,12 @@ function renderAdminLayout(container, userId) {
       <div class="demo-cta-content" style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
         <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(108, 92, 231, 0.15); color: var(--primary-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span class="material-icons-round" style="font-size: 1.5rem;">auto_awesome</span></div>
         <div class="demo-cta-text" style="flex: 1; min-width: 200px;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 2px 0; color: var(--text-primary);">Sistemi Beğendiniz mi?</h4>
-          <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">Kendi restoranınız için ücretsiz kurup test etmek ister misiniz?</p>
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 2px 0; color: var(--text-primary);">${t('demoPopupTitle', 'admin')}</h4>
+          <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">${t('demoPopupDesc', 'admin')}</p>
         </div>
         <div class="demo-cta-actions" style="display: flex; gap: 8px; width: 100%; margin-top: 8px;">
-          <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20test%20kurulumu%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="background: #25D366; border-color: #25D366; color: white; flex: 1; justify-content: center; font-size: 0.78rem; font-weight:700; display:flex; align-items:center; gap:4px; padding:6px 12px; height:34px; border-radius:8px;">
-            <span class="material-icons-round" style="font-size: 1rem;">chat</span> WhatsApp
-          </a>
-          <a href="tel:+905417744304" class="btn btn-secondary btn-sm" style="flex: 1; justify-content: center; font-size: 0.78rem; font-weight:700; display:flex; align-items:center; gap:4px; padding:6px 12px; height:34px; border-radius:8px; border: 1px solid rgba(108, 92, 231, 0.3); color: var(--primary-light); background: rgba(108, 92, 231, 0.05);">
-            <span class="material-icons-round" style="font-size: 1rem;">phone</span> Hemen Ara
+          <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6c5ce7, #8e44ad); border-color: transparent; color: white; flex: 1; justify-content: center; font-size: 0.78rem; font-weight:700; display:flex; align-items:center; gap:4px; padding:6px 12px; height:34px; border-radius:8px;">
+            <span class="material-icons-round" style="font-size: 1rem;">calendar_month</span> ${t('demoPromoBtn', 'admin')}
           </a>
         </div>
       </div>
@@ -1411,47 +1414,43 @@ function showDemoContactModal() {
     <div class="demo-popup-card">
       <!-- Scarcity Badge (FOMO) -->
       <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(235, 94, 40, 0.1); border: 1px solid rgba(235, 94, 40, 0.25); color: #eb5e28; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">
-        🔥 Bu Aya Özel: Son 4 Ücretsiz Kurulum Kontenjanı!
+        🔥 ${t('demoPopupFomo', 'admin')}
       </div>
       
       <div class="demo-popup-icon-box" style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 8px 32px var(--primary-glow);">
         <span class="material-icons-round" style="font-size: 2.2rem; color: white;">rocket_launch</span>
       </div>
       
-      <h3 class="demo-popup-title" style="font-size: 1.45rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.25;">Restoranınızın Satışlarını Artırmaya Hazır mısınız?</h3>
+      <h3 class="demo-popup-title" style="font-size: 1.45rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.25;">${t('demoPopupTitle', 'admin')}</h3>
       
       <!-- Social Proof -->
       <div style="font-size: 0.78rem; color: #fdcb6e; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 4px;">
         <span>⭐⭐⭐⭐⭐</span>
-        <span style="color: var(--text-secondary);">Alsancak & Karşıyaka'da 40+ aktif restoran kullanıyor</span>
+        <span style="color: var(--text-secondary);">${t('demoPopupSocial', 'admin')}</span>
       </div>
       
       <p class="demo-popup-text" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.55; margin: 0 0 24px 0;">
-        Servify ile sipariş hızınızı artırabilir, cironuzu anlık <strong>%15 yükseltebilirsiniz</strong>. Kendi restoran menünüzü kurmak ve <strong>tamamen ücretsiz</strong> test etmek için hemen başvurun!
+        ${t('demoPopupLongDesc', 'admin')}
       </p>
       
       <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-        <a href="https://wa.me/905417744304?text=Merhaba,%20Servify%20ücretsiz%20kurulum%20kampanyasından%20yararlanmak%20ve%20menümüzü%20dijitalleştirmek%20istiyoruz." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg demo-popup-btn pulse-btn" style="background: #25D366; border-color: #25D366; gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.92rem;">
-          <span class="material-icons-round">chat</span>
-          WhatsApp ile Ücretsiz Kurulum Talebi
-        </a>
-        <a href="tel:+905417744304" class="btn btn-secondary btn-lg demo-popup-btn" style="background: rgba(108, 92, 231, 0.08); border-color: rgba(108, 92, 231, 0.25); color: var(--primary-light); gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; text-decoration: none; border-radius: 12px; font-size: 0.92rem;">
-          <span class="material-icons-round">phone</span>
-          Hemen Bilgi Al: 0541 774 43 04
+        <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg demo-popup-btn pulse-btn" style="background: linear-gradient(135deg, #6c5ce7, #8e44ad); border-color: transparent; gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.92rem;">
+          <span class="material-icons-round">calendar_month</span>
+          ${t('demoPopupCalendly', 'admin')}
         </a>
       </div>
       
       <!-- Risk Reversal Text -->
       <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
-        <span>💳 Kredi Kartı Gerekmez</span>
+        <span>💳 ${t('demoPopupNoCc', 'admin')}</span>
         <span>•</span>
-        <span>🤝 Taahhüt Yok</span>
+        <span>🤝 ${t('demoPopupNoCommit', 'admin')}</span>
         <span>•</span>
-        <span>⚡ Kurulum Desteği Dahil</span>
+        <span>⚡ ${t('demoPopupSetupIncl', 'admin')}</span>
       </div>
       
       <button class="btn btn-ghost" id="close-demo-contact" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-decoration: underline; background: none; border: none; cursor: pointer;">
-        Daha Sonra İncele (Demoya Geri Dön)
+        ${t('demoPopupDismiss', 'admin')}
       </button>
     </div>
   `;
