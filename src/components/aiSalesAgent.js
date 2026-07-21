@@ -1,5 +1,5 @@
 // ============================================
-// SERVIFY AI LIVE SALES BOT (Strict Closing & Lead Gen)
+// SERVIFY AI ASSISTANT (Clean Servify AI Identity)
 // ============================================
 import { getLang } from '../i18n.js';
 
@@ -11,24 +11,24 @@ export function initAISalesAgent() {
 
   const i18nAI = {
     tr: {
-      agentName: 'Servify AI Satış Danışmanı',
-      status: 'Canlı Satış Asistanı • 7/24 Aktif',
-      welcomeMsg: 'Willkommen! 👋 Ben Servify Yapay Zeka Satış Danışmanı. Restoranınız için 0% komisyonlu QR menü, Klarna taksit imkanları ve size özel çözümler hakkında aklınıza takılan her şeyi sorabilirsiniz!',
+      agentName: 'Servify AI',
+      status: 'Çevrimiçi • 7/24',
+      welcomeMsg: 'Merhaba! 👋 Ben Servify AI. Restoranınız için 0% komisyonlu QR menü, Klarna taksit imkanları ve size özel çözümler hakkında aklınıza takılan her şeyi sorabilirsiniz!',
       typePlaceholder: 'Sorunuzu yazın (örn: İndirimli teklif nasıl alırım?)...',
-      chip1: '📋 Restoranıma Özel Fiyat Teklifi Al',
+      chip1: '📋 Restoranıma Özel Teklif Al',
       chip2: '💳 Klarna taksit imkanları nasıl?',
       chip3: '🚀 14 Gün Ücretsiz Deneme & QR Stant Hediyesi',
       chip4: '📞 60 Saniyede Sizi Arayalım',
       calloutText: '👋 Restoranınız için özel teklif almak ister misiniz?',
       leadPromptName: 'Harika! Size özel hazırlanacak teklif ve ücretsiz demo için restoranınızın adı nedir?',
-      leadPromptPhone: 'Teşekkürler! Danışmanımızın size özel teklifi sunabilmesi için telefon numaranızı yazar mısınız?',
-      leadSuccess: '🎉 Harika! Bilgileriniz alındı. Kıdemli restoran danışmanımız 60 saniye içinde sizi arayacaktır.',
+      leadPromptPhone: 'Teşekkürler! Ekibimizin size özel teklifi sunabilmesi için telefon numaranızı yazar mısınız?',
+      leadSuccess: '🎉 Harika! Bilgileriniz alındı. Ekibimiz 60 saniye içinde sizi arayacaktır.',
       botTyping: 'Servify AI yanıt oluşturuyor...'
     },
     en: {
-      agentName: 'Servify AI Sales Consultant',
-      status: 'Live Sales Assistant • 24/7 Active',
-      welcomeMsg: 'Welcome! 👋 I am the Servify AI Sales Consultant. Ask me anything about our 0% commission QR menu, Klarna installment financing, and custom restaurant solutions!',
+      agentName: 'Servify AI',
+      status: 'Online • 24/7',
+      welcomeMsg: 'Welcome! 👋 I am Servify AI. Ask me anything about our 0% commission QR menu, Klarna installment financing, and custom restaurant solutions!',
       typePlaceholder: 'Ask a question (e.g. How to get a custom quote?)...',
       chip1: '📋 Get a Custom Quote for My Restaurant',
       chip2: '💳 How do Klarna installments work?',
@@ -36,14 +36,14 @@ export function initAISalesAgent() {
       chip4: '📞 Request a 60-Sec Callback',
       calloutText: '👋 Want a custom quote for your restaurant?',
       leadPromptName: 'Awesome! What is the name of your restaurant?',
-      leadPromptPhone: 'Thank you! What is your phone number so our advisor can present your custom deal?',
-      leadSuccess: '🎉 Fantastic! Your info has been saved. Our senior advisor will call you within 60 seconds.',
+      leadPromptPhone: 'Thank you! What is your phone number so our team can present your custom deal?',
+      leadSuccess: '🎉 Fantastic! Your info has been saved. Our team will call you within 60 seconds.',
       botTyping: 'Servify AI is thinking...'
     },
     de: {
-      agentName: 'Servify KI-Verkaufsberater',
-      status: 'Live-Verkaufsassistent • 24/7 Aktiv',
-      welcomeMsg: 'Willkommen! 👋 Ich bin der Servify KI-Verkaufsberater. Stellen Sie mir gerne jede Frage zu unserem 0% Provision QR-Menü, Klarna-Ratenzahlung und individuellen Angeboten für Ihr Restaurant!',
+      agentName: 'Servify AI',
+      status: 'Online • 24/7',
+      welcomeMsg: 'Willkommen! 👋 Ich bin Servify AI. Stellen Sie mir gerne jede Frage zu unserem 0% Provision QR-Menü, Klarna-Ratenzahlung und individuellen Lösungen für Ihr Restaurant!',
       typePlaceholder: 'Stellen Sie eine Frage (z.B. Wie erhalte ich ein Angebot?)...',
       chip1: '📋 Individuelles Angebot für mein Restaurant',
       chip2: '💳 Wie funktioniert Klarna-Ratenzahlung?',
@@ -51,9 +51,9 @@ export function initAISalesAgent() {
       chip4: '📞 Rückruf in 60 Sekunden anfordern',
       calloutText: '👋 Möchten Sie ein individuelles Angebot für Ihr Restaurant?',
       leadPromptName: 'Wunderbar! Wie heißt Ihr Restaurant?',
-      leadPromptPhone: 'Vielen Dank! Unter welcher Telefonnummer kann unser Berater Sie erreichen?',
-      leadSuccess: '🎉 Fantastisch! Ihre Informationen wurden gespeichert. Unser Berater wird Sie in 60 Sekunden anrufen.',
-      botTyping: 'Servify KI generiert Antwort...'
+      leadPromptPhone: 'Vielen Dank! Unter welcher Telefonnummer kann unser Team Sie erreichen?',
+      leadSuccess: '🎉 Fantastisch! Ihre Informationen wurden gespeichert. Unser Team wird Sie in 60 Sekunden anrufen.',
+      botTyping: 'Servify AI generiert Antwort...'
     }
   };
 
@@ -478,21 +478,28 @@ export function initAISalesAgent() {
     messagesArea.scrollTop = messagesArea.scrollHeight;
   };
 
-  // Direct Gemini 3.5 Flash Call with Sales Closing Strategy
+  // Direct Gemini 3.5 Flash Client-Side Call
   const callGemini35Flash = async (userPrompt) => {
     const systemPrompt = `
-You are the elite AI Sales & Growth Consultant for Servify (servifysaas.com).
-Your main job is to be a top Sales Closing Bot for restaurant owners.
+You are Servify AI, the official intelligent assistant for Servify (servifysaas.com).
+Your goal is to answer restaurant owners' questions in real-time, explain Servify's digital QR ordering & POS system, and help them get an individual offer or start a 14-day free trial.
 
-CRITICAL RULE: DO NOT GIVE OUT EXACT NUMERICAL PRICES IN CHAT (Do NOT mention exact euro amounts like €599 or €1199).
-If the user asks for prices, rates, or costs:
-- Explain that prices are customized based on their restaurant size, table count, and features so they never overpay.
-- Highlight that Servify has 0% commission on orders (keep 100% of profits).
-- Highlight Klarna financing: convenient monthly installments for the owner while Servify receives full payment.
-- Immediately prompt for their Restaurant Name & Phone Number so a senior advisor can give them a custom quote & 14-day free trial.
+STRICT RULES:
+1. NEVER refer to yourself as a salesperson or "Verkaufsberater". You are simply "Servify AI".
+2. DO NOT GIVE OUT NUMERICAL PRICES IN CHAT (NO €599, €1199, etc.).
+   - Explain that prices are individually tailored to the restaurant size and table count so they never overpay.
+   - Mention 0% commission on orders and flexible Klarna installment financing.
+   - Prompt for their Restaurant Name & Phone Number so the team can send them a custom offer or call within 60 seconds.
+
+3. KEY FEATURES:
+   - 0% Commission on all orders.
+   - Klarna financing (bequeme Ratenzahlung).
+   - Zero app download required for guests (camera QR scan).
+   - Hardware independent (works on any tablet, iPad, phone, PC, thermal printer).
+   - Free 14-day trial + free 10-table QR stand kit.
 
 Respond in ${currentLang === 'de' ? 'German' : currentLang === 'tr' ? 'Turkish' : 'English'}.
-Keep responses punchy, professional, and sales-focused with emojis.
+Keep responses friendly, clear, structured with emojis, and concise.
     `;
 
     const modelsToTry = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'];
@@ -503,7 +510,7 @@ Keep responses punchy, professional, and sales-focused with emojis.
         
         const contents = [
           { role: 'user', parts: [{ text: systemPrompt }] },
-          { role: 'model', parts: [{ text: 'Verstanden! Ich gebe keine festen Preise im Chat an, sondern erstelle maßgeschneiderte Angebote und erfasse Kontaktdaten.' }] }
+          { role: 'model', parts: [{ text: 'Verstanden! Ich bin Servify AI und gebe Antworten ohne Verkäufer-Bezeichnung.' }] }
         ];
 
         conversationHistory.forEach(h => {
@@ -537,7 +544,7 @@ Keep responses punchy, professional, and sales-focused with emojis.
     return null;
   };
 
-  // Local Sales Strategy Fallback
+  // Local Strategy Fallback
   const getDynamicNLPResponse = (userText) => {
     const q = userText.toLowerCase();
 
@@ -558,7 +565,7 @@ Keep responses punchy, professional, and sales-focused with emojis.
     if (q.includes('preis') || q.includes('kosten') || q.includes('fiyat') || q.includes('price') || q.includes('paket') || q.includes('angebot')) {
       leadStep = 1;
       if (currentLang === 'de') {
-        return `<strong>📋 Individuelles Angebot für Ihr Restaurant:</strong><br>Unsere Tarife werden exakt an die Größe und Tischanzahl Ihres Betriebes angepasst, damit Sie garantiert den besten Preis erhalten. Zudem bieten wir <strong>0% Provision</strong> auf Bestellungen und bequeme <strong>Klarna-Ratenzahlung</strong>.<br><br>👉 <strong>Wie heißt Ihr Restaurant?</strong> (Unser Berater schickt Ihnen sofort ein maßgeschneidertes Angebot!)`;
+        return `<strong>📋 Individuelles Angebot für Ihr Restaurant:</strong><br>Unsere Tarife werden exakt an die Größe und Tischanzahl Ihres Betriebes angepasst, damit Sie garantiert den besten Preis erhalten. Zudem bieten wir <strong>0% Provision</strong> auf Bestellungen und bequeme <strong>Klarna-Ratenzahlung</strong>.<br><br>👉 <strong>Wie heißt Ihr Restaurant?</strong> (Unser Team schickt Ihnen sofort ein maßgeschneidertes Angebot!)`;
       }
       return `<strong>📋 Restoranınıza Özel Fiyat Teklifi:</strong><br>Tarifelerimiz masa sayınıza ve ihtiyacınıza göre özel olarak belirlenir. Ayrıca <strong>%0 komisyon</strong> ve <strong>Klarna esnek taksit imkanı</strong> sunuyoruz.<br><br>👉 <strong>Restoranınızın adı nedir?</strong> (Size özel teklifimizi hazırlayalım!)`;
     }
@@ -630,7 +637,7 @@ Keep responses punchy, professional, and sales-focused with emojis.
       console.log('Serverless API fetch fallback.');
     }
 
-    // 3. Fallback to Dynamic Sales Lead Engine
+    // 3. Fallback to Dynamic NLP Engine
     typingIndicator.style.display = 'none';
     const fallbackReply = getDynamicNLPResponse(msgText);
     appendMessage('bot', fallbackReply);
