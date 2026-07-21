@@ -1,19 +1,20 @@
 // ============================================
-// SERVIFY AI LIVE SALES AGENT (Real-Time AI Engine)
+// SERVIFY AI LIVE SALES AGENT (Real-Time Gemini LLM)
 // ============================================
 import { getLang } from '../i18n.js';
 
 export function initAISalesAgent() {
   if (document.getElementById('servify-ai-agent-launcher')) return;
 
-  const currentLang = getLang() || 'tr';
+  const currentLang = getLang() || 'de';
+  const GEMINI_API_KEY = 'AIzaSyAg4FhfpH1mVL9akncq7axLuywcrnkFIwQ';
 
   const i18nAI = {
     tr: {
       agentName: 'Servify AI Satış Asistanı',
-      status: 'Gerçek Zamanlı AI • 7/24 Aktif',
-      welcomeMsg: 'Willkommen! 👋 Ben Servify Yapay Zeka Satış Asistanı. Restoranınız için 0% komisyonlu QR menü, Klarna taksit imkanları, donanım veya paketler hakkında aklınıza takılan her şeyi sorabilirsiniz!',
-      typePlaceholder: 'Sorunuzu yazın (örn: Klarna nasıl çalışır?)...',
+      status: 'Gemini AI • 7/24 Canlı',
+      welcomeMsg: 'Willkommen! 👋 Ben Servify Yapay Zeka Satış Asistanı. Restoranınız için 0% komisyonlu QR menü, Klarna taksit imkanları, donanım veya paketler hakkında aklınıza takılan HER ŞEYİ gerçek zamanlı sorabilirsiniz!',
+      typePlaceholder: 'Sorunuzu yazın (örn: Klarna taksit sistemi nasıl çalışır?)...',
       chip1: '📦 Hangi paket bana uygun?',
       chip2: '💳 Klarna taksit sistemi nasıl?',
       chip3: '🚀 14 Gün Ücretsiz Deneme',
@@ -22,12 +23,12 @@ export function initAISalesAgent() {
       leadPromptName: 'Harika! Size özel ücretsiz demo kurulumu için restoranınızın adı nedir?',
       leadPromptPhone: 'Teşekkürler! Kıdemli restoran danışmanımızın sizi hemen arayabilmesi için telefon numaranızı yazar mısınız?',
       leadSuccess: '🎉 Harika! Bilgileriniz alındı. Kıdemli restoran danışmanımız 60 saniye içinde sizi arayacaktır.',
-      botTyping: 'Servify AI yanıt oluşturuyor...'
+      botTyping: 'Servify AI (Gemini Flash) yanıt üretiyor...'
     },
     en: {
       agentName: 'Servify AI Sales Consultant',
-      status: 'Real-Time AI • 24/7 Active',
-      welcomeMsg: 'Welcome! 👋 I am the Servify AI Sales Consultant. Feel free to ask me ANYTHING about our 0% commission QR menu, Klarna installments, hardware, or pricing plans!',
+      status: 'Gemini AI • 24/7 Live',
+      welcomeMsg: 'Welcome! 👋 I am the Servify AI Sales Consultant powered by Gemini. Feel free to ask me ANYTHING about our 0% commission QR menu, Klarna installments, hardware, or pricing plans in real-time!',
       typePlaceholder: 'Ask any question (e.g. How does Klarna work?)...',
       chip1: '📦 Which plan is right for me?',
       chip2: '💳 How do Klarna installments work?',
@@ -37,12 +38,12 @@ export function initAISalesAgent() {
       leadPromptName: 'Awesome! What is the name of your restaurant?',
       leadPromptPhone: 'Thank you! What is your phone number so our specialist can call you?',
       leadSuccess: '🎉 Fantastic! Your info has been saved. Our senior advisor will call you within 60 seconds.',
-      botTyping: 'Servify AI is thinking...'
+      botTyping: 'Servify AI (Gemini Flash) is thinking...'
     },
     de: {
       agentName: 'Servify KI-Verkaufsberater',
-      status: 'Echtzeit-KI • 24/7 Aktiv',
-      welcomeMsg: 'Willkommen! 👋 Ich bin der Servify KI-Verkaufsberater. Stellen Sie mir gerne jede Frage zu unserem 0% Provision QR-Menü, Klarna-Ratenzahlung, Hardware oder Preisen in Echtzeit!',
+      status: 'Gemini KI • 24/7 Live',
+      welcomeMsg: 'Willkommen! 👋 Ich bin der Servify KI-Verkaufsberater (powered by Gemini AI). Stellen Sie mir gerne jede Frage zu unserem 0% Provision QR-Menü, Klarna-Ratenzahlung, Hardware oder Preisen in Echtzeit!',
       typePlaceholder: 'Stellen Sie eine Frage (z.B. Wie funktioniert Klarna?)...',
       chip1: '📦 Welches Paket passt zu mir?',
       chip2: '💳 Wie funktioniert Klarna-Ratenzahlung?',
@@ -52,7 +53,7 @@ export function initAISalesAgent() {
       leadPromptName: 'Wunderbar! Wie heißt Ihr Restaurant?',
       leadPromptPhone: 'Vielen Dank! Unter welcher Telefonnummer kann unser Berater Sie erreichen?',
       leadSuccess: '🎉 Fantastisch! Ihre Informationen wurden gespeichert. Unser Berater wird Sie in 60 Sekunden anrufen.',
-      botTyping: 'Servify KI generiert Antwort...'
+      botTyping: 'Servify KI (Gemini Flash) generiert Antwort...'
     }
   };
 
@@ -356,7 +357,7 @@ export function initAISalesAgent() {
 
   document.body.appendChild(container);
 
-  // Conversation State
+  // State
   let isOpen = false;
   let conversationHistory = [];
   let leadStep = 0;
@@ -477,11 +478,67 @@ export function initAISalesAgent() {
     messagesArea.scrollTop = messagesArea.scrollHeight;
   };
 
-  // Real-Time Dynamic NLP Engine (Conversational AI for Gastro & Servify)
+  // Direct Client-Side Gemini Flash API Call
+  const callGeminiDirectly = async (userPrompt) => {
+    const systemPrompt = `
+You are the official Servify AI Sales & Gastro Consultant for Servify (servifysaas.com).
+Answer the user's question in real-time. Respond natively in ${currentLang === 'de' ? 'German' : currentLang === 'tr' ? 'Turkish' : 'English'}.
+
+Servify Info:
+- Digital QR menu, table ordering, kitchen display (KDS), POS system.
+- Klarna Ratenzahlung: Sold with Klarna financing (easy monthly installments for customer, 100% upfront payout for Servify).
+- 0% Commission on orders. Flat yearly pricing: Starter (€599), Professional (€1199), Enterprise (€1999).
+- Hardware: Works on any existing tablet, iPad, phone, or PC. Compatible with Epson & ESC/POS thermal printers.
+- App-free: Guests scan QR code with phone camera, zero download needed.
+- 14-day free trial with free sample QR table stand kit.
+
+Keep responses friendly, helpful, structured with emojis, and concise.
+    `;
+
+    const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'];
+
+    for (const modelName of modelsToTry) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
+        const contents = [
+          { role: 'user', parts: [{ text: systemPrompt }] },
+          { role: 'model', parts: [{ text: 'Verstanden! Ich stehe als Servify KI-Verkaufsberater bereit.' }] }
+        ];
+
+        conversationHistory.forEach(h => {
+          contents.push({
+            role: h.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: h.text }]
+          });
+        });
+
+        contents.push({ role: 'user', parts: [{ text: userPrompt }] });
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (reply) {
+            // Format markdown bolding to HTML bolding
+            return reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+          }
+        }
+      } catch (err) {
+        console.log(`Direct Gemini model ${modelName} error:`, err);
+      }
+    }
+    return null;
+  };
+
+  // Local NLP Engine Fallback
   const getDynamicNLPResponse = (userText) => {
     const q = userText.toLowerCase();
 
-    // Lead Capture Flow
     if (leadStep === 1) {
       leadData.name = userText;
       leadStep = 2;
@@ -496,82 +553,32 @@ export function initAISalesAgent() {
       return text.leadSuccess;
     }
 
-    // Klarna / Ratenzahlung / Finance
     if (q.includes('klarna') || q.includes('ratenzahlung') || q.includes('raten') || q.includes('taksit') || q.includes('bezahlen') || q.includes('installment')) {
       if (currentLang === 'de') {
-        return `<strong>💳 Klarna-Ratenzahlung im Detail:</strong><br>Servify wird exklusiv über Klarna verkauft. Für Sie bedeutet das:<br>• <strong>Für Ihre Kunden/Dich:</strong> Bequeme Ratenzahlung (z.B. monatliche Auszahlung), ohne die Gesamtsumme auf einmal zahlen zu müssen.<br>• <strong>Für Servify:</strong> Der volle Jahresbetrag wird sofort ausgezahlt.<br>Das senkt die Kaufhürde drastisch!`;
-      } else if (currentLang === 'en') {
-        return `<strong>💳 Klarna Installment Financing:</strong><br>Servify is available via Klarna payment! You can pay in easy monthly installments while enjoy 100% full access to all software features immediately.`;
+        return `<strong>💳 Klarna-Ratenzahlung:</strong> Servify wird exklusiv über Klarna verkauft. Kunden können bequem in monatlichen Raten zahlen, während Sie als Händler den vollen Jahresbetrag sofort erhalten. Das senkt die Kaufhürde drastisch!`;
       }
-      return `<strong>💳 Klarna Taksit Sistemi:</strong><br>Servify sipariş paketleri Klarna ile satılmaktadır. Müşterileriniz bütçelerini zorlamadan esnek taksitlerle ödeyebilir, siz ise anında tam erişim sağlarsınız!`;
+      return `<strong>💳 Klarna Taksit Sistemi:</strong> Servify sipariş paketleri Klarna ile satılmaktadır. Müşterileriniz bütçelerini zorlamadan esnek taksitlerle ödeyecek, siz ise ödemeyi anında alacaksınız!`;
     }
 
-    // Pricing & Packages
-    if (q.includes('paket') || q.includes('preis') || q.includes('kosten') || q.includes('fiyat') || q.includes('price') || q.includes('cost') || q.includes('gebühr')) {
+    if (q.includes('paket') || q.includes('preis') || q.includes('kosten') || q.includes('fiyat') || q.includes('price')) {
       if (currentLang === 'de') {
-        return `<strong>📦 Unsere Preispakete:</strong><br>• <strong>Starter (599 €/Jahr):</strong> QR-Menü, Tischanfragen, Basis-Dashboard (1 Filiale).<br>• <strong>Professional (1.199 €/Jahr):</strong> Kassen- & POS-System, Lagerverwaltung, Coupons, Mitarbeiterverwaltung.<br>• <strong>Enterprise (1.999 €/Jahr):</strong> Mehrere Filialen, KI-Branding, Finanzauswertungen, 24/7 VIP-Support.<br><br>💡 <i>Alle Pakete bequem über Klarna in Raten zahlbar!</i>`;
-      } else if (currentLang === 'en') {
-        return `<strong>📦 Our Pricing Packages:</strong><br>• <strong>Starter (€599/yr):</strong> QR ordering, waiter calls, basic dashboard.<br>• <strong>Professional (€1,199/yr):</strong> POS cashier, inventory, coupons, staff management.<br>• <strong>Enterprise (€1,999/yr):</strong> Multi-branch, AI theme, financial forecasts, 24/7 VIP support.`;
+        return `<strong>📦 Preispakete:</strong><br>• <strong>Starter (599 €/Jahr):</strong> QR-Menü, Tischanfragen, Basis-Dashboard.<br>• <strong>Professional (1.199 €/Jahr):</strong> Kassen- & POS-System, Lagerverwaltung, Coupons.<br>• <strong>Enterprise (1.999 €/Jahr):</strong> Mehrere Filialen, KI-Branding, 24/7 VIP-Support.`;
       }
-      return `<strong>📦 Servify Paket Fiyatları:</strong><br>• <strong>Starter (599 €/Yıl):</strong> QR menü, garson çağırma, temel panel.<br>• <strong>Professional (1.199 €/Yıl):</strong> POS kasa sistemi, stok takibi, kuponlar.<br>• <strong>Enterprise (1.999 €/Yıl):</strong> Çoklu şube, AI tema, 7/24 VIP destek.`;
+      return `<strong>📦 Paket Seçenekleri:</strong><br>• <strong>Starter (599 €/Yıl):</strong> QR menü, garson çağırma.<br>• <strong>Professional (1.199 €/Yıl):</strong> POS kasa, stok takibi.<br>• <strong>Enterprise (1.999 €/Yıl):</strong> Çoklu şube, AI tema, 7/24 VIP destek.`;
     }
 
-    // Hardware / Printers / Tablets
-    if (q.includes('hardware') || q.includes('drucker') || q.includes('printer') || q.includes('tablet') || q.includes('ipad') || q.includes('pos') || q.includes('yazıcı') || q.includes('donanım')) {
-      if (currentLang === 'de') {
-        return `<strong>🪟 Hardware & Drucker-Kompatibilität:</strong><br>Servify benötigt <strong>keine teure Spezial-Hardware!</strong> Es läuft auf jedem vorhandenen Tablet, iPad, Android oder PC. Thermodrucker (Epson, Star, ESC/POS) werden direkt über WLAN/Bluetooth angesteuert.`;
-      } else if (currentLang === 'en') {
-        return `<strong>🪟 Hardware Compatibility:</strong><br>Servify runs on any existing iPad, Android tablet, smartphone, or PC. Compatible with Epson & ESC/POS receipt printers via Wi-Fi or Bluetooth.`;
-      }
-      return `<strong>🪟 Donanım Uyumluluğu:</strong><br>Servify özel pahalı donanım gerektirmez! Mevcut tüm iPad, Android tablet veya bilgisayarlarınızda çalışır. Epson ve ESC/POS termal yazıcılarla doğrudan entegredir.`;
-    }
-
-    // App Download / QR scanning for guests
-    if (q.includes('app') || q.includes('download') || q.includes('install') || q.includes('müşteri') || q.includes('gast') || q.includes('guest')) {
-      if (currentLang === 'de') {
-        return `<strong>📱 Keine App-Installation notwendig!</strong><br>Ihre Gäste müssen KEINE App herunterladen. Sie scannen einfach den QR-Code am Tisch mit ihrer Smartphone-Kamera und die Speisekarte öffnet sich sofort im Browser.`;
-      } else if (currentLang === 'en') {
-        return `<strong>📱 Zero App Download Required!</strong><br>Guests scan the QR code at the table with their phone camera and the digital menu opens instantly in their web browser.`;
-      }
-      return `<strong>📱 Uygulama İndirmeye Gerek Yok!</strong><br>Müşterileriniz herhangi bir uygulama indirmek zorunda kalmaz. Masadaki QR kodu kameralarıyla okuttukları an menü doğrudan tarayıcıda açılır.`;
-    }
-
-    // Commission / Fees vs Lieferando
-    if (q.includes('provision') || q.includes('commission') || q.includes('komisyon') || q.includes('gebühren') || q.includes('lieferando') || q.includes('ubereats')) {
-      if (currentLang === 'de') {
-        return `<strong>💰 0% Provision!</strong><br>Im Gegensatz zu Lieferando oder UberEats (die 15-30% pro Bestellung verlangen), zahlen Sie bei Servify <strong>0% Provision!</strong> Alle Einnahmen gehören 100% Ihnen.`;
-      } else if (currentLang === 'en') {
-        return `<strong>💰 0% Commission Guarantee!</strong><br>Keep 100% of your order profits. Unlike third-party apps charging 15-30% fees, Servify has a flat yearly subscription with zero commissions.`;
-      }
-      return `<strong>💰 %0 Komisyon Garantisi!</strong><br>%15-%30 arası komisyon kesen üçüncü taraf platformların aksine Servify'da tüm kazancınız cebinizde kalır. Sıfır komisyon!`;
-    }
-
-    // Test / Trial / Demo
-    if (q.includes('test') || q.includes('demo') || q.includes('gratis') || q.includes('kostenlos') || q.includes('deneme') || q.includes('trial')) {
-      if (currentLang === 'de') {
-        return `<strong>🚀 14 Tage Kostenlos Testen:</strong> Sie können Servify 14 Tage lang unverbindlich testen. Zusätzlich schicken wir Ihnen ein kostenloses QR-Tischaufsteller-Set zu! Möchten Sie, dass unser Berater Sie anruft?`;
-      } else if (currentLang === 'en') {
-        return `<strong>🚀 14-Day Free Trial:</strong> Test Servify 14 days risk-free! We also include a free sample table QR stand kit.`;
-      }
-      return `<strong>🚀 14 Gün Ücretsiz Deneme:</strong> Servify'ı 14 gün sıfır riskle deneyebilirsiniz. Ayrıca 10 masalık ücretsiz QR stant seti gönderiyoruz!`;
-    }
-
-    // Callback / Phone request
     if (q.includes('anruf') || q.includes('kontakt') || q.includes('berater') || q.includes('call') || q.includes('temsilci') || q.includes('telefon')) {
       leadStep = 1;
       return text.leadPromptName;
     }
 
-    // Generic Friendly Real-time AI response
     if (currentLang === 'de') {
-      return `Ich verstehe Ihre Frage zu "${userText}". Servify ist die führende digitale All-in-One Lösung für QR-Bestellungen, Kassenführung und Tischverwaltung. Möchten Sie ein kostenloses Beratungsgespräch anfordern oder haben Sie Fragen zu einem bestimmten Paket?`;
-    } else if (currentLang === 'en') {
-      return `I understand your inquiry about "${userText}". Servify is the premier digital QR ordering and POS system for gastronomy. Would you like to request a quick 60-second callback or compare our plans?`;
+      return `Servify ist das modernste digitales QR-Bestellsystem für die Gastronomie. Möchten Sie, dass unser Berater Sie anruft oder möchtes Sie die Pakete vergleichen?`;
     }
-    return `"${userText}" hakkındaki sorunuzu anlıyorum. Servify, restoranınızın sipariş süreçlerini hızlandıran ve cirosunu artıran en gelişmiş sistemdir. Özel teklif için numaranızı bırakmak ister misiniz?`;
+    return `Servify QR Menü ve Sipariş Sistemi restoranınızın garson yükünü hafifletir, sipariş süresini hızlandırır ve ciroyu artırır. Size özel teklif sunmamız için temsilcimizin aramasını ister misiniz?`;
   };
 
-  // Main Handle User Message Action (Calls Serverless Endpoint with Local Fallback)
+  // Main Handle User Message Action
   const handleUserMessage = async (msgText) => {
     if (!msgText.trim()) return;
 
@@ -579,11 +586,10 @@ export function initAISalesAgent() {
     input.value = '';
 
     conversationHistory.push({ sender: 'user', text: msgText });
-
     typingIndicator.style.display = 'flex';
 
+    // 1. Try Vercel Serverless Endpoint
     try {
-      // Send message to serverless API endpoint for real-time live LLM response
       const res = await fetch('/api/aiChat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -594,21 +600,33 @@ export function initAISalesAgent() {
         })
       });
 
-      typingIndicator.style.display = 'none';
-
       if (res.ok) {
         const data = await res.json();
         if (data.reply) {
+          typingIndicator.style.display = 'none';
           appendMessage('bot', data.reply);
           conversationHistory.push({ sender: 'bot', text: data.reply });
           return;
         }
       }
     } catch (e) {
-      console.log('Serverless AI API fallback activated.');
+      console.log('Serverless API fetch skipped or offline.');
     }
 
-    // Fallback to Natural Language Processor Engine
+    // 2. Direct Client-Side Gemini Flash API Call with Provided Key
+    try {
+      const geminiReply = await callGeminiDirectly(msgText);
+      if (geminiReply) {
+        typingIndicator.style.display = 'none';
+        appendMessage('bot', geminiReply);
+        conversationHistory.push({ sender: 'bot', text: geminiReply });
+        return;
+      }
+    } catch (err) {
+      console.log('Direct Gemini API call fallback.');
+    }
+
+    // 3. Dynamic Local NLP Fallback
     typingIndicator.style.display = 'none';
     const fallbackReply = getDynamicNLPResponse(msgText);
     appendMessage('bot', fallbackReply);

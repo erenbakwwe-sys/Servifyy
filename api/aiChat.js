@@ -1,8 +1,7 @@
 // ============================================
-// VERCEL SERVERLESS FUNCTION: Real-time AI Chat Endpoint
+// VERCEL SERVERLESS FUNCTION: Real-time Gemini AI Chat Endpoint
 // ============================================
 export default async function handler(req, res) {
-  // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -24,9 +23,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyAg4FhfpH1mVL9akncq7axLuywcrnkFIwQ';
 
-    // System prompt for Servify Gastro AI Sales Consultant
     const systemInstruction = `
 You are the official Servify AI Sales & Gastro Consultant for Servify (servifysaas.com).
 Your goal is to answer restaurant owners' questions in real-time, explain Servify's digital QR ordering & POS system, and help them choose the right package or book a 14-day free trial.
@@ -50,42 +48,45 @@ Rules:
 - Encourage booking a free 14-day trial or leaving a phone number for a 60-second callback.
     `;
 
-    // If Gemini API Key exists, call Google Gemini 1.5 Flash API directly
-    if (apiKey) {
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-      
-      const contents = [
-        { role: 'user', parts: [{ text: systemInstruction }] },
-        { role: 'model', parts: [{ text: 'Verstanden! Ich bin der offizielle Servify KI-Berater und beantworte alle Fragen in Echtzeit.' }] }
-      ];
+    // Try Gemini Flash models (1.5-flash / 2.0-flash / 2.5-flash)
+    const models = ['gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'];
+    
+    for (const model of models) {
+      try {
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        
+        const contents = [
+          { role: 'user', parts: [{ text: systemInstruction }] },
+          { role: 'model', parts: [{ text: 'Verstanden! Ich bin der offizielle Servify KI-Berater und beantworte alle Fragen in Echtzeit.' }] }
+        ];
 
-      // Add conversation history
-      history.forEach(h => {
-        contents.push({
-          role: h.sender === 'user' ? 'user' : 'model',
-          parts: [{ text: h.text }]
+        history.forEach(h => {
+          contents.push({
+            role: h.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: h.text }]
+          });
         });
-      });
 
-      // Add current user message
-      contents.push({ role: 'user', parts: [{ text: message }] });
+        contents.push({ role: 'user', parts: [{ text: message }] });
 
-      const geminiRes = await fetch(geminiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents })
-      });
+        const geminiRes = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents })
+        });
 
-      if (geminiRes.ok) {
-        const data = await geminiRes.json();
-        const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (replyText) {
-          return res.status(200).json({ reply: replyText });
+        if (geminiRes.ok) {
+          const data = await geminiRes.json();
+          const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (replyText) {
+            return res.status(200).json({ reply: replyText });
+          }
         }
+      } catch (err) {
+        console.error(`Error with model ${model}:`, err);
       }
     }
 
-    // Fallback: If no API key or API call fails, return null to let client-side engine handle it gracefully
     return res.status(200).json({ fallback: true });
 
   } catch (err) {
