@@ -315,34 +315,34 @@ export function renderLanding(container) {
                 <!-- Category Filter -->
                 <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">
                   <span style="background: #6c5ce7; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; cursor: pointer;">${t('simPopular', 'landing')}</span>
-                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">${t('simKebabs', 'landing')}</span>
-                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">${t('simDrinks', 'landing')}</span>
+                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">${t('simMainDishes', 'landing')}</span>
+                  <span style="background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; opacity: 0.7;">${t('simDesserts', 'landing')}</span>
                 </div>
                 
                 <!-- Food Items -->
                 <div style="display: flex; flex-direction: column; gap: 12px;">
-                  <div class="sim-food-item" data-id="sim-f1" data-name="Adana Kebap" data-price="280" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                  <div class="sim-food-item" data-id="sim-f1" data-name="Wagyu Ribeye Steak" data-price="950" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                     <div>
-                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🍢 Adana Kebap</h6>
-                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">280 ₺</span>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🥩 Wagyu Ribeye Steak</h6>
+                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">950 ₺</span>
                     </div>
-                    <button class="sim-add-btn" data-id="sim-f1" data-name="Adana Kebap" data-price="280" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                    <button class="sim-add-btn" data-id="sim-f1" data-name="Wagyu Ribeye Steak" data-price="950" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
                   </div>
                   
-                  <div class="sim-food-item" data-id="sim-f2" data-name="Lahmacun" data-price="80" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                  <div class="sim-food-item" data-id="sim-f2" data-name="Trüf Soslu Deniz Levreği" data-price="580" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                     <div>
-                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🍕 Lahmacun</h6>
-                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">80 ₺</span>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🦞 Trüf Soslu Deniz Levreği</h6>
+                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">580 ₺</span>
                     </div>
-                    <button class="sim-add-btn" data-id="sim-f2" data-name="Lahmacun" data-price="80" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                    <button class="sim-add-btn" data-id="sim-f2" data-name="Trüf Soslu Deniz Levreği" data-price="580" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
                   </div>
                   
-                  <div class="sim-food-item" data-id="sim-f3" data-name="Künefe" data-price="140" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                  <div class="sim-food-item" data-id="sim-f3" data-name="Valrhona Soufflé" data-price="240" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                     <div>
-                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🧁 Künefe</h6>
-                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">140 ₺</span>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🍨 Valrhona Soufflé</h6>
+                      <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">240 ₺</span>
                     </div>
-                    <button class="sim-add-btn" data-id="sim-f3" data-name="Künefe" data-price="140" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                    <button class="sim-add-btn" data-id="sim-f3" data-name="Valrhona Soufflé" data-price="240" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
                   </div>
                 </div>
                 
@@ -498,6 +498,30 @@ export function renderLanding(container) {
                 <div class="demo-browser-dots">
                   <span></span><span></span><span></span>
                 </div>
+                <div class="demo-browser-url">blockhousee.vercel.app</div>
+              </div>
+              <iframe src="https://blockhousee.vercel.app/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="Block House Steakhouse Demo"></iframe>
+              <div class="demo-card-overlay">
+                <a href="https://blockhousee.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+                  <span class="material-icons-round">open_in_new</span>
+                  ${t('demoVisit', 'landing')}
+                </a>
+              </div>
+            </div>
+            <div class="demo-card-info">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+                <div class="demo-card-badge" style="margin-bottom:0;">${t('demoSteakhouse', 'landing')}</div>
+              </div>
+              <h3>${t('demoCard4Title', 'landing')}</h3>
+              <p>${t('demoCard4Desc', 'landing')}</p>
+            </div>
+          </div>
+          <div class="demo-card">
+            <div class="demo-card-preview">
+              <div class="demo-browser-bar">
+                <div class="demo-browser-dots">
+                  <span></span><span></span><span></span>
+                </div>
                 <div class="demo-browser-url">cigerciapo.vercel.app</div>
               </div>
               <iframe src="https://cigerciapo.vercel.app/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="Ciğerci Apo Demo"></iframe>
@@ -509,7 +533,9 @@ export function renderLanding(container) {
               </div>
             </div>
             <div class="demo-card-info">
-              <div class="demo-card-badge">${t('demoRestaurant', 'landing')}</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+                <div class="demo-card-badge" style="margin-bottom:0;">${t('demoRestaurant', 'landing')}</div>
+              </div>
               <h3>${t('demoCard1Title', 'landing')}</h3>
               <p>${t('demoCard1Desc', 'landing')}</p>
             </div>
@@ -531,7 +557,9 @@ export function renderLanding(container) {
               </div>
             </div>
             <div class="demo-card-info">
-              <div class="demo-card-badge">${t('demoCafe', 'landing')}</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+                <div class="demo-card-badge" style="margin-bottom:0;">${t('demoCafe', 'landing')}</div>
+              </div>
               <h3>${t('demoCard2Title', 'landing')}</h3>
               <p>${t('demoCard2Desc', 'landing')}</p>
             </div>
@@ -553,7 +581,9 @@ export function renderLanding(container) {
               </div>
             </div>
             <div class="demo-card-info">
-              <div class="demo-card-badge">${t('demoPublic', 'landing')}</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+                <div class="demo-card-badge" style="margin-bottom:0;">${t('demoPublic', 'landing')}</div>
+              </div>
               <h3>${t('demoCard3Title', 'landing')}</h3>
               <p>${t('demoCard3Desc', 'landing')}</p>
             </div>
