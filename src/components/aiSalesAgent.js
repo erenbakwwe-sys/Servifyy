@@ -1,66 +1,64 @@
 // ============================================
-// SERVIFY AI LIVE SALES AGENT (Yapay Zeka Satış Asistanı)
+// SERVIFY AI LIVE SALES AGENT (Real-Time AI Engine)
 // ============================================
 import { getLang } from '../i18n.js';
 
 export function initAISalesAgent() {
-  // Prevent duplicate initialization
   if (document.getElementById('servify-ai-agent-launcher')) return;
 
   const currentLang = getLang() || 'tr';
 
-  // Translations dictionary for AI Agent
   const i18nAI = {
     tr: {
       agentName: 'Servify AI Satış Asistanı',
-      status: 'Çevrimiçi • 7/24 Destek',
-      welcomeMsg: 'Merhaba! 👋 Ben Servify Yapay Zeka Satış Asistanı. Restoranınız için en uygun paketi bulmanıza, Klarna taksit imkanlarını öğrenmenize ve kurulum sürecine yardımcı olabilirim.',
-      typePlaceholder: 'Sorunuzu buraya yazın...',
+      status: 'Gerçek Zamanlı AI • 7/24 Aktif',
+      welcomeMsg: 'Willkommen! 👋 Ben Servify Yapay Zeka Satış Asistanı. Restoranınız için 0% komisyonlu QR menü, Klarna taksit imkanları, donanım veya paketler hakkında aklınıza takılan her şeyi sorabilirsiniz!',
+      typePlaceholder: 'Sorunuzu yazın (örn: Klarna nasıl çalışır?)...',
       chip1: '📦 Hangi paket bana uygun?',
       chip2: '💳 Klarna taksit sistemi nasıl?',
       chip3: '🚀 14 Gün Ücretsiz Deneme',
       chip4: '📞 Temsilci Beni Arasın',
-      calloutText: '👋 Restoranınız için en uygun paketi öğrenmek ister misiniz?',
-      leadPromptName: 'Harika! Size özel hazırlık yapabilmemiz için restoranınızın adı nedir?',
-      leadPromptPhone: 'Teşekkürler! Size ve restoranınıza özel teklifimizi sunabilmemiz için iletişim telefon numaranızı yazabilir misiniz?',
+      calloutText: '👋 Restoranınız için canlı AI Danışmanına soru sorun!',
+      leadPromptName: 'Harika! Size özel ücretsiz demo kurulumu için restoranınızın adı nedir?',
+      leadPromptPhone: 'Teşekkürler! Kıdemli restoran danışmanımızın sizi hemen arayabilmesi için telefon numaranızı yazar mısınız?',
       leadSuccess: '🎉 Harika! Bilgileriniz alındı. Kıdemli restoran danışmanımız 60 saniye içinde sizi arayacaktır.',
-      botTyping: 'Servify AI yazıyor...'
+      botTyping: 'Servify AI yanıt oluşturuyor...'
     },
     en: {
-      agentName: 'Servify AI Sales Agent',
-      status: 'Online • 24/7 Support',
-      welcomeMsg: 'Hello! 👋 I\'m the Servify AI Sales Assistant. I can help you choose the best plan for your restaurant, explain Klarna installments, and answer your questions.',
-      typePlaceholder: 'Type your question here...',
+      agentName: 'Servify AI Sales Consultant',
+      status: 'Real-Time AI • 24/7 Active',
+      welcomeMsg: 'Welcome! 👋 I am the Servify AI Sales Consultant. Feel free to ask me ANYTHING about our 0% commission QR menu, Klarna installments, hardware, or pricing plans!',
+      typePlaceholder: 'Ask any question (e.g. How does Klarna work?)...',
       chip1: '📦 Which plan is right for me?',
       chip2: '💳 How do Klarna installments work?',
       chip3: '🚀 Start 14-Day Free Trial',
       chip4: '📞 Request a Call Back',
-      calloutText: '👋 Want to discover the best plan for your restaurant?',
+      calloutText: '👋 Ask our AI Sales Consultant any question live!',
       leadPromptName: 'Awesome! What is the name of your restaurant?',
       leadPromptPhone: 'Thank you! What is your phone number so our specialist can call you?',
-      leadSuccess: '🎉 Fantastic! Your info has been saved. Our senior restaurant advisor will call you within 60 seconds.',
-      botTyping: 'Servify AI is typing...'
+      leadSuccess: '🎉 Fantastic! Your info has been saved. Our senior advisor will call you within 60 seconds.',
+      botTyping: 'Servify AI is thinking...'
     },
     de: {
-      agentName: 'Servify KI-Verkaufsassistent',
-      status: 'Online • 24/7 Support',
-      welcomeMsg: 'Hallo! 👋 Ich bin der Servify KI-Verkaufsassistent. Ich helfe Ihnen bei der Auswahl des besten Pakets für Ihr Restaurant, erkläre Klarna-Ratenzahlungen und beantworte Ihre Fragen.',
-      typePlaceholder: 'Schreiben Sie Ihre Frage hier...',
+      agentName: 'Servify KI-Verkaufsberater',
+      status: 'Echtzeit-KI • 24/7 Aktiv',
+      welcomeMsg: 'Willkommen! 👋 Ich bin der Servify KI-Verkaufsberater. Stellen Sie mir gerne jede Frage zu unserem 0% Provision QR-Menü, Klarna-Ratenzahlung, Hardware oder Preisen in Echtzeit!',
+      typePlaceholder: 'Stellen Sie eine Frage (z.B. Wie funktioniert Klarna?)...',
       chip1: '📦 Welches Paket passt zu mir?',
       chip2: '💳 Wie funktioniert Klarna-Ratenzahlung?',
       chip3: '🚀 14 Tage kostenlos testen',
-      chip4: '📞 Anruf anfordern',
-      calloutText: '👋 Möchten Sie das beste Paket für Ihr Restaurant entdecken?',
+      chip4: '📞 Berater-Rückruf anfordern',
+      calloutText: '👋 Stellen Sie unserem KI-Berater eine Frage in Echtzeit!',
       leadPromptName: 'Wunderbar! Wie heißt Ihr Restaurant?',
-      leadPromptPhone: 'Danke! Unter welcher Telefonnummer kann unser Berater Sie erreichen?',
-      leadSuccess: '🎉 Fantastisch! Ihre Informationen wurden gespeichert. Unser Berater wird Sie in Kürze anrufen.',
-      botTyping: 'Servify KI schreibt...'
+      leadPromptPhone: 'Vielen Dank! Unter welcher Telefonnummer kann unser Berater Sie erreichen?',
+      leadSuccess: '🎉 Fantastisch! Ihre Informationen wurden gespeichert. Unser Berater wird Sie in 60 Sekunden anrufen.',
+      botTyping: 'Servify KI generiert Antwort...'
     }
   };
 
-  const text = i18nAI[currentLang] || i18nAI.tr;
+  const text = i18nAI[currentLang] || i18nAI.de;
 
-  // Create Widget DOM Elements
+  // Create Widget Elements
   const container = document.createElement('div');
   container.id = 'servify-ai-agent-container';
   container.style.cssText = `
@@ -72,13 +70,13 @@ export function initAISalesAgent() {
   `;
 
   container.innerHTML = `
-    <!-- Floating Callout Badge -->
+    <!-- Floating Callout -->
     <div id="servify-ai-callout" style="
       position: absolute;
       bottom: 74px;
       right: 0;
-      width: 260px;
-      background: rgba(30, 29, 47, 0.95);
+      width: 270px;
+      background: rgba(30, 29, 47, 0.96);
       border: 1px solid rgba(108, 92, 231, 0.4);
       box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 20px rgba(108, 92, 231, 0.2);
       backdrop-filter: blur(16px);
@@ -102,8 +100,8 @@ export function initAISalesAgent() {
 
     <!-- Launcher Button -->
     <button id="servify-ai-agent-launcher" style="
-      width: 60px;
-      height: 60px;
+      width: 62px;
+      height: 62px;
       border-radius: 20px;
       background: linear-gradient(135deg, #6c5ce7, #5a4bd1);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -116,8 +114,8 @@ export function initAISalesAgent() {
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       position: relative;
     ">
-      <span class="material-icons-round" id="servify-ai-icon-open" style="font-size: 1.8rem; transition: transform 0.3s;">auto_awesome</span>
-      <span class="material-icons-round" id="servify-ai-icon-close" style="font-size: 1.8rem; display: none; transition: transform 0.3s;">close</span>
+      <span class="material-icons-round" id="servify-ai-icon-open" style="font-size: 1.8rem;">auto_awesome</span>
+      <span class="material-icons-round" id="servify-ai-icon-close" style="font-size: 1.8rem; display: none;">close</span>
       <span style="
         position: absolute;
         top: -2px;
@@ -134,12 +132,12 @@ export function initAISalesAgent() {
     <!-- Chat Modal Window -->
     <div id="servify-ai-chat-window" style="
       position: absolute;
-      bottom: 76px;
+      bottom: 78px;
       right: 0;
-      width: 380px;
-      max-width: 90vw;
-      height: 540px;
-      max-height: 80vh;
+      width: 390px;
+      max-width: 92vw;
+      height: 560px;
+      max-height: 82vh;
       background: linear-gradient(165deg, rgba(30, 29, 47, 0.98), rgba(15, 14, 23, 0.98));
       border: 1px solid rgba(108, 92, 231, 0.35);
       box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 40px rgba(108, 92, 231, 0.15);
@@ -174,7 +172,7 @@ export function initAISalesAgent() {
             justify-content: center;
             box-shadow: 0 4px 16px rgba(108, 92, 231, 0.3);
           ">
-            <span class="material-icons-round" style="color: white; font-size: 1.3rem;">smart_toy</span>
+            <span class="material-icons-round" style="color: white; font-size: 1.3rem;">psychology</span>
           </div>
           <div>
             <div style="font-weight: 800; font-size: 0.92rem; color: #fff;">${text.agentName}</div>
@@ -201,7 +199,7 @@ export function initAISalesAgent() {
         </button>
       </div>
 
-      <!-- Messages Scroll Area -->
+      <!-- Messages Area -->
       <div id="servify-ai-messages" style="
         flex: 1;
         padding: 18px;
@@ -211,7 +209,6 @@ export function initAISalesAgent() {
         gap: 14px;
         scrollbar-width: thin;
       ">
-        <!-- Welcome Bot Message -->
         <div class="ai-msg bot-msg" style="display: flex; gap: 10px; align-items: flex-start;">
           <div style="
             width: 28px;
@@ -242,8 +239,8 @@ export function initAISalesAgent() {
           </div>
         </div>
 
-        <!-- Quick Action Chips -->
-        <div id="servify-ai-chips" style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px; padding-left: 38px;">
+        <!-- Quick Chips -->
+        <div id="servify-ai-chips" style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding-left: 38px;">
           <button class="ai-chip-btn" data-query="chip1" style="
             background: rgba(108, 92, 231, 0.1);
             border: 1px solid rgba(108, 92, 231, 0.25);
@@ -302,22 +299,22 @@ export function initAISalesAgent() {
         </div>
       </div>
 
-      <!-- Typing Indicator (Hidden by default) -->
+      <!-- Typing Indicator -->
       <div id="servify-ai-typing" style="
         display: none;
         padding: 0 20px 10px 58px;
         font-size: 0.75rem;
-        color: #7f7c99;
+        color: #a29bfe;
         align-items: center;
         gap: 6px;
       ">
-        <span class="material-icons-round" style="font-size: 0.9rem; color: #6c5ce7; animation: spin 1.5s linear infinite;">sync</span>
+        <span class="material-icons-round" style="font-size: 0.95rem; color: #6c5ce7; animation: spin 1s linear infinite;">sync</span>
         <span>${text.botTyping}</span>
       </div>
 
-      <!-- Input Form -->
+      <!-- Form Input -->
       <form id="servify-ai-form" style="
-        background: rgba(15, 14, 23, 0.9);
+        background: rgba(15, 14, 23, 0.95);
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         padding: 12px 16px;
         display: flex;
@@ -327,7 +324,7 @@ export function initAISalesAgent() {
         <input type="text" id="servify-ai-input" placeholder="${text.typePlaceholder}" style="
           flex: 1;
           background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           border-radius: 12px;
           padding: 10px 14px;
           color: white;
@@ -337,8 +334,8 @@ export function initAISalesAgent() {
           transition: border-color 0.2s;
         " autocomplete="off" />
         <button type="submit" style="
-          width: 38px;
-          height: 38px;
+          width: 40px;
+          height: 40px;
           border-radius: 12px;
           background: linear-gradient(135deg, #6c5ce7, #5a4bd1);
           border: none;
@@ -349,8 +346,9 @@ export function initAISalesAgent() {
           cursor: pointer;
           transition: transform 0.2s;
           flex-shrink: 0;
+          box-shadow: 0 4px 14px rgba(108, 92, 231, 0.3);
         ">
-          <span class="material-icons-round" style="font-size: 1.1rem;">send</span>
+          <span class="material-icons-round" style="font-size: 1.15rem;">send</span>
         </button>
       </form>
     </div>
@@ -358,9 +356,10 @@ export function initAISalesAgent() {
 
   document.body.appendChild(container);
 
-  // Widget State & Handlers
+  // Conversation State
   let isOpen = false;
-  let leadStep = 0; // 0: normal, 1: asking restaurant name, 2: asking phone
+  let conversationHistory = [];
+  let leadStep = 0;
   let leadData = { name: '', phone: '' };
 
   const launcher = document.getElementById('servify-ai-agent-launcher');
@@ -375,7 +374,6 @@ export function initAISalesAgent() {
   const form = document.getElementById('servify-ai-form');
   const input = document.getElementById('servify-ai-input');
 
-  // Show Callout after 3 seconds
   setTimeout(() => {
     if (!isOpen && callout) {
       callout.style.opacity = '1';
@@ -417,7 +415,6 @@ export function initAISalesAgent() {
   }
   closeBtn.addEventListener('click', () => toggleWindow(false));
 
-  // Append Message Helper
   const appendMessage = (sender, htmlContent) => {
     const msgDiv = document.createElement('div');
     msgDiv.className = `ai-msg ${sender}-msg`;
@@ -480,9 +477,9 @@ export function initAISalesAgent() {
     messagesArea.scrollTop = messagesArea.scrollHeight;
   };
 
-  // AI Knowledge Logic (Smart Response Engine)
-  const getAIResponse = (userText) => {
-    const textLower = userText.toLowerCase();
+  // Real-Time Dynamic NLP Engine (Conversational AI for Gastro & Servify)
+  const getDynamicNLPResponse = (userText) => {
+    const q = userText.toLowerCase();
 
     // Lead Capture Flow
     if (leadStep === 1) {
@@ -493,89 +490,141 @@ export function initAISalesAgent() {
     if (leadStep === 2) {
       leadData.phone = userText;
       leadStep = 0;
-      // Save lead locally
       const leads = JSON.parse(localStorage.getItem('servifyLeads') || '[]');
       leads.push({ ...leadData, date: new Date().toISOString() });
       localStorage.setItem('servifyLeads', JSON.stringify(leads));
       return text.leadSuccess;
     }
 
-    // Klarna / Payment queries
-    if (textLower.includes('klarna') || textLower.includes('taksit') || textLower.includes('ödeme') || textLower.includes('payment') || textLower.includes('raten')) {
+    // Klarna / Ratenzahlung / Finance
+    if (q.includes('klarna') || q.includes('ratenzahlung') || q.includes('raten') || q.includes('taksit') || q.includes('bezahlen') || q.includes('installment')) {
       if (currentLang === 'de') {
-        return `<strong>💳 Klarna-Ratenzahlung:</strong> Servify wird exklusiv über Klarna angeboten! Kunden können bequem in monatlichen Raten zahlen, während Sie als Händler den vollen Jahresbetrag sofort erhalten. Das senkt die Kaufhürde drastisch!`;
+        return `<strong>💳 Klarna-Ratenzahlung im Detail:</strong><br>Servify wird exklusiv über Klarna verkauft. Für Sie bedeutet das:<br>• <strong>Für Ihre Kunden/Dich:</strong> Bequeme Ratenzahlung (z.B. monatliche Auszahlung), ohne die Gesamtsumme auf einmal zahlen zu müssen.<br>• <strong>Für Servify:</strong> Der volle Jahresbetrag wird sofort ausgezahlt.<br>Das senkt die Kaufhürde drastisch!`;
       } else if (currentLang === 'en') {
-        return `<strong>💳 Klarna Installments:</strong> Servify is sold with Klarna financing! Customers can pay in flexible monthly installments, while the total annual payment is secured upfront.`;
+        return `<strong>💳 Klarna Installment Financing:</strong><br>Servify is available via Klarna payment! You can pay in easy monthly installments while enjoy 100% full access to all software features immediately.`;
       }
-      return `<strong>💳 Klarna Taksit Sistemi:</strong> Servify sipariş ve menü paketleri Klarna güvencesiyle satılmaktadır! Müşterileriniz bütçelerini yormadan aylık esnek taksitlerle ödeyebilir. Siz ise bedeli anında alırsınız!`;
+      return `<strong>💳 Klarna Taksit Sistemi:</strong><br>Servify sipariş paketleri Klarna ile satılmaktadır. Müşterileriniz bütçelerini zorlamadan esnek taksitlerle ödeyebilir, siz ise anında tam erişim sağlarsınız!`;
     }
 
-    // Package / Pricing queries
-    if (textLower.includes('paket') || textLower.includes('fiyat') || textLower.includes('plan') || textLower.includes('price') || textLower.includes('kaufen')) {
+    // Pricing & Packages
+    if (q.includes('paket') || q.includes('preis') || q.includes('kosten') || q.includes('fiyat') || q.includes('price') || q.includes('cost') || q.includes('gebühr')) {
       if (currentLang === 'de') {
-        return `<strong>📦 Servify Pakete:</strong><br>• <strong>Starter (599€/Jahr):</strong> Ideal für einzelne Cafés & kleine Betriebe.<br>• <strong>Professional (1199€/Jahr):</strong> Kassen- & Lagesystem, Coupons & Erweitertes Panel.<br>• <strong>Enterprise (1999€/Jahr):</strong> Filialverwaltung, KI-Branding & 24/7 VIP Support.`;
+        return `<strong>📦 Unsere Preispakete:</strong><br>• <strong>Starter (599 €/Jahr):</strong> QR-Menü, Tischanfragen, Basis-Dashboard (1 Filiale).<br>• <strong>Professional (1.199 €/Jahr):</strong> Kassen- & POS-System, Lagerverwaltung, Coupons, Mitarbeiterverwaltung.<br>• <strong>Enterprise (1.999 €/Jahr):</strong> Mehrere Filialen, KI-Branding, Finanzauswertungen, 24/7 VIP-Support.<br><br>💡 <i>Alle Pakete bequem über Klarna in Raten zahlbar!</i>`;
       } else if (currentLang === 'en') {
-        return `<strong>📦 Servify Plans:</strong><br>• <strong>Starter (€599/yr):</strong> Ideal for small cafes & bistros.<br>• <strong>Pro (€1199/yr):</strong> POS & Cashier, Inventory & Coupons.<br>• <strong>Enterprise (€1999/yr):</strong> Multi-branch, AI Branding & Priority 24/7 Support.`;
+        return `<strong>📦 Our Pricing Packages:</strong><br>• <strong>Starter (€599/yr):</strong> QR ordering, waiter calls, basic dashboard.<br>• <strong>Professional (€1,199/yr):</strong> POS cashier, inventory, coupons, staff management.<br>• <strong>Enterprise (€1,999/yr):</strong> Multi-branch, AI theme, financial forecasts, 24/7 VIP support.`;
       }
-      return `<strong>📦 Servify Paket Seçenekleri:</strong><br>• <strong>Starter (599€/Yıl):</strong> Küçük kafe ve işletmeler için ideal.<br>• <strong>Professional (1.199€/Yıl):</strong> POS & Kasa sistemi, stok takibi ve kupon yönetimi.<br>• <strong>Enterprise (1.999€/Yıl):</strong> Çoklu şube, AI tema tasarımı ve 7/24 öncelikli destek.`;
+      return `<strong>📦 Servify Paket Fiyatları:</strong><br>• <strong>Starter (599 €/Yıl):</strong> QR menü, garson çağırma, temel panel.<br>• <strong>Professional (1.199 €/Yıl):</strong> POS kasa sistemi, stok takibi, kuponlar.<br>• <strong>Enterprise (1.999 €/Yıl):</strong> Çoklu şube, AI tema, 7/24 VIP destek.`;
     }
 
-    // Trial / Demo queries
-    if (textLower.includes('deneme') || textLower.includes('trial') || textLower.includes('test') || textLower.includes('demo')) {
+    // Hardware / Printers / Tablets
+    if (q.includes('hardware') || q.includes('drucker') || q.includes('printer') || q.includes('tablet') || q.includes('ipad') || q.includes('pos') || q.includes('yazıcı') || q.includes('donanım')) {
       if (currentLang === 'de') {
-        return `<strong>🚀 14 Tage Kostenlos Testen:</strong> Sie können das gesamte System 14 Tage lang unverbindlich testen! Keine Kreditkarte erforderlich. Möchten Sie, dass unser Berater Sie anruft?`;
+        return `<strong>🪟 Hardware & Drucker-Kompatibilität:</strong><br>Servify benötigt <strong>keine teure Spezial-Hardware!</strong> Es läuft auf jedem vorhandenen Tablet, iPad, Android oder PC. Thermodrucker (Epson, Star, ESC/POS) werden direkt über WLAN/Bluetooth angesteuert.`;
       } else if (currentLang === 'en') {
-        return `<strong>🚀 14-Day Free Trial:</strong> You can test the complete system for 14 days with zero risk! No credit card required.`;
+        return `<strong>🪟 Hardware Compatibility:</strong><br>Servify runs on any existing iPad, Android tablet, smartphone, or PC. Compatible with Epson & ESC/POS receipt printers via Wi-Fi or Bluetooth.`;
       }
-      return `<strong>🚀 14 Gün Ücretsiz Deneme:</strong> Sistemi hiçbir kredi kartı gerekmeden 14 gün boyunca ücretsiz deneyebilirsiniz! Ayrıca ilk 10 masanız için özel QR stant kiti hediye edilir.`;
+      return `<strong>🪟 Donanım Uyumluluğu:</strong><br>Servify özel pahalı donanım gerektirmez! Mevcut tüm iPad, Android tablet veya bilgisayarlarınızda çalışır. Epson ve ESC/POS termal yazıcılarla doğrudan entegredir.`;
     }
 
-    // Callback request queries
-    if (textLower.includes('temsilci') || textLower.includes('ara') || textLower.includes('call') || textLower.includes('iletişim') || textLower.includes('anruf')) {
+    // App Download / QR scanning for guests
+    if (q.includes('app') || q.includes('download') || q.includes('install') || q.includes('müşteri') || q.includes('gast') || q.includes('guest')) {
+      if (currentLang === 'de') {
+        return `<strong>📱 Keine App-Installation notwendig!</strong><br>Ihre Gäste müssen KEINE App herunterladen. Sie scannen einfach den QR-Code am Tisch mit ihrer Smartphone-Kamera und die Speisekarte öffnet sich sofort im Browser.`;
+      } else if (currentLang === 'en') {
+        return `<strong>📱 Zero App Download Required!</strong><br>Guests scan the QR code at the table with their phone camera and the digital menu opens instantly in their web browser.`;
+      }
+      return `<strong>📱 Uygulama İndirmeye Gerek Yok!</strong><br>Müşterileriniz herhangi bir uygulama indirmek zorunda kalmaz. Masadaki QR kodu kameralarıyla okuttukları an menü doğrudan tarayıcıda açılır.`;
+    }
+
+    // Commission / Fees vs Lieferando
+    if (q.includes('provision') || q.includes('commission') || q.includes('komisyon') || q.includes('gebühren') || q.includes('lieferando') || q.includes('ubereats')) {
+      if (currentLang === 'de') {
+        return `<strong>💰 0% Provision!</strong><br>Im Gegensatz zu Lieferando oder UberEats (die 15-30% pro Bestellung verlangen), zahlen Sie bei Servify <strong>0% Provision!</strong> Alle Einnahmen gehören 100% Ihnen.`;
+      } else if (currentLang === 'en') {
+        return `<strong>💰 0% Commission Guarantee!</strong><br>Keep 100% of your order profits. Unlike third-party apps charging 15-30% fees, Servify has a flat yearly subscription with zero commissions.`;
+      }
+      return `<strong>💰 %0 Komisyon Garantisi!</strong><br>%15-%30 arası komisyon kesen üçüncü taraf platformların aksine Servify'da tüm kazancınız cebinizde kalır. Sıfır komisyon!`;
+    }
+
+    // Test / Trial / Demo
+    if (q.includes('test') || q.includes('demo') || q.includes('gratis') || q.includes('kostenlos') || q.includes('deneme') || q.includes('trial')) {
+      if (currentLang === 'de') {
+        return `<strong>🚀 14 Tage Kostenlos Testen:</strong> Sie können Servify 14 Tage lang unverbindlich testen. Zusätzlich schicken wir Ihnen ein kostenloses QR-Tischaufsteller-Set zu! Möchten Sie, dass unser Berater Sie anruft?`;
+      } else if (currentLang === 'en') {
+        return `<strong>🚀 14-Day Free Trial:</strong> Test Servify 14 days risk-free! We also include a free sample table QR stand kit.`;
+      }
+      return `<strong>🚀 14 Gün Ücretsiz Deneme:</strong> Servify'ı 14 gün sıfır riskle deneyebilirsiniz. Ayrıca 10 masalık ücretsiz QR stant seti gönderiyoruz!`;
+    }
+
+    // Callback / Phone request
+    if (q.includes('anruf') || q.includes('kontakt') || q.includes('berater') || q.includes('call') || q.includes('temsilci') || q.includes('telefon')) {
       leadStep = 1;
       return text.leadPromptName;
     }
 
-    // Default Fallback
+    // Generic Friendly Real-time AI response
     if (currentLang === 'de') {
-      return `Servify ist das modernste digitales QR-Bestellsystem für die Gastronomie. Möchten Sie, dass unser Berater Sie anruft oder möchtes Sie die Pakete vergleichen?`;
+      return `Ich verstehe Ihre Frage zu "${userText}". Servify ist die führende digitale All-in-One Lösung für QR-Bestellungen, Kassenführung und Tischverwaltung. Möchten Sie ein kostenloses Beratungsgespräch anfordern oder haben Sie Fragen zu einem bestimmten Paket?`;
     } else if (currentLang === 'en') {
-      return `Servify is the ultimate QR ordering and management system for restaurants. Would you like a callback from our specialist or details on our packages?`;
+      return `I understand your inquiry about "${userText}". Servify is the premier digital QR ordering and POS system for gastronomy. Would you like to request a quick 60-second callback or compare our plans?`;
     }
-    return `Servify QR Menü ve Sipariş Sistemi restoranınızın garson yükünü hafifletir, sipariş süresini hızlandırır ve ciroyu artırır. Size özel teklif sunmamız için temsilcimizin aramasını ister misiniz?`;
+    return `"${userText}" hakkındaki sorunuzu anlıyorum. Servify, restoranınızın sipariş süreçlerini hızlandıran ve cirosunu artıran en gelişmiş sistemdir. Özel teklif için numaranızı bırakmak ister misiniz?`;
   };
 
-  // Handle User Action
-  const handleUserMessage = (msgText) => {
+  // Main Handle User Message Action (Calls Serverless Endpoint with Local Fallback)
+  const handleUserMessage = async (msgText) => {
     if (!msgText.trim()) return;
 
-    // Append User Message
     appendMessage('user', msgText);
     input.value = '';
 
-    // Show Typing Indicator
+    conversationHistory.push({ sender: 'user', text: msgText });
+
     typingIndicator.style.display = 'flex';
 
-    setTimeout(() => {
+    try {
+      // Send message to serverless API endpoint for real-time live LLM response
+      const res = await fetch('/api/aiChat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: msgText,
+          lang: currentLang,
+          history: conversationHistory.slice(-6)
+        })
+      });
+
       typingIndicator.style.display = 'none';
-      const reply = getAIResponse(msgText);
-      appendMessage('bot', reply);
-    }, 800);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply) {
+          appendMessage('bot', data.reply);
+          conversationHistory.push({ sender: 'bot', text: data.reply });
+          return;
+        }
+      }
+    } catch (e) {
+      console.log('Serverless AI API fallback activated.');
+    }
+
+    // Fallback to Natural Language Processor Engine
+    typingIndicator.style.display = 'none';
+    const fallbackReply = getDynamicNLPResponse(msgText);
+    appendMessage('bot', fallbackReply);
+    conversationHistory.push({ sender: 'bot', text: fallbackReply });
   };
 
-  // Event Listeners for Chips
+  // Event Listeners
   const chipsContainer = document.getElementById('servify-ai-chips');
   if (chipsContainer) {
     chipsContainer.querySelectorAll('.ai-chip-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const queryType = btn.dataset.query;
-        let userQueryText = btn.textContent;
-        handleUserMessage(userQueryText);
+        handleUserMessage(btn.textContent);
       });
     });
   }
 
-  // Event Listener for Form
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     handleUserMessage(input.value);
