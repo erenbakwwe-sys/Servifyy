@@ -2,6 +2,7 @@
 // LANDING PAGE
 // ============================================
 import { t, getLang, setLang } from '../i18n.js';
+import { initAISalesAgent } from '../components/aiSalesAgent.js';
 
 export function renderLanding(container) {
   container.innerHTML = `
@@ -1071,6 +1072,9 @@ export function renderLanding(container) {
       }
     });
   });
+
+  // Initialize AI Sales Agent
+  initAISalesAgent();
 
   // Intersection observer for animations
   const observer = new IntersectionObserver((entries) => {
