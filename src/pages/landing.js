@@ -181,6 +181,51 @@ export function renderLanding(container) {
       </div>
     </div>
 
+    <!-- Product Showcase Video Section -->
+    <section class="video-showcase-section" id="product-video" style="padding: 90px 0; background: var(--bg-primary); position: relative; overflow: hidden;">
+      <div class="container">
+        <div class="section-header" style="text-align: center; margin-bottom: 48px;">
+          <div class="section-tag">
+            <span class="material-icons-round">play_circle</span>
+            ${t('videoSectionTag', 'landing')}
+          </div>
+          <h2 class="section-title">${t('videoSectionTitle', 'landing')}</h2>
+          <p class="section-subtitle" style="max-width: 680px; margin: 0 auto;">${t('videoSectionSub', 'landing')}</p>
+        </div>
+
+        <div class="video-player-wrapper" style="max-width: 960px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: 0 24px 80px rgba(108, 92, 231, 0.22), 0 0 0 1px rgba(255,255,255,0.05); position: relative;">
+          <!-- Window Header Bar -->
+          <div style="background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56; display: inline-block;"></span>
+              <span style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e; display: inline-block;"></span>
+              <span style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f; display: inline-block;"></span>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+              <span class="material-icons-round" style="font-size: 0.9rem; color: var(--primary-light);">videocam</span>
+              Servify QR Menü & Sistem Tanıtım Videosu
+            </div>
+            <div style="font-size: 0.72rem; color: var(--success); background: rgba(0, 184, 148, 0.1); padding: 2px 8px; border-radius: 12px; font-weight: 700;">
+              HD 1080p
+            </div>
+          </div>
+          
+          <!-- Video Frame -->
+          <div style="position: relative; width: 100%; padding-top: 56.25%; background: #000;">
+            <video 
+              src="/demo-video.mp4" 
+              controls 
+              playsinline 
+              preload="metadata"
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: contain;"
+            >
+              Tarayıcınız video oynatmayı desteklemiyor.
+            </video>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Features Section -->
     <section class="features-section" id="features">
       <div class="container">
