@@ -945,7 +945,7 @@
 /* FLOATING CONTACT WIDGET */
 .floating-contact-widget {
   position: fixed;
-  bottom: 24px;
+  bottom: 90px;
   right: 24px;
   display: flex;
   flex-direction: column;
@@ -996,7 +996,7 @@
 
 @media (max-width: 768px) {
   .floating-contact-widget {
-    bottom: 16px;
+    bottom: 80px;
     right: 16px;
     gap: 8px;
   }

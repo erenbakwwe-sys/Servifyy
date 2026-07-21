@@ -423,7 +423,7 @@ export function renderLanding(container) {
                         <span class="material-icons-round" style="color: #00b894; font-size: 1.15rem;">payments</span>
                         <span style="font-size:0.78rem;">${t('simCash', 'landing')}</span>
                       </div>
-                      <input type="radio" name="sim-pay-method" value="Nakit" checked style="accent-color:#6c5ce7;">
+                      <input type="radio" name="sim-pay-method" value="${t('simCash', 'landing')}" checked style="accent-color:#6c5ce7;">
                     </label>
                     <!-- Kredi Kartı -->
                     <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
@@ -431,7 +431,7 @@ export function renderLanding(container) {
                         <span class="material-icons-round" style="color: #0984e3; font-size: 1.15rem;">credit_card</span>
                         <span style="font-size:0.78rem;">${t('simCard', 'landing')}</span>
                       </div>
-                      <input type="radio" name="sim-pay-method" value="Kredi Kartı" style="accent-color:#6c5ce7;">
+                      <input type="radio" name="sim-pay-method" value="${t('simCard', 'landing')}" style="accent-color:#6c5ce7;">
                     </label>
                     <!-- Fiziksel POS -->
                     <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
@@ -439,7 +439,7 @@ export function renderLanding(container) {
                         <span class="material-icons-round" style="color: #e84393; font-size: 1.15rem;">point_of_sale</span>
                         <span style="font-size:0.78rem;">${t('simPos', 'landing')}</span>
                       </div>
-                      <input type="radio" name="sim-pay-method" value="Fiziksel POS" style="accent-color:#6c5ce7;">
+                      <input type="radio" name="sim-pay-method" value="${t('simPos', 'landing')}" style="accent-color:#6c5ce7;">
                     </label>
                     <!-- Hesabı Bölüş -->
                     <label style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
@@ -447,7 +447,7 @@ export function renderLanding(container) {
                         <span class="material-icons-round" style="color: #6c5ce7; font-size: 1.15rem;">call_split</span>
                         <span style="font-size:0.78rem;">${t('simSplit', 'landing')}</span>
                       </div>
-                      <input type="radio" name="sim-pay-method" value="Hesabı Bölüş" style="accent-color:#6c5ce7;">
+                      <input type="radio" name="sim-pay-method" value="${t('simSplit', 'landing')}" style="accent-color:#6c5ce7;">
                     </label>
                   </div>
                   
@@ -1224,11 +1224,11 @@ export function renderLanding(container) {
         <div style="display: flex; align-items: center; gap: 12px;">
           <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(108, 92, 231, 0.15); color: var(--primary-light); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.2rem;">notifications_active</span></div>
           <div>
-            <h4 style="font-size: 0.85rem; font-weight: 700; margin: 0 0 2px 0; color: var(--text-primary);">Masa 4</h4>
-            <p style="font-size: 0.72rem; color: var(--text-secondary); margin: 0;">Garson Çağırıyor!</p>
+            <h4 style="font-size: 0.85rem; font-weight: 700; margin: 0 0 2px 0; color: var(--text-primary);">${t('simTableLabel', 'landing')} 4</h4>
+            <p style="font-size: 0.72rem; color: var(--text-secondary); margin: 0;">${t('simWaiterCalling', 'landing')}</p>
           </div>
         </div>
-        <button class="btn btn-success btn-sm sim-resolve-btn" style="padding: 4px 10px; font-size: 0.72rem; font-weight:700; height:28px; border-radius:6px; flex-shrink:0;">Çöz</button>
+        <button class="btn btn-success btn-sm sim-resolve-btn" style="padding: 4px 10px; font-size: 0.72rem; font-weight:700; height:28px; border-radius:6px; flex-shrink:0;">${t('simResolveBtn', 'landing')}</button>
       `;
 
       simOrdersList.insertBefore(callCard, simOrdersList.firstChild);
@@ -1236,7 +1236,7 @@ export function renderLanding(container) {
       // Disable waiter button on phone temporarily to simulate wait
       simWaiterBtn.disabled = true;
       simWaiterBtn.style.opacity = '0.5';
-      simWaiterBtn.innerHTML = `<span class="material-icons-round" style="font-size: 0.95rem;">done</span> Çağrıldı`;
+      simWaiterBtn.innerHTML = `<span class="material-icons-round" style="font-size: 0.95rem;">done</span> ${t('simCalledState', 'landing')}`;
 
       callCard.querySelector('.sim-resolve-btn').addEventListener('click', () => {
         callCard.style.opacity = '0';
@@ -1246,7 +1246,7 @@ export function renderLanding(container) {
           callCard.remove();
           simWaiterBtn.disabled = false;
           simWaiterBtn.style.opacity = '1';
-          simWaiterBtn.innerHTML = `<span class="material-icons-round" style="font-size: 0.95rem;">notifications_active</span> Garson Çağır`;
+          simWaiterBtn.innerHTML = `<span class="material-icons-round" style="font-size: 0.95rem;">notifications_active</span> ${t('simWaiterBtn', 'landing')}`;
           if (simOrdersList.children.length === 0 && simAdminEmpty) {
             simAdminEmpty.style.display = 'block';
           }
@@ -1281,7 +1281,7 @@ export function renderLanding(container) {
 
       // Get selected payment method
       const selectedRadio = container.querySelector('input[name="sim-pay-method"]:checked');
-      const payMethod = selectedRadio ? selectedRadio.value : 'Nakit';
+      const payMethod = selectedRadio ? selectedRadio.value : t('simCash', 'landing');
 
       // Play chime sound
       try {
@@ -1309,15 +1309,19 @@ export function renderLanding(container) {
       // Color coding for payment methods
       let payBadgeStyle = 'background: rgba(108, 92, 231, 0.15); color: var(--primary-light);';
       let payLabel = payMethod;
-      if (payMethod === 'Nakit') {
+      const cashLabel = t('simCash', 'landing');
+      const cardLabel = t('simCard', 'landing');
+      const posLabel = t('simPos', 'landing');
+      const splitLabel = t('simSplit', 'landing');
+      if (payMethod === cashLabel || payMethod === 'Nakit') {
         payBadgeStyle = 'background: rgba(0, 184, 148, 0.15); color: var(--success);';
-      } else if (payMethod === 'Kredi Kartı') {
+      } else if (payMethod === cardLabel || payMethod === 'Kredi Kartı') {
         payBadgeStyle = 'background: rgba(9, 132, 227, 0.15); color: #0984e3;';
-      } else if (payMethod === 'Fiziksel POS') {
+      } else if (payMethod === posLabel || payMethod === 'Fiziksel POS') {
         payBadgeStyle = 'background: rgba(232, 67, 147, 0.15); color: #e84393;';
-      } else if (payMethod === 'Hesabı Bölüş') {
+      } else if (payMethod === splitLabel || payMethod === 'Hesabı Bölüş') {
         const perPerson = Math.round(orderTotal / 4);
-        payLabel = `Hesabı Bölüş (4 Kişi - Kişi Başı ${perPerson} ₺)`;
+        payLabel = `${t('simSplitPerPerson', 'landing')} (4 ${t('simSplitDetail', 'landing')} - ${t('simPerPerson', 'landing')} ${perPerson} ₺)`;
         payBadgeStyle = 'background: rgba(108, 92, 231, 0.15); color: var(--primary-light);';
       }
 
@@ -1342,16 +1346,16 @@ export function renderLanding(container) {
       orderCard.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex:1;">
           <div style="display: flex; align-items: center; gap: 8px; flex-wrap:wrap;">
-            <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary);">Masa 4</span>
-            <span class="sim-status-badge" style="background: rgba(108, 92, 231, 0.15); color: var(--primary-light); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Yeni</span>
+            <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary);">${t('simTableLabel', 'landing')} 4</span>
+            <span class="sim-status-badge" style="background: rgba(108, 92, 231, 0.15); color: var(--primary-light); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">${t('simNewStatus', 'landing')}</span>
             <span style="${payBadgeStyle} font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space:nowrap;">${payLabel}</span>
           </div>
           <span style="font-size: 0.78rem; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display:block;">${orderItemsStr}</span>
           <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary-light);">${orderTotal} ₺</span>
         </div>
         <div style="display: flex; gap: 6px; flex-shrink:0;">
-          <button class="btn btn-secondary btn-sm sim-print-btn" title="Mutfak Fişi Yazdır" style="padding: 6px 10px; font-size: 0.72rem; height:30px; border-radius:6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-primary); display:flex; align-items:center; justify-content:center;"><span class="material-icons-round" style="font-size: 0.95rem;">print</span></button>
-          <button class="btn btn-primary btn-sm sim-status-btn" style="padding: 6px 12px; font-size: 0.72rem; font-weight:700; height:30px; border-radius:6px;">Hazırla</button>
+          <button class="btn btn-secondary btn-sm sim-print-btn" title="${t('simPrintTitle', 'landing')}" style="padding: 6px 10px; font-size: 0.72rem; height:30px; border-radius:6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-primary); display:flex; align-items:center; justify-content:center;"><span class="material-icons-round" style="font-size: 0.95rem;">print</span></button>
+          <button class="btn btn-primary btn-sm sim-status-btn" style="padding: 6px 12px; font-size: 0.72rem; font-weight:700; height:30px; border-radius:6px;">${t('simPrepareBtn', 'landing')}</button>
         </div>
       `;
 
@@ -1374,18 +1378,18 @@ export function renderLanding(container) {
       statusBtn.addEventListener('click', () => {
         if (status === 'new') {
           status = 'preparing';
-          statusBadge.textContent = 'Hazırlanıyor';
+          statusBadge.textContent = t('simPreparingStatus', 'landing');
           statusBadge.style.background = 'rgba(254, 190, 46, 0.15)';
           statusBadge.style.color = '#febd2e';
-          statusBtn.textContent = 'Tamamla';
+          statusBtn.textContent = t('simCompleteBtn', 'landing');
           statusBtn.style.background = 'var(--success)';
           statusBtn.style.borderColor = 'var(--success)';
         } else if (status === 'preparing') {
           status = 'completed';
-          statusBadge.textContent = 'Tamamlandı';
+          statusBadge.textContent = t('simCompletedStatus', 'landing');
           statusBadge.style.background = 'rgba(0, 184, 148, 0.15)';
           statusBadge.style.color = 'var(--success)';
-          statusBtn.textContent = 'Arşivle';
+          statusBtn.textContent = t('simArchiveBtn', 'landing');
           statusBtn.style.background = 'rgba(255,255,255,0.05)';
           statusBtn.style.borderColor = 'var(--border)';
           statusBtn.style.color = 'var(--text-muted)';
@@ -1457,8 +1461,9 @@ function showPrintedReceipt(items, total, payMethod) {
     padding: 20px;
   `;
 
-  const dateStr = new Date().toLocaleDateString('tr-TR');
-  const timeStr = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+  const langLocale = getLang() === 'de' ? 'de-DE' : getLang() === 'en' ? 'en-US' : 'tr-TR';
+  const dateStr = new Date().toLocaleDateString(langLocale);
+  const timeStr = new Date().toLocaleTimeString(langLocale, { hour: '2-digit', minute: '2-digit' });
 
   const itemsHtml = items.map(item => `
     <div style="display:flex; justify-content:space-between; font-family: monospace; font-size:0.8rem; margin-bottom:4px;">
@@ -1473,14 +1478,14 @@ function showPrintedReceipt(items, total, payMethod) {
       <div style="position: absolute; top: -6px; left: 0; right: 0; height: 8px; background-image: linear-gradient(135deg, transparent 4px, #fbfbfb 4px), linear-gradient(-135deg, transparent 4px, #fbfbfb 4px); background-size: 8px 8px; background-repeat: repeat-x;"></div>
       
       <div style="text-align: center; margin-bottom: 14px; border-bottom: 1px dashed #333; padding-bottom: 10px;">
-        <h4 style="margin: 0 0 2px 0; font-size: 0.95rem; font-weight: 800; letter-spacing:-0.5px;">SERVIFY RESTORAN</h4>
-        <span style="font-size: 0.7rem; color:#555;">Masa 4 | Sipariş Fişi</span>
+        <h4 style="margin: 0 0 2px 0; font-size: 0.95rem; font-weight: 800; letter-spacing:-0.5px;">SERVIFY RESTAURANT</h4>
+        <span style="font-size: 0.7rem; color:#555;">${t('simTableLabel', 'landing')} 4 | ${t('simReceiptHeader', 'landing')}</span>
       </div>
 
       <div style="font-size:0.7rem; color:#444; margin-bottom:10px; line-height:1.3; border-bottom: 1px dashed #333; padding-bottom: 8px;">
-        Tarih: ${dateStr}<br>
-        Saat: ${timeStr}<br>
-        Ödeme: ${payMethod}
+        ${t('simReceiptDate', 'landing')}: ${dateStr}<br>
+        ${t('simReceiptTime', 'landing')}: ${timeStr}<br>
+        ${t('simReceiptPayment', 'landing')}: ${payMethod}
       </div>
 
       <div style="border-bottom: 1px dashed #333; padding-bottom: 8px; margin-bottom: 8px;">
@@ -1488,16 +1493,16 @@ function showPrintedReceipt(items, total, payMethod) {
       </div>
 
       <div style="display:flex; justify-content:space-between; font-weight: 800; font-size:0.85rem; margin-bottom: 14px;">
-        <span>TOPLAM</span>
+        <span>${t('simReceiptTotal', 'landing')}</span>
         <span>${total.toFixed(2)} ₺</span>
       </div>
 
       <div style="text-align: center; border-top: 1px dashed #333; padding-top: 10px; font-size: 0.7rem; color:#555; line-height:1.3;">
-        AFİYET OLSUN!<br>
-        Servify Entegrasyon Sistemi
+        ${t('simReceiptBonAppetit', 'landing')}<br>
+        Servify Integration System
       </div>
 
-      <button id="close-receipt-btn" style="margin-top: 20px; width:100%; border:none; background:#111; color:#fff; font-family:monospace; padding:8px; font-size:0.75rem; cursor:pointer; font-weight:700;">Fişi Kapat</button>
+      <button id="close-receipt-btn" style="margin-top: 20px; width:100%; border:none; background:#111; color:#fff; font-family:monospace; padding:8px; font-size:0.75rem; cursor:pointer; font-weight:700;">${t('simReceiptClose', 'landing')}</button>
     </div>
   `;
 

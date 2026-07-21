@@ -129,7 +129,7 @@ function renderAdminLayout(container, userId) {
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('marketing')}</div>
             <div class="sidebar-nav-item ${currentPage === 'coupons' ? 'active' : ''}" data-page="coupons"><span class="material-icons-round">confirmation_number</span>${t('coupons')}</div>
-            <div class="sidebar-nav-item ${currentPage === 'leads' ? 'active' : ''}" data-page="leads"><span class="material-icons-round">contact_phone</span>${t('leads')}</div>
+            ${userId !== 'demo' ? `<div class="sidebar-nav-item ${currentPage === 'leads' ? 'active' : ''}" data-page="leads"><span class="material-icons-round">contact_phone</span>${t('leads')}</div>` : ''}
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('reports')}</div>
