@@ -321,28 +321,28 @@ export function renderLanding(container) {
                 
                 <!-- Food Items -->
                 <div style="display: flex; flex-direction: column; gap: 12px;">
-                  <div class="sim-food-item" data-id="sim-f1" data-name="Wagyu Ribeye Steak" data-price="950" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                  <div class="sim-food-item" data-id="sim-f1" data-name="${t('simFood1Name', 'landing')}" data-price="950" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                     <div>
-                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🥩 Wagyu Ribeye Steak</h6>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🥩 ${t('simFood1Name', 'landing')}</h6>
                       <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">950 ₺</span>
                     </div>
-                    <button class="sim-add-btn" data-id="sim-f1" data-name="Wagyu Ribeye Steak" data-price="950" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                    <button class="sim-add-btn" data-id="sim-f1" data-name="${t('simFood1Name', 'landing')}" data-price="950" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
                   </div>
                   
-                  <div class="sim-food-item" data-id="sim-f2" data-name="Trüf Soslu Deniz Levreği" data-price="580" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                  <div class="sim-food-item" data-id="sim-f2" data-name="${t('simFood2Name', 'landing')}" data-price="580" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                     <div>
-                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🦞 Trüf Soslu Deniz Levreği</h6>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🦞 ${t('simFood2Name', 'landing')}</h6>
                       <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">580 ₺</span>
                     </div>
-                    <button class="sim-add-btn" data-id="sim-f2" data-name="Trüf Soslu Deniz Levreği" data-price="580" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                    <button class="sim-add-btn" data-id="sim-f2" data-name="${t('simFood2Name', 'landing')}" data-price="580" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
                   </div>
                   
-                  <div class="sim-food-item" data-id="sim-f3" data-name="Valrhona Soufflé" data-price="240" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                  <div class="sim-food-item" data-id="sim-f3" data-name="${t('simFood3Name', 'landing')}" data-price="240" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                     <div>
-                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🍨 Valrhona Soufflé</h6>
+                      <h6 style="margin: 0 0 4px 0; font-size: 0.82rem; font-weight: 700;">🍨 ${t('simFood3Name', 'landing')}</h6>
                       <span style="font-size: 0.8rem; color: #a29bfe; font-weight: 700;">240 ₺</span>
                     </div>
-                    <button class="sim-add-btn" data-id="sim-f3" data-name="Valrhona Soufflé" data-price="240" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
+                    <button class="sim-add-btn" data-id="sim-f3" data-name="${t('simFood3Name', 'landing')}" data-price="240" style="background: #6c5ce7; border: none; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><span class="material-icons-round" style="font-size: 1rem;">add</span></button>
                   </div>
                 </div>
                 
