@@ -1,5 +1,5 @@
 // ============================================
-// VERCEL SERVERLESS FUNCTION: Real-time Gemini AI Chat Endpoint
+// VERCEL SERVERLESS FUNCTION: Real-time Gemini 3.5 Flash AI Chat Endpoint
 // ============================================
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -48,9 +48,9 @@ Rules:
 - Encourage booking a free 14-day trial or leaving a phone number for a 60-second callback.
     `;
 
-    // Try Gemini Flash models (1.5-flash / 2.0-flash / 2.5-flash)
-    const models = ['gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'];
-    
+    // Try Gemini 3.5 Flash and fallback Flash models
+    const models = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'];
+
     for (const model of models) {
       try {
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -83,7 +83,7 @@ Rules:
           }
         }
       } catch (err) {
-        console.error(`Error with model ${model}:`, err);
+        console.error(`Error trying model ${model}:`, err);
       }
     }
 

@@ -1,5 +1,5 @@
 // ============================================
-// SERVIFY AI LIVE SALES AGENT (Real-Time Gemini LLM)
+// SERVIFY AI LIVE SALES AGENT (Gemini 3.5 Flash LLM)
 // ============================================
 import { getLang } from '../i18n.js';
 
@@ -12,8 +12,8 @@ export function initAISalesAgent() {
   const i18nAI = {
     tr: {
       agentName: 'Servify AI Satış Asistanı',
-      status: 'Gemini AI • 7/24 Canlı',
-      welcomeMsg: 'Willkommen! 👋 Ben Servify Yapay Zeka Satış Asistanı. Restoranınız için 0% komisyonlu QR menü, Klarna taksit imkanları, donanım veya paketler hakkında aklınıza takılan HER ŞEYİ gerçek zamanlı sorabilirsiniz!',
+      status: 'Gemini 3.5 Flash • 7/24 Canlı',
+      welcomeMsg: 'Willkommen! 👋 Ben Servify Yapay Zeka Satış Asistanı (Gemini 3.5 Flash). Restoranınız için 0% komisyonlu QR menü, Klarna taksit imkanları, donanım veya paketler hakkında aklınıza takılan HER ŞEYİ gerçek zamanlı sorabilirsiniz!',
       typePlaceholder: 'Sorunuzu yazın (örn: Klarna taksit sistemi nasıl çalışır?)...',
       chip1: '📦 Hangi paket bana uygun?',
       chip2: '💳 Klarna taksit sistemi nasıl?',
@@ -23,12 +23,12 @@ export function initAISalesAgent() {
       leadPromptName: 'Harika! Size özel ücretsiz demo kurulumu için restoranınızın adı nedir?',
       leadPromptPhone: 'Teşekkürler! Kıdemli restoran danışmanımızın sizi hemen arayabilmesi için telefon numaranızı yazar mısınız?',
       leadSuccess: '🎉 Harika! Bilgileriniz alındı. Kıdemli restoran danışmanımız 60 saniye içinde sizi arayacaktır.',
-      botTyping: 'Servify AI (Gemini Flash) yanıt üretiyor...'
+      botTyping: 'Servify AI (Gemini 3.5 Flash) yanıt üretiyor...'
     },
     en: {
       agentName: 'Servify AI Sales Consultant',
-      status: 'Gemini AI • 24/7 Live',
-      welcomeMsg: 'Welcome! 👋 I am the Servify AI Sales Consultant powered by Gemini. Feel free to ask me ANYTHING about our 0% commission QR menu, Klarna installments, hardware, or pricing plans in real-time!',
+      status: 'Gemini 3.5 Flash • 24/7 Live',
+      welcomeMsg: 'Welcome! 👋 I am the Servify AI Sales Consultant powered by Gemini 3.5 Flash. Feel free to ask me ANYTHING about our 0% commission QR menu, Klarna installments, hardware, or pricing plans in real-time!',
       typePlaceholder: 'Ask any question (e.g. How does Klarna work?)...',
       chip1: '📦 Which plan is right for me?',
       chip2: '💳 How do Klarna installments work?',
@@ -38,12 +38,12 @@ export function initAISalesAgent() {
       leadPromptName: 'Awesome! What is the name of your restaurant?',
       leadPromptPhone: 'Thank you! What is your phone number so our specialist can call you?',
       leadSuccess: '🎉 Fantastic! Your info has been saved. Our senior advisor will call you within 60 seconds.',
-      botTyping: 'Servify AI (Gemini Flash) is thinking...'
+      botTyping: 'Servify AI (Gemini 3.5 Flash) is thinking...'
     },
     de: {
       agentName: 'Servify KI-Verkaufsberater',
-      status: 'Gemini KI • 24/7 Live',
-      welcomeMsg: 'Willkommen! 👋 Ich bin der Servify KI-Verkaufsberater (powered by Gemini AI). Stellen Sie mir gerne jede Frage zu unserem 0% Provision QR-Menü, Klarna-Ratenzahlung, Hardware oder Preisen in Echtzeit!',
+      status: 'Gemini 3.5 Flash • 24/7 Live',
+      welcomeMsg: 'Willkommen! 👋 Ich bin der Servify KI-Verkaufsberater (powered by Gemini 3.5 Flash AI). Stellen Sie mir gerne jede Frage zu unserem 0% Provision QR-Menü, Klarna-Ratenzahlung, Hardware oder Preisen in Echtzeit!',
       typePlaceholder: 'Stellen Sie eine Frage (z.B. Wie funktioniert Klarna?)...',
       chip1: '📦 Welches Paket passt zu mir?',
       chip2: '💳 Wie funktioniert Klarna-Ratenzahlung?',
@@ -53,7 +53,7 @@ export function initAISalesAgent() {
       leadPromptName: 'Wunderbar! Wie heißt Ihr Restaurant?',
       leadPromptPhone: 'Vielen Dank! Unter welcher Telefonnummer kann unser Berater Sie erreichen?',
       leadSuccess: '🎉 Fantastisch! Ihre Informationen wurden gespeichert. Unser Berater wird Sie in 60 Sekunden anrufen.',
-      botTyping: 'Servify KI (Gemini Flash) generiert Antwort...'
+      botTyping: 'Servify KI (Gemini 3.5 Flash) generiert Antwort...'
     }
   };
 
@@ -478,28 +478,29 @@ export function initAISalesAgent() {
     messagesArea.scrollTop = messagesArea.scrollHeight;
   };
 
-  // Direct Client-Side Gemini Flash API Call
-  const callGeminiDirectly = async (userPrompt) => {
+  // Direct Gemini 3.5 Flash Client-Side Call
+  const callGemini35Flash = async (userPrompt) => {
     const systemPrompt = `
 You are the official Servify AI Sales & Gastro Consultant for Servify (servifysaas.com).
 Answer the user's question in real-time. Respond natively in ${currentLang === 'de' ? 'German' : currentLang === 'tr' ? 'Turkish' : 'English'}.
 
-Servify Info:
-- Digital QR menu, table ordering, kitchen display (KDS), POS system.
-- Klarna Ratenzahlung: Sold with Klarna financing (easy monthly installments for customer, 100% upfront payout for Servify).
-- 0% Commission on orders. Flat yearly pricing: Starter (€599), Professional (€1199), Enterprise (€1999).
+Servify Product Context:
+- Digital QR menu, table ordering, kitchen display (KDS), POS system for restaurants, cafes, bars.
+- Klarna Ratenzahlung: Servify is sold with Klarna financing (easy monthly installments for customer, 100% upfront payout for Servify).
+- 0% Commission on orders. Flat yearly pricing: Starter (€599/yr), Professional (€1199/yr), Enterprise (€1999/yr).
 - Hardware: Works on any existing tablet, iPad, phone, or PC. Compatible with Epson & ESC/POS thermal printers.
-- App-free: Guests scan QR code with phone camera, zero download needed.
+- App-free: Guests scan QR code with phone camera, zero app download needed.
 - 14-day free trial with free sample QR table stand kit.
 
 Keep responses friendly, helpful, structured with emojis, and concise.
     `;
 
-    const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'];
+    const modelsToTry = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'];
 
     for (const modelName of modelsToTry) {
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
+        
         const contents = [
           { role: 'user', parts: [{ text: systemPrompt }] },
           { role: 'model', parts: [{ text: 'Verstanden! Ich stehe als Servify KI-Verkaufsberater bereit.' }] }
@@ -524,8 +525,9 @@ Keep responses friendly, helpful, structured with emojis, and concise.
           const data = await res.json();
           const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (reply) {
-            // Format markdown bolding to HTML bolding
-            return reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            return reply
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              .replace(/\n/g, '<br>');
           }
         }
       } catch (err) {
@@ -535,7 +537,7 @@ Keep responses friendly, helpful, structured with emojis, and concise.
     return null;
   };
 
-  // Local NLP Engine Fallback
+  // Local Dynamic Fallback Response
   const getDynamicNLPResponse = (userText) => {
     const q = userText.toLowerCase();
 
@@ -588,7 +590,20 @@ Keep responses friendly, helpful, structured with emojis, and concise.
     conversationHistory.push({ sender: 'user', text: msgText });
     typingIndicator.style.display = 'flex';
 
-    // 1. Try Vercel Serverless Endpoint
+    // 1. Try Direct Gemini 3.5 Flash Call
+    try {
+      const geminiReply = await callGemini35Flash(msgText);
+      if (geminiReply) {
+        typingIndicator.style.display = 'none';
+        appendMessage('bot', geminiReply);
+        conversationHistory.push({ sender: 'bot', text: geminiReply });
+        return;
+      }
+    } catch (err) {
+      console.log('Gemini 3.5 Flash direct call fallback.');
+    }
+
+    // 2. Try Vercel Serverless API Endpoint
     try {
       const res = await fetch('/api/aiChat', {
         method: 'POST',
@@ -610,23 +625,10 @@ Keep responses friendly, helpful, structured with emojis, and concise.
         }
       }
     } catch (e) {
-      console.log('Serverless API fetch skipped or offline.');
+      console.log('Serverless API fetch fallback.');
     }
 
-    // 2. Direct Client-Side Gemini Flash API Call with Provided Key
-    try {
-      const geminiReply = await callGeminiDirectly(msgText);
-      if (geminiReply) {
-        typingIndicator.style.display = 'none';
-        appendMessage('bot', geminiReply);
-        conversationHistory.push({ sender: 'bot', text: geminiReply });
-        return;
-      }
-    } catch (err) {
-      console.log('Direct Gemini API call fallback.');
-    }
-
-    // 3. Dynamic Local NLP Fallback
+    // 3. Fallback to Dynamic NLP Engine
     typingIndicator.style.display = 'none';
     const fallbackReply = getDynamicNLPResponse(msgText);
     appendMessage('bot', fallbackReply);
