@@ -1,7 +1,34 @@
 // ============================================
-// SERVIFY AI ASSISTANT (Clean Servify AI Identity)
+// SERVIFY AI ASSISTANT (Real-Time Lead & Telegram Dispatch)
 // ============================================
 import { getLang } from '../i18n.js';
+
+// Send Instant Lead Notification to Telegram Bot (Phone Notification)
+async function sendLeadTelegramNotification(data) {
+  const botToken = atob('ODk4OTg4NzM3MTpBQUdmMWpkd2FFVzN2bl84M0Y2VV9HMmVJbkNuU0M1MWRlUQ==');
+  const chatId = atob('NjMzMDAwMDEyMg==');
+  
+  const message = `🚨 *YENİ SERVIFY MÜŞTERİ ADAYI (LEAD)!* 🚨\n\n` +
+    `🏢 *Restoran Adı:* ${data.name || 'Belirtilmedi'}\n` +
+    `📞 *Telefon:* ${data.phone || 'Belirtilmedi'}\n` +
+    `🌍 *Dil / Ülke:* ${getLang().toUpperCase()}\n` +
+    `🤖 *Kaynak:* Servify AI Canlı Sohbet\n` +
+    `📅 *Tarih:* ${new Date().toLocaleString('tr-TR')}`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'Markdown'
+      })
+    });
+  } catch (err) {
+    console.error('Telegram lead alert error:', err);
+  }
+}
 
 export function initAISalesAgent() {
   if (document.getElementById('servify-ai-agent-launcher')) return;
@@ -556,9 +583,16 @@ Keep responses friendly, clear, structured with emojis, and concise.
     if (leadStep === 2) {
       leadData.phone = userText;
       leadStep = 0;
+      
+      // 1. Save Lead to LocalStorage
       const leads = JSON.parse(localStorage.getItem('servifyLeads') || '[]');
-      leads.push({ ...leadData, date: new Date().toISOString() });
+      const newLead = { ...leadData, date: new Date().toISOString() };
+      leads.push(newLead);
       localStorage.setItem('servifyLeads', JSON.stringify(leads));
+
+      // 2. Dispatch Instant Telegram Push Notification
+      sendLeadTelegramNotification(leadData);
+
       return text.leadSuccess;
     }
 
@@ -597,6 +631,16 @@ Keep responses friendly, clear, structured with emojis, and concise.
     input.value = '';
 
     conversationHistory.push({ sender: 'user', text: msgText });
+
+    // Detect if user wrote a phone number directly in free chat
+    const containsPhoneNumber = /(\+?\d{1,4}?[\s.-]?)?\(?\d{3,5}\)?[\s.-]?\d{3,5}[\s.-]?\d{2,4}/.test(msgText);
+    if (containsPhoneNumber && msgText.length >= 8) {
+      sendLeadTelegramNotification({
+        name: leadData.name || 'Chat Ziyaretçisi',
+        phone: msgText
+      });
+    }
+
     typingIndicator.style.display = 'flex';
 
     // 1. Direct Gemini 3.5 Flash Call
@@ -606,6 +650,11 @@ Keep responses friendly, clear, structured with emojis, and concise.
         typingIndicator.style.display = 'none';
         appendMessage('bot', geminiReply);
         conversationHistory.push({ sender: 'bot', text: geminiReply });
+        
+        // If LLM output or state prompt for phone number was triggered
+        if (leadStep === 2) {
+          sendLeadTelegramNotification({ name: leadData.name, phone: msgText });
+        }
         return;
       }
     } catch (err) {

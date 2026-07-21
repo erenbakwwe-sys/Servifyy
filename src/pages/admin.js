@@ -2,7 +2,7 @@ import { auth, db, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, o
 import { showToast, getTrialDaysLeft, playNotificationSound, escapeHtml, formatCurrency } from '../utils.js';
 import { renderDashboardContent } from './admin-dashboard.js';
 import { renderMenuContent, showAddItemModal, showEditItemModal, showAddCategoryModal, deleteMenuItem } from './admin-menu.js';
-import { renderQRContent, generateAllQR, renderCallsContent, renderOrdersContent, renderHistoryContent, renderFinanceContent } from './admin-sections.js';
+import { renderQRContent, generateAllQR, renderCallsContent, renderOrdersContent, renderHistoryContent, renderFinanceContent, renderLeadsContent } from './admin-sections.js';
 import { renderAIThemeContent, generateThemeWithAI, setStatusCallback, generateThemeHTML } from './admin-ai-theme.js';
 import { buildThemeHTML } from './theme-templates.js';
 import { renderBranchesContent, setupBranchHandlers, loadBranches } from './admin-branches.js';
@@ -129,6 +129,7 @@ function renderAdminLayout(container, userId) {
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('marketing')}</div>
             <div class="sidebar-nav-item ${currentPage === 'coupons' ? 'active' : ''}" data-page="coupons"><span class="material-icons-round">confirmation_number</span>${t('coupons')}</div>
+            <div class="sidebar-nav-item ${currentPage === 'leads' ? 'active' : ''}" data-page="leads"><span class="material-icons-round">contact_phone</span>${t('leads')}</div>
           </div>
           <div class="sidebar-nav-group">
             <div class="sidebar-nav-label">${t('reports')}</div>
@@ -368,6 +369,9 @@ function renderPage(userId) {
     case 'pos':
       content.innerHTML = renderPOSContent(tabs, menuItems, userData);
       setupPOSHandlers(userId, content, menuItems);
+      break;
+    case 'leads':
+      content.innerHTML = renderLeadsContent();
       break;
     case '_kitchen':
       // Opens kitchen in new tab, revert to dashboard

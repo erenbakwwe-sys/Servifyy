@@ -292,3 +292,64 @@ export function renderFinanceContent(orders, userData) {
     </div>
   `;
 }
+
+export function renderLeadsContent() {
+  const leads = JSON.parse(localStorage.getItem('servifyLeads') || '[]');
+
+  return `
+    <div class="leads-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
+        <div>
+          <h2 style="font-size:1.4rem;font-weight:800;margin:0 0 4px 0;color:var(--text-primary);">${t('leadsTitle', 'admin')}</h2>
+          <p style="color:var(--text-secondary);font-size:0.88rem;margin:0;">${t('leadsSub', 'admin')}</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <span class="badge" style="background:rgba(108,92,231,0.15);color:var(--primary-light);padding:8px 14px;border-radius:20px;font-weight:700;font-size:0.82rem;">
+            Toplam: ${leads.length} Aday
+          </span>
+        </div>
+      </div>
+
+      ${leads.length === 0 ? `
+        <div class="card" style="text-align:center;padding:48px 24px;">
+          <span class="material-icons-round" style="font-size:3.5rem;color:var(--text-muted);margin-bottom:12px;">connect_without_contact</span>
+          <h4 style="font-weight:700;margin:0 0 6px 0;">Henüz müşteri adayı yok</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin:0;">Servify AI canlı sohbetinden ve web sitenizden gelen talepler otomatik olarak burada ve Telegram hesabınızda görünecektir.</p>
+        </div>
+      ` : `
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:16px;">
+          ${leads.map((lead, idx) => `
+            <div class="card" style="position:relative;border:1px solid rgba(108,92,231,0.25);box-shadow:0 8px 24px rgba(0,0,0,0.06);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="font-weight:800;font-size:1.05rem;color:var(--primary-light);display:flex;align-items:center;gap:6px;">
+                  <span class="material-icons-round" style="font-size:1.2rem;">store</span>
+                  ${escapeHtml(lead.name || 'Restoran Adayı')}
+                </div>
+                <span style="font-size:0.72rem;color:var(--text-muted);background:rgba(255,255,255,0.06);padding:4px 8px;border-radius:6px;">
+                  ${lead.date ? new Date(lead.date).toLocaleDateString('tr-TR') : 'Bugün'}
+                </span>
+              </div>
+
+              <div style="margin-bottom:16px;font-size:0.9rem;display:flex;align-items:center;gap:8px;color:var(--text-primary);">
+                <span class="material-icons-round" style="color:#00b894;font-size:1.1rem;">phone</span>
+                <strong>${escapeHtml(lead.phone || 'Telefon Yok')}</strong>
+              </div>
+
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                ${lead.phone ? `
+                  <a href="tel:${lead.phone}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;font-size:0.78rem;font-weight:700;">
+                    <span class="material-icons-round" style="font-size:0.9rem;">phone</span> Ara
+                  </a>
+                  <a href="https://wa.me/${lead.phone.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="background:#25D366;color:white;flex:1;justify-content:center;font-size:0.78rem;font-weight:700;">
+                    <span class="material-icons-round" style="font-size:0.9rem;">chat</span> WhatsApp
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `}
+    </div>
+  `;
+}
+
