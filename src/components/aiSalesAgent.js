@@ -574,9 +574,22 @@ Keep responses friendly, clear, structured with emojis, and concise.
     return null;
   };
 
+  const normalizeText = (str) => {
+    return (str || '')
+      .toLowerCase()
+      .replace(/ı/g, 'i')
+      .replace(/ğ/g, 'g')
+      .replace(/ü/g, 'u')
+      .replace(/ş/g, 's')
+      .replace(/ö/g, 'o')
+      .replace(/ç/g, 'c')
+      .replace(/ä/g, 'a')
+      .replace(/ß/g, 'ss');
+  };
+
   // Comprehensive Multi-Language NLP Engine Fallback
   const getDynamicNLPResponse = (userText) => {
-    const q = userText.toLowerCase();
+    const q = normalizeText(userText);
 
     if (leadStep === 1) {
       leadData.name = userText;
@@ -598,8 +611,45 @@ Keep responses friendly, clear, structured with emojis, and concise.
       return text.leadSuccess;
     }
 
-    // Pricing / Quote / Offer
-    if (q.includes('preis') || q.includes('kosten') || q.includes('fiyat') || q.includes('price') || q.includes('paket') || q.includes('angebot') || q.includes('teklif') || q.includes('ucret')) {
+    // 1. General Questions / Features Overview / System Inquiry
+    if (q.includes('ozellik') || q.includes('soru') || q.includes('bilgi') || q.includes('sistem') || q.includes('yardim') || q.includes('anlat') || q.includes('nedir') || q.includes('detay') || q.includes('fragen') || q.includes('feature')) {
+      if (currentLang === 'de') {
+        return `<strong>✨ Servify Systemfunktionen im Überblick:</strong><br><br>` +
+          `1️⃣ <strong>QR-Menü & Tischbestellung:</strong> Gäste scannen den QR-Code – ganz ohne App-Download!<br>` +
+          `2️⃣ <strong>Küchen-Display (KDS):</strong> Neue Bestellungen erscheinen in Echtzeit mit Ton-Signal.<br>` +
+          `3️⃣ <strong>POS & Tischverwaltung:</strong> Rechnungen teilen, Tische verschieben & Kellner-Ruf.<br>` +
+          `4️⃣ <strong>0% Provision & Klarna-Ratenzahlung:</strong> Sie zahlen keine prozentualen Gebühren.<br><br>` +
+          `💡 Zu welchem Thema möchten Sie mehr erfahren? (z.B. Testphase, Hardware oder individuelles Angebot?)`;
+      }
+      if (currentLang === 'en') {
+        return `<strong>✨ Servify System Features Overview:</strong><br><br>` +
+          `1️⃣ <strong>QR Menu & Ordering:</strong> Guests scan to order without app download!<br>` +
+          `2️⃣ <strong>Kitchen Display (KDS):</strong> Real-time alerts on your kitchen screen.<br>` +
+          `3️⃣ <strong>POS & Billing:</strong> Move tables, split bills & waiter calling.<br>` +
+          `4️⃣ <strong>0% Commission & Klarna Installments.</strong><br><br>` +
+          `💡 Which feature would you like more details on?`;
+      }
+      return `<strong>✨ Servify Sistem Özellikleri & Avantajları:</strong><br><br>` +
+        `1️⃣ <strong>QR Menü & Masadan Sipariş:</strong> Müşterileriniz uygulama indirmeden masadaki QR'ı kamerayla okutup sipariş verir.<br>` +
+        `2️⃣ <strong>Canlı Mutfak Ekranı (KDS):</strong> Siparişler mutfağınıza veya tabletinize anında sesli uyarı ile düşer.<br>` +
+        `3️⃣ <strong>Adisyon & POS Yönetimi:</strong> Masa birleştirme, hesap bölme ve garson çağırma özellikleri.<br>` +
+        `4️⃣ <strong>%0 Komisyon & Klarna Taksit:</strong> Sipariş başı komisyon ödemezsiniz.<br><br>` +
+        `💡 Hangi detay hakkında bilgi almak istersiniz? (örn: Fiyat teklifi, 14 gün ücretsiz deneme veya donanım?)`;
+    }
+
+    // 2. How it works / QR scanning / App
+    if (q.includes('nasil') || q.includes('calis') || q.includes('wie funktioniert') || q.includes('how does') || q.includes('qr') || q.includes('scan') || q.includes('kod') || q.includes('app')) {
+      if (currentLang === 'de') {
+        return `<strong>📱 So einfach funktioniert Servify:</strong><br>1️⃣ Ihre Gäste scannen den QR-Code am Tisch mit ihrer Smartphone-Kamera – <strong>keine App-Installation erforderlich!</strong><br>2️⃣ Die Speisekarte öffnet sich interaktiv mit Bildern, Fotos & Allergenfilter.<br>3️⃣ Gäste bestellen direkt vom Tisch; die Bestellung erscheint sofort im Admin-/Küchen-Panel mit Ton-Signal!`;
+      }
+      if (currentLang === 'en') {
+        return `<strong>📱 How Servify Works:</strong><br>1️⃣ Guests scan the table QR code with their phone camera – <strong>no app download needed!</strong><br>2️⃣ Interactive menu opens with photos & filters.<br>3️⃣ Orders land instantly on your kitchen display and POS!`;
+      }
+      return `<strong>📱 Servify Nasıl Çalışır?</strong><br>1️⃣ Müşterileriniz masadaki QR kodu telefon kamerasıyla okutur – <strong>uygulama indirmeye gerek yok!</strong><br>2️⃣ Görsel ve dijital menü anında açılır.<br>3️⃣ Verilen siparişler mutfak ekranına ve yönetim paneline sesli uyarı ile düşer!`;
+    }
+
+    // 3. Pricing / Quote / Offer
+    if (q.includes('preis') || q.includes('kosten') || q.includes('fiyat') || q.includes('price') || q.includes('paket') || q.includes('angebot') || q.includes('teklif') || q.includes('ucret') || q.includes('maliyet') || q.includes('cost') || q.includes('quote')) {
       leadStep = 1;
       if (currentLang === 'de') {
         return `<strong>📋 Individuelles Angebot für Ihr Restaurant:</strong><br>Unsere Tarife werden exakt an die Größe und Tischanzahl Ihres Betriebes angepasst, damit Sie garantiert den besten Preis erhalten. Zudem bieten wir <strong>0% Provision</strong> auf Bestellungen und bequeme <strong>Klarna-Ratenzahlung</strong>.<br><br>👉 <strong>Wie heißt Ihr Restaurant?</strong> (Unser Team schickt Ihnen sofort ein maßgeschneidertes Angebot!)`;
@@ -610,8 +660,8 @@ Keep responses friendly, clear, structured with emojis, and concise.
       return `<strong>📋 Restoranınıza Özel Fiyat Teklifi:</strong><br>Tarifelerimiz masa sayınıza ve ihtiyacınıza göre özel olarak belirlenir. Ayrıca <strong>%0 komisyon</strong> ve <strong>Klarna esnek taksit imkanı</strong> sunuyoruz.<br><br>👉 <strong>Restoranınızın adı nedir?</strong> (Size özel teklifimizi hazırlayalım!)`;
     }
 
-    // Klarna Installments
-    if (q.includes('klarna') || q.includes('ratenzahlung') || q.includes('taksit') || q.includes('installment')) {
+    // 4. Klarna Installments
+    if (q.includes('klarna') || q.includes('ratenzahlung') || q.includes('taksit') || q.includes('installment') || q.includes('odeme')) {
       if (currentLang === 'de') {
         return `<strong>💳 Klarna-Ratenzahlung:</strong> Servify ermöglicht Ihnen eine flexible monatliche Ratenzahlung über Klarna. Sie müssen den Betrag nicht auf einmal zahlen und profitieren sofort von allen Features!`;
       }
@@ -621,19 +671,8 @@ Keep responses friendly, clear, structured with emojis, and concise.
       return `<strong>💳 Klarna Taksit İmkanı:</strong> Servify sistemini Klarna güvencesiyle aylık esnek taksitlerle kullanabilirsiniz.`;
     }
 
-    // How it works / QR scanning
-    if (q.includes('wie funktioniert') || q.includes('nasil') || q.includes('how does') || q.includes('qr') || q.includes('scan') || q.includes('app')) {
-      if (currentLang === 'de') {
-        return `<strong>📱 So einfach funktioniert Servify:</strong><br>1️⃣ Ihre Gäste scannen den QR-Code am Tisch mit ihrer Smartphone-Kamera – <strong>keine App-Installation erforderlich!</strong><br>2️⃣ Die Speisekarte öffnet sich interaktiv mit Bildern, Fotos & Allergenfilter.<br>3️⃣ Gäste bestellen direkt vom Tisch; die Bestellung erscheint sofort im Admin-/Mutfak-Panel mit Ton-Signal!`;
-      }
-      if (currentLang === 'en') {
-        return `<strong>📱 How Servify Works:</strong><br>1️⃣ Guests scan the table QR code with their phone camera – <strong>no app download needed!</strong><br>2️⃣ Interactive menu opens with photos & filters.<br>3️⃣ Orders land instantly on your kitchen display and POS!`;
-      }
-      return `<strong>📱 Servify Nasıl Çalışır?</strong><br>1️⃣ Müşterileriniz masadaki QR kodu telefon kamerasıyla okutur – <strong>uygulama indirmeye gerek yok!</strong><br>2️⃣ Görsel ve dijital menü anında açılır.<br>3️⃣ Verilen siparişler mutfak ekranına ve yönetim paneline sesli uyarı ile düşer!`;
-    }
-
-    // Hardware / Compatibility
-    if (q.includes('drucker') || q.includes('pos') || q.includes('tablet') || q.includes('yazıcı') || q.includes('hardware') || q.includes('gerät') || q.includes('donanım')) {
+    // 5. Hardware / Compatibility
+    if (q.includes('drucker') || q.includes('pos') || q.includes('tablet') || q.includes('yazici') || q.includes('hardware') || q.includes('gerat') || q.includes('donanim') || q.includes('ipad') || q.includes('device')) {
       if (currentLang === 'de') {
         return `<strong>💻 Hardware-unabhängig & Kompatibel:</strong><br>Servify funktioniert auf allen vorhandenen Geräten! Egal ob iPad, Android-Tablet, Smartphone, PC oder Thermo-Bonsprinter. Es ist keine teure Spezialhardware nötig.`;
       }
@@ -643,8 +682,8 @@ Keep responses friendly, clear, structured with emojis, and concise.
       return `<strong>💻 Donanımdan Bağımsız:</strong><br>Servify mevcut tüm cihazlarınızda (iPad, Android tablet, PC, akıllı telefon, termal yazıcı) sorunsuz çalışır. Özel ve pahalı cihazlar satın almanız gerekmez.`;
     }
 
-    // Free Trial / Demo
-    if (q.includes('test') || q.includes('trial') || q.includes('deneme') || q.includes('kostenlos') || q.includes('ücretsiz') || q.includes('demo')) {
+    // 6. Free Trial / Demo
+    if (q.includes('test') || q.includes('trial') || q.includes('deneme') || q.includes('kostenlos') || q.includes('ucretsiz') || q.includes('demo') || q.includes('free') || q.includes('stant') || q.includes('aufsteller')) {
       if (currentLang === 'de') {
         return `<strong>🚀 14 Tage kostenlos testen:</strong><br>Sie können Servify 14 Tage lang unverbindlich und ohne Risiko testen. Zusätzlich erhalten Sie bei Vertragsabschluss ein <strong>kostenloses Tisch-QR-Aufsteller-Set (10 Stück)</strong> für Ihr Restaurant!`;
       }
@@ -654,20 +693,20 @@ Keep responses friendly, clear, structured with emojis, and concise.
       return `<strong>🚀 14 Gün Ücretsiz Deneme:</strong><br>Servify'ı 14 gün boyunca taahhütsüz ve ücretsiz deneyebilirsiniz. Ayrıca kurulumda <strong>10 adet masaya özel QR masa stant seti hediyemizdir!</strong>`;
     }
 
-    // Callback / Contact
-    if (q.includes('anruf') || q.includes('kontakt') || q.includes('berater') || q.includes('call') || q.includes('temsilci') || q.includes('telefon') || q.includes('ara')) {
+    // 7. Callback / Contact
+    if (q.includes('anruf') || q.includes('kontakt') || q.includes('berater') || q.includes('call') || q.includes('temsilci') || q.includes('telefon') || q.includes('ara') || q.includes('iletisim')) {
       leadStep = 1;
       return text.leadPromptName;
     }
 
-    // Default friendly overview (DO NOT force leadStep = 1)
+    // 8. Default friendly helper
     if (currentLang === 'de') {
-      return `Willkommen bei <strong>Servify AI</strong>! 🚀<br>Wir bieten das führende QR-Bestell- & Kassensystem mit <strong>0% Provision</strong>, Klarna-Ratenzahlung und sofortiger Küchen-Benachrichtigung.<br><br>💡 Möchten Sie ein individuelles Angebot erhalten oder haben Sie Fragen zu Testphase, Kassensystem oder QR-Aufstellern?`;
+      return `Gerne helfe ich Ihnen weiter! 🚀<br>Möchten Sie Informationen zu <strong>QR-Bestellungen</strong>, <strong>Küchen-Displays</strong>, <strong>Klarna-Ratenzahlung</strong> oder ein <strong>individuelles Angebot</strong> erhalten?`;
     }
     if (currentLang === 'en') {
-      return `Welcome to <strong>Servify AI</strong>! 🚀<br>We provide 0% commission QR menu & POS ordering for modern restaurants.<br><br>💡 Would you like a custom quote or have questions about features and trial?`;
+      return `Happy to help! 🚀<br>Would you like information about <strong>QR ordering</strong>, <strong>Kitchen displays</strong>, <strong>Klarna installments</strong>, or a <strong>custom quote</strong>?`;
     }
-    return `<strong>Servify AI</strong>'a hoş geldiniz! 🚀<br>Restoranınız için %0 komisyonlu QR menü, adisyon ve sipariş yönetim sistemi sunuyoruz.<br><br>💡 Özel teklif almak mı istersiniz yoksa sistem özellikleri hakkında sorunuz mu var?`;
+    return `Size memnuniyetle yardımcı olayım! 🚀<br><strong>QR Menü & Sipariş</strong>, <strong>Mutfak Ekranı</strong>, <strong>Klarna Taksit</strong> veya <strong>Size Özel Fiyat Teklifi</strong> hakkında hangi konuyu öğrenmek istersiniz?`;
   };
 
   // Main Handle User Message Action
