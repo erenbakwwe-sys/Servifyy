@@ -17,13 +17,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, lang = 'de', history = [] } = req.body || {};
+    const { message, lang = 'de', history = [], userApiKey = '' } = req.body || {};
 
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyAg4FhfpH1mVL9akncq7axLuywcrnkFIwQ';
+    const apiKey = userApiKey || process.env.GEMINI_API_KEY || 'AIzaSyAg4FhfpH1mVL9akncq7axLuywcrnkFIwQ';
 
     // SYSTEM PROMPT FOR SERVIFY AI ASSISTANT (No "Verkaufsberater" wording)
     const systemInstruction = `
@@ -49,7 +49,7 @@ STRICT INSTRUCTIONS:
    - Respond in the user's language (German if German, English if English, Turkish if Turkish).
     `;
 
-    const models = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'];
+    const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
     for (const model of models) {
       try {

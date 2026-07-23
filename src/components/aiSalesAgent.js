@@ -505,8 +505,11 @@ export function initAISalesAgent() {
     messagesArea.scrollTop = messagesArea.scrollHeight;
   };
 
-  // Direct Gemini 3.5 Flash Client-Side Call
-  const callGemini35Flash = async (userPrompt) => {
+  // Gemini API Call
+  const callGeminiFlash = async (userPrompt) => {
+    const userApiKey = localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
+    if (!userApiKey) return null;
+
     const systemPrompt = `
 You are Servify AI, the official intelligent assistant for Servify (servifysaas.com).
 Your goal is to answer restaurant owners' questions in real-time, explain Servify's digital QR ordering & POS system, and help them get an individual offer or start a 14-day free trial.
@@ -529,18 +532,18 @@ Respond in ${currentLang === 'de' ? 'German' : currentLang === 'tr' ? 'Turkish' 
 Keep responses friendly, clear, structured with emojis, and concise.
     `;
 
-    const modelsToTry = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'];
+    const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
     for (const modelName of modelsToTry) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${userApiKey}`;
         
         const contents = [
           { role: 'user', parts: [{ text: systemPrompt }] },
           { role: 'model', parts: [{ text: 'Verstanden! Ich bin Servify AI und gebe Antworten ohne Verkäufer-Bezeichnung.' }] }
         ];
 
-        conversationHistory.forEach(h => {
+        conversationHistory.slice(-6).forEach(h => {
           contents.push({
             role: h.sender === 'user' ? 'user' : 'model',
             parts: [{ text: h.text }]
@@ -571,7 +574,7 @@ Keep responses friendly, clear, structured with emojis, and concise.
     return null;
   };
 
-  // Local Strategy Fallback
+  // Comprehensive Multi-Language NLP Engine Fallback
   const getDynamicNLPResponse = (userText) => {
     const q = userText.toLowerCase();
 
@@ -584,92 +587,121 @@ Keep responses friendly, clear, structured with emojis, and concise.
       leadData.phone = userText;
       leadStep = 0;
       
-      // 1. Save Lead to LocalStorage
-      const leads = JSON.parse(localStorage.getItem('servifyLeads') || '[]');
-      const newLead = { ...leadData, date: new Date().toISOString() };
-      leads.push(newLead);
-      localStorage.setItem('servifyLeads', JSON.stringify(leads));
+      try {
+        const leads = JSON.parse(localStorage.getItem('servifyLeads') || '[]');
+        const newLead = { ...leadData, date: new Date().toISOString() };
+        leads.push(newLead);
+        localStorage.setItem('servifyLeads', JSON.stringify(leads));
+      } catch (e) {}
 
-      // 2. Dispatch Instant Telegram Push Notification
       sendLeadTelegramNotification(leadData);
-
       return text.leadSuccess;
     }
 
-    if (q.includes('preis') || q.includes('kosten') || q.includes('fiyat') || q.includes('price') || q.includes('paket') || q.includes('angebot')) {
+    // Pricing / Quote / Offer
+    if (q.includes('preis') || q.includes('kosten') || q.includes('fiyat') || q.includes('price') || q.includes('paket') || q.includes('angebot') || q.includes('teklif') || q.includes('ucret')) {
       leadStep = 1;
       if (currentLang === 'de') {
         return `<strong>📋 Individuelles Angebot für Ihr Restaurant:</strong><br>Unsere Tarife werden exakt an die Größe und Tischanzahl Ihres Betriebes angepasst, damit Sie garantiert den besten Preis erhalten. Zudem bieten wir <strong>0% Provision</strong> auf Bestellungen und bequeme <strong>Klarna-Ratenzahlung</strong>.<br><br>👉 <strong>Wie heißt Ihr Restaurant?</strong> (Unser Team schickt Ihnen sofort ein maßgeschneidertes Angebot!)`;
       }
+      if (currentLang === 'en') {
+        return `<strong>📋 Custom Quote for Your Restaurant:</strong><br>Our plans are tailored specifically to your table count and restaurant size. Enjoy 0% commission on orders and flexible Klarna installments.<br><br>👉 <strong>What is the name of your restaurant?</strong>`;
+      }
       return `<strong>📋 Restoranınıza Özel Fiyat Teklifi:</strong><br>Tarifelerimiz masa sayınıza ve ihtiyacınıza göre özel olarak belirlenir. Ayrıca <strong>%0 komisyon</strong> ve <strong>Klarna esnek taksit imkanı</strong> sunuyoruz.<br><br>👉 <strong>Restoranınızın adı nedir?</strong> (Size özel teklifimizi hazırlayalım!)`;
     }
 
-    if (q.includes('klarna') || q.includes('ratenzahlung') || q.includes('taksit')) {
+    // Klarna Installments
+    if (q.includes('klarna') || q.includes('ratenzahlung') || q.includes('taksit') || q.includes('installment')) {
       if (currentLang === 'de') {
         return `<strong>💳 Klarna-Ratenzahlung:</strong> Servify ermöglicht Ihnen eine flexible monatliche Ratenzahlung über Klarna. Sie müssen den Betrag nicht auf einmal zahlen und profitieren sofort von allen Features!`;
+      }
+      if (currentLang === 'en') {
+        return `<strong>💳 Klarna Installments:</strong> Pay conveniently in flexible monthly installments via Klarna security.`;
       }
       return `<strong>💳 Klarna Taksit İmkanı:</strong> Servify sistemini Klarna güvencesiyle aylık esnek taksitlerle kullanabilirsiniz.`;
     }
 
-    if (q.includes('anruf') || q.includes('kontakt') || q.includes('berater') || q.includes('call') || q.includes('temsilci') || q.includes('telefon')) {
+    // How it works / QR scanning
+    if (q.includes('wie funktioniert') || q.includes('nasil') || q.includes('how does') || q.includes('qr') || q.includes('scan') || q.includes('app')) {
+      if (currentLang === 'de') {
+        return `<strong>📱 So einfach funktioniert Servify:</strong><br>1️⃣ Ihre Gäste scannen den QR-Code am Tisch mit ihrer Smartphone-Kamera – <strong>keine App-Installation erforderlich!</strong><br>2️⃣ Die Speisekarte öffnet sich interaktiv mit Bildern, Fotos & Allergenfilter.<br>3️⃣ Gäste bestellen direkt vom Tisch; die Bestellung erscheint sofort im Admin-/Mutfak-Panel mit Ton-Signal!`;
+      }
+      if (currentLang === 'en') {
+        return `<strong>📱 How Servify Works:</strong><br>1️⃣ Guests scan the table QR code with their phone camera – <strong>no app download needed!</strong><br>2️⃣ Interactive menu opens with photos & filters.<br>3️⃣ Orders land instantly on your kitchen display and POS!`;
+      }
+      return `<strong>📱 Servify Nasıl Çalışır?</strong><br>1️⃣ Müşterileriniz masadaki QR kodu telefon kamerasıyla okutur – <strong>uygulama indirmeye gerek yok!</strong><br>2️⃣ Görsel ve dijital menü anında açılır.<br>3️⃣ Verilen siparişler mutfak ekranına ve yönetim paneline sesli uyarı ile düşer!`;
+    }
+
+    // Hardware / Compatibility
+    if (q.includes('drucker') || q.includes('pos') || q.includes('tablet') || q.includes('yazıcı') || q.includes('hardware') || q.includes('gerät') || q.includes('donanım')) {
+      if (currentLang === 'de') {
+        return `<strong>💻 Hardware-unabhängig & Kompatibel:</strong><br>Servify funktioniert auf allen vorhandenen Geräten! Egal ob iPad, Android-Tablet, Smartphone, PC oder Thermo-Bonsprinter. Es ist keine teure Spezialhardware nötig.`;
+      }
+      if (currentLang === 'en') {
+        return `<strong>💻 Hardware Independent:</strong><br>Servify works seamlessly on any iPad, Android tablet, smartphone, PC, or thermal printer. No expensive proprietary hardware required!`;
+      }
+      return `<strong>💻 Donanımdan Bağımsız:</strong><br>Servify mevcut tüm cihazlarınızda (iPad, Android tablet, PC, akıllı telefon, termal yazıcı) sorunsuz çalışır. Özel ve pahalı cihazlar satın almanız gerekmez.`;
+    }
+
+    // Free Trial / Demo
+    if (q.includes('test') || q.includes('trial') || q.includes('deneme') || q.includes('kostenlos') || q.includes('ücretsiz') || q.includes('demo')) {
+      if (currentLang === 'de') {
+        return `<strong>🚀 14 Tage kostenlos testen:</strong><br>Sie können Servify 14 Tage lang unverbindlich und ohne Risiko testen. Zusätzlich erhalten Sie bei Vertragsabschluss ein <strong>kostenloses Tisch-QR-Aufsteller-Set (10 Stück)</strong> für Ihr Restaurant!`;
+      }
+      if (currentLang === 'en') {
+        return `<strong>🚀 14-Day Free Trial:</strong><br>Test Servify for 14 days with zero risk. Plus get a free 10-table QR stand kit upon onboarding!`;
+      }
+      return `<strong>🚀 14 Gün Ücretsiz Deneme:</strong><br>Servify'ı 14 gün boyunca taahhütsüz ve ücretsiz deneyebilirsiniz. Ayrıca kurulumda <strong>10 adet masaya özel QR masa stant seti hediyemizdir!</strong>`;
+    }
+
+    // Callback / Contact
+    if (q.includes('anruf') || q.includes('kontakt') || q.includes('berater') || q.includes('call') || q.includes('temsilci') || q.includes('telefon') || q.includes('ara')) {
       leadStep = 1;
       return text.leadPromptName;
     }
 
-    leadStep = 1;
+    // Default friendly overview (DO NOT force leadStep = 1)
     if (currentLang === 'de') {
-      return `Servify ist das führende QR-Bestellsystem ohne Provision. Möchten Sie ein individuelles Angebot erhalten?<br><br>👉 <strong>Wie heißt Ihr Restaurant?</strong>`;
+      return `Willkommen bei <strong>Servify AI</strong>! 🚀<br>Wir bieten das führende QR-Bestell- & Kassensystem mit <strong>0% Provision</strong>, Klarna-Ratenzahlung und sofortiger Küchen-Benachrichtigung.<br><br>💡 Möchten Sie ein individuelles Angebot erhalten oder haben Sie Fragen zu Testphase, Kassensystem oder QR-Aufstellern?`;
     }
-    return `Servify %0 komisyonlu QR sipariş ve restoran yönetim sistemidir. Size özel teklif hazırlamamız için restoranınızın adı nedir?`;
+    if (currentLang === 'en') {
+      return `Welcome to <strong>Servify AI</strong>! 🚀<br>We provide 0% commission QR menu & POS ordering for modern restaurants.<br><br>💡 Would you like a custom quote or have questions about features and trial?`;
+    }
+    return `<strong>Servify AI</strong>'a hoş geldiniz! 🚀<br>Restoranınız için %0 komisyonlu QR menü, adisyon ve sipariş yönetim sistemi sunuyoruz.<br><br>💡 Özel teklif almak mı istersiniz yoksa sistem özellikleri hakkında sorunuz mu var?`;
   };
 
   // Main Handle User Message Action
   const handleUserMessage = async (msgText) => {
     if (!msgText.trim()) return;
 
-    appendMessage('user', msgText);
+    const userCleanText = msgText.trim();
+    appendMessage('user', userCleanText);
     input.value = '';
 
-    conversationHistory.push({ sender: 'user', text: msgText });
+    conversationHistory.push({ sender: 'user', text: userCleanText });
 
     // Detect if user wrote a phone number directly in free chat
-    const containsPhoneNumber = /(\+?\d{1,4}?[\s.-]?)?\(?\d{3,5}\)?[\s.-]?\d{3,5}[\s.-]?\d{2,4}/.test(msgText);
-    if (containsPhoneNumber && msgText.length >= 8) {
+    const containsPhoneNumber = /(\+?\d{1,4}?[\s.-]?)?\(?\d{3,5}\)?[\s.-]?\d{3,5}[\s.-]?\d{2,4}/.test(userCleanText);
+    if (containsPhoneNumber && userCleanText.length >= 8) {
       sendLeadTelegramNotification({
         name: leadData.name || 'Chat Ziyaretçisi',
-        phone: msgText
+        phone: userCleanText
       });
     }
 
     typingIndicator.style.display = 'flex';
 
-    // 1. Direct Gemini 3.5 Flash Call
+    // 1. Try Vercel Serverless API Endpoint
     try {
-      const geminiReply = await callGemini35Flash(msgText);
-      if (geminiReply) {
-        typingIndicator.style.display = 'none';
-        appendMessage('bot', geminiReply);
-        conversationHistory.push({ sender: 'bot', text: geminiReply });
-        
-        // If LLM output or state prompt for phone number was triggered
-        if (leadStep === 2) {
-          sendLeadTelegramNotification({ name: leadData.name, phone: msgText });
-        }
-        return;
-      }
-    } catch (err) {
-      console.log('Gemini 3.5 Flash direct call fallback.');
-    }
-
-    // 2. Vercel Serverless API Endpoint
-    try {
+      const userApiKey = localStorage.getItem('gemini_api_key') || '';
       const res = await fetch('/api/aiChat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: msgText,
+          message: userCleanText,
           lang: currentLang,
-          history: conversationHistory.slice(-6)
+          history: conversationHistory.slice(-6),
+          userApiKey
         })
       });
 
@@ -677,7 +709,7 @@ Keep responses friendly, clear, structured with emojis, and concise.
         const data = await res.json();
         if (data.reply) {
           typingIndicator.style.display = 'none';
-          appendMessage('bot', data.reply);
+          appendMessage('bot', data.reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'));
           conversationHistory.push({ sender: 'bot', text: data.reply });
           return;
         }
@@ -686,9 +718,22 @@ Keep responses friendly, clear, structured with emojis, and concise.
       console.log('Serverless API fetch fallback.');
     }
 
-    // 3. Fallback to Dynamic NLP Engine
+    // 2. Try Client-Side Direct Gemini API Call if key available
+    try {
+      const geminiReply = await callGeminiFlash(userCleanText);
+      if (geminiReply) {
+        typingIndicator.style.display = 'none';
+        appendMessage('bot', geminiReply);
+        conversationHistory.push({ sender: 'bot', text: geminiReply });
+        return;
+      }
+    } catch (err) {
+      console.log('Gemini Flash direct call fallback.');
+    }
+
+    // 3. Fallback to Enhanced Dynamic NLP Engine
     typingIndicator.style.display = 'none';
-    const fallbackReply = getDynamicNLPResponse(msgText);
+    const fallbackReply = getDynamicNLPResponse(userCleanText);
     appendMessage('bot', fallbackReply);
     conversationHistory.push({ sender: 'bot', text: fallbackReply });
   };
