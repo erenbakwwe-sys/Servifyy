@@ -750,8 +750,8 @@ export function renderLanding(container) {
           <p class="section-subtitle">${t('compSub', 'landing')}</p>
         </div>
         
-        <div class="comparison-table-wrapper" style="overflow-x: auto; max-width: 900px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-lg); padding: 8px;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 600px;">
+        <div class="comparison-table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; max-width: 900px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-lg); padding: 8px;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 500px;">
             <thead>
               <tr style="border-bottom: 1px solid var(--border);">
                 <th style="padding: 20px 24px; font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">${t('compHeadFeatures', 'landing')}</th>

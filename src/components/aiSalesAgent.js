@@ -86,39 +86,41 @@ export function initAISalesAgent() {
 
   const text = i18nAI[currentLang] || i18nAI.de;
 
-  // Create Widget Elements
   const container = document.createElement('div');
   container.id = 'servify-ai-agent-container';
+  container.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99999;
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  `;
 
   container.innerHTML = `
     <style>
-      #servify-ai-agent-container {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        z-index: 99999;
-        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-        will-change: transform;
-        transform: translateZ(0);
-      }
       @media (max-width: 768px) {
         #servify-ai-agent-container {
-          bottom: 14px !important;
-          right: 14px !important;
+          position: fixed !important;
+          bottom: 16px !important;
+          right: 16px !important;
+          z-index: 99999 !important;
         }
         #servify-ai-agent-launcher {
-          width: 52px !important;
-          height: 52px !important;
-          border-radius: 16px !important;
+          width: 54px !important;
+          height: 54px !important;
+          border-radius: 18px !important;
         }
         #servify-ai-agent-launcher span {
           font-size: 1.5rem !important;
         }
         #servify-ai-callout {
+          position: absolute !important;
           right: 0 !important;
-          bottom: 64px !important;
-          width: calc(100vw - 32px) !important;
-          max-width: 275px !important;
+          bottom: 68px !important;
+          width: 250px !important;
+          max-width: calc(100vw - 40px) !important;
+          font-size: 0.78rem !important;
+          padding: 10px 12px !important;
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
           background: rgba(24, 23, 38, 0.98) !important;
