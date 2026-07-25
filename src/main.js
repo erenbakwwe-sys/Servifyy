@@ -52,12 +52,9 @@ if (!localStorage.getItem('appLang')) {
   document.body.appendChild(langModal);
   
   window.selectAppLang = (lang) => {
-    if (lang !== getLang()) {
-      setLang(lang);
-      setTimeout(() => {
-        window.location.reload();
-      }, 150);
-    }
+    setLang(lang);
+    if (langModal) langModal.remove();
+    window.location.reload();
   };
 }
 

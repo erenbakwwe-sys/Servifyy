@@ -1020,22 +1020,14 @@ export function renderLanding(container) {
   // Language selectors
   container.querySelector('#landing-lang-select')?.addEventListener('change', (e) => {
     const newLang = e.target.value;
-    if (newLang !== getLang()) {
-      setLang(newLang);
-      setTimeout(() => {
-        window.location.reload();
-      }, 150);
-    }
+    setLang(newLang);
+    window.location.reload();
   });
   
   container.querySelector('#mobile-lang-select')?.addEventListener('change', (e) => {
     const newLang = e.target.value;
-    if (newLang !== getLang()) {
-      setLang(newLang);
-      setTimeout(() => {
-        window.location.reload();
-      }, 150);
-    }
+    setLang(newLang);
+    window.location.reload();
   });
 
   // Scroll-based navbar styling
