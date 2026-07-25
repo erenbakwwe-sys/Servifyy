@@ -996,18 +996,30 @@
 
 @media (max-width: 768px) {
   .floating-contact-widget {
-    bottom: 80px;
-    right: 16px;
-    gap: 8px;
+    bottom: 74px !important;
+    right: 14px !important;
+    gap: 8px !important;
+    z-index: 99998 !important;
   }
   
   .floating-btn {
-    width: 48px;
-    height: 48px;
+    width: 48px !important;
+    height: 48px !important;
   }
   
   .floating-btn span {
-    font-size: 1.5rem;
+    font-size: 1.4rem !important;
+  }
+
+  /* 60 FPS Mobile Performance Overrides */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .landing-nav.scrolled {
+    background: #0f0e17 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 

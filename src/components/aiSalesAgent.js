@@ -89,15 +89,63 @@ export function initAISalesAgent() {
   // Create Widget Elements
   const container = document.createElement('div');
   container.id = 'servify-ai-agent-container';
-  container.style.cssText = `
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 99999;
-    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-  `;
 
   container.innerHTML = `
+    <style>
+      #servify-ai-agent-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 99999;
+        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+        will-change: transform;
+        transform: translateZ(0);
+      }
+      @media (max-width: 768px) {
+        #servify-ai-agent-container {
+          bottom: 14px !important;
+          right: 14px !important;
+        }
+        #servify-ai-agent-launcher {
+          width: 52px !important;
+          height: 52px !important;
+          border-radius: 16px !important;
+        }
+        #servify-ai-agent-launcher span {
+          font-size: 1.5rem !important;
+        }
+        #servify-ai-callout {
+          right: 0 !important;
+          bottom: 64px !important;
+          width: calc(100vw - 32px) !important;
+          max-width: 275px !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          background: rgba(24, 23, 38, 0.98) !important;
+        }
+        #servify-ai-chat-window {
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          background: #0f0e17 !important;
+        }
+        #servify-ai-chat-window.active {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          width: 100vw !important;
+          height: 100dvh !important;
+          max-width: 100vw !important;
+          max-height: 100dvh !important;
+          border-radius: 0 !important;
+          border: none !important;
+          z-index: 999999 !important;
+          transform: none !important;
+        }
+      }
+    </style>
+
     <!-- Floating Callout -->
     <div id="servify-ai-callout" style="
       position: absolute;
@@ -413,6 +461,7 @@ export function initAISalesAgent() {
   const toggleWindow = (openState) => {
     isOpen = openState !== undefined ? openState : !isOpen;
     if (isOpen) {
+      chatWindow.classList.add('active');
       chatWindow.style.opacity = '1';
       chatWindow.style.transform = 'translateY(0) scale(1)';
       chatWindow.style.pointerEvents = 'auto';
@@ -424,6 +473,7 @@ export function initAISalesAgent() {
       }
       setTimeout(() => input.focus(), 300);
     } else {
+      chatWindow.classList.remove('active');
       chatWindow.style.opacity = '0';
       chatWindow.style.transform = 'translateY(20px) scale(0.92)';
       chatWindow.style.pointerEvents = 'none';
