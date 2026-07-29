@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" id="html-tag">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -138,6 +138,21 @@
     .navbar-brand .logo-icon .material-icons-round { font-size: 1.15rem; color: white; }
 
     .nav-links { display: flex; align-items: center; gap: 4px; }
+
+    /* ============================================
+       LANGUAGE SWITCHER
+       ============================================ */
+    .lang-switcher {
+      display: flex; align-items: center; gap: 8px; margin-right: 12px;
+    }
+    .lang-btn {
+      background: rgba(255, 255, 255, 0.05); border: 2px solid transparent; border-radius: 50%;
+      cursor: pointer; font-size: 1.1rem; padding: 4px; width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition); filter: grayscale(0.6) opacity(0.7);
+    }
+    .lang-btn:hover { filter: grayscale(0) opacity(1); transform: scale(1.1); background: rgba(255, 255, 255, 0.1); }
+    .lang-btn.active { filter: grayscale(0) opacity(1); border-color: var(--primary-light); background: rgba(108, 92, 231, 0.15); box-shadow: 0 0 10px var(--primary-glow); }
 
     .nav-links a {
       font-size: 0.84rem; font-weight: 500; color: var(--text-muted);
@@ -739,11 +754,16 @@
         <span class="gradient-text">Servify</span>
       </a>
       <div class="nav-links" id="navLinks">
-        <a href="#was-ist-servify">Was ist Servify?</a>
-        <a href="#provision">Provision</a>
-        <a href="#pakete">Pakete</a>
-        <a href="#faq">FAQ</a>
-        <a href="#kontakt" class="nav-cta">Kontakt</a>
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="de" title="Deutsch">🇩🇪</button>
+          <button class="lang-btn" data-lang="tr" title="Türkçe">🇹🇷</button>
+          <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
+        </div>
+        <a href="#was-ist-servify" data-i18n="nav_what">Was ist Servify?</a>
+        <a href="#provision" data-i18n="nav_comm">Provision</a>
+        <a href="#pakete" data-i18n="nav_packs">Pakete</a>
+        <a href="#faq" data-i18n="nav_faq">FAQ</a>
+        <a href="#kontakt" class="nav-cta" data-i18n="nav_contact">Kontakt</a>
       </div>
       <button class="mobile-menu-btn" id="mobileMenuBtn">
         <span class="material-icons-round" style="font-size:1.6rem;">menu</span>
@@ -760,22 +780,22 @@
       <div class="grid-pattern"></div>
     </div>
     <div class="hero-content container">
-      <div class="hero-badge">
+      <div class="hero-badge" data-i18n-html="hero_badge">
         <span class="material-icons-round" style="font-size:1rem;">handshake</span>
         Exklusives Affiliate-Programm
       </div>
-      <h1 class="hero-title">
+      <h1 class="hero-title" data-i18n-html="hero_title">
         Willkommen im Servify<br><span class="gradient-text">Affiliate-Bereich</span>
       </h1>
-      <p class="hero-subtitle">
+      <p class="hero-subtitle" data-i18n="hero_subtitle">
         Gemeinsam mehr erreichen. Werde Teil unseres Partner-Netzwerks und verdiene mit jeder erfolgreichen Vermittlung.
       </p>
       <div class="hero-actions">
-        <a href="#provision" class="btn btn-primary animate-glow">
+        <a href="#provision" class="btn btn-primary animate-glow" data-i18n-html="hero_btn1">
           <span class="material-icons-round">trending_up</span>
           Jetzt starten
         </a>
-        <a href="#was-ist-servify" class="btn btn-secondary">
+        <a href="#was-ist-servify" class="btn btn-secondary" data-i18n-html="hero_btn2">
           <span class="material-icons-round">play_circle</span>
           Mehr erfahren
         </a>
@@ -783,15 +803,15 @@
       <div class="hero-stats">
         <div class="hero-stat">
           <div class="hero-stat-value gradient-text"><span class="counter" data-target="50">0</span>%</div>
-          <div class="hero-stat-label">Provision</div>
+          <div class="hero-stat-label" data-i18n="hero_stat_comm">Provision</div>
         </div>
         <div class="hero-stat">
           <div class="hero-stat-value gradient-text"><span class="counter" data-target="90">0</span></div>
-          <div class="hero-stat-label">Tage Cookie</div>
+          <div class="hero-stat-label" data-i18n="hero_stat_cookie">Tage Cookie</div>
         </div>
         <div class="hero-stat">
           <div class="hero-stat-value gradient-text">3</div>
-          <div class="hero-stat-label">Pakete</div>
+          <div class="hero-stat-label" data-i18n="hero_stat_pack">Pakete</div>
         </div>
       </div>
     </div>
@@ -801,11 +821,11 @@
   <section class="section section-alt" id="was-ist-servify">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="what_label">
           <span class="material-icons-round" style="font-size:0.9rem;">devices</span>
           Was ist Servify?
         </div>
-        <h2 class="section-title reveal reveal-delay-1">
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="what_title">
           Digitales Bestellsystem<br>für die <span class="gradient-text">Gastronomie</span>
         </h2>
       </div>
@@ -814,22 +834,22 @@
           <div class="feature-icon-wrap" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
             <span class="material-icons-round">qr_code_2</span>
           </div>
-          <h3>QR & NFC</h3>
-          <p>Gäste scannen, bestellen und zahlen direkt am Tisch – ohne Warten.</p>
+          <h3 data-i18n="what_c1_t">QR & NFC</h3>
+          <p data-i18n="what_c1_p">Gäste scannen, bestellen und zahlen direkt am Tisch – ohne Warten.</p>
         </div>
         <div class="glass-card reveal reveal-delay-2">
           <div class="feature-icon-wrap" style="background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));">
             <span class="material-icons-round">kitchen</span>
           </div>
-          <h3>Kitchen Display</h3>
-          <p>Bestellungen gehen direkt in die Küche. Keine Zettel, keine Fehler.</p>
+          <h3 data-i18n="what_c2_t">Kitchen Display</h3>
+          <p data-i18n="what_c2_p">Bestellungen gehen direkt in die Küche. Keine Zettel, keine Fehler.</p>
         </div>
         <div class="glass-card reveal reveal-delay-3">
           <div class="feature-icon-wrap" style="background: linear-gradient(135deg, var(--accent), #D63384);">
             <span class="material-icons-round">analytics</span>
           </div>
-          <h3>Analytics</h3>
-          <p>Umsatzdaten, Filialverwaltung und Reporting auf einen Blick.</p>
+          <h3 data-i18n="what_c3_t">Analytics</h3>
+          <p data-i18n="what_c3_p">Umsatzdaten, Filialverwaltung und Reporting auf einen Blick.</p>
         </div>
       </div>
     </div>
@@ -841,19 +861,19 @@
   <section class="section" id="problem">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="prob_label">
           <span class="material-icons-round" style="font-size:0.9rem;">report_problem</span>
           Das Problem
         </div>
-        <h2 class="section-title reveal reveal-delay-1">Was Servify <span class="gradient-text">löst</span></h2>
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="prob_title">Was Servify <span class="gradient-text">löst</span></h2>
       </div>
       <div class="card-grid card-grid-3">
         <div class="glass-card reveal reveal-delay-1">
           <div class="problem-card">
             <div class="problem-icon"><span class="material-icons-round">schedule</span></div>
             <div>
-              <h3>Lange Wartezeiten</h3>
-              <p>Gäste warten zu lang – Servify beschleunigt den gesamten Ablauf.</p>
+              <h3 data-i18n="prob_c1_t">Lange Wartezeiten</h3>
+              <p data-i18n="prob_c1_p">Gäste warten zu lang – Servify beschleunigt den gesamten Ablauf.</p>
             </div>
           </div>
         </div>
@@ -861,8 +881,8 @@
           <div class="problem-card">
             <div class="problem-icon"><span class="material-icons-round">person_off</span></div>
             <div>
-              <h3>Überlastetes Personal</h3>
-              <p>Handschriftliche Bestellungen führen zu Fehlern und Stress.</p>
+              <h3 data-i18n="prob_c2_t">Überlastetes Personal</h3>
+              <p data-i18n="prob_c2_p">Handschriftliche Bestellungen führen zu Fehlern und Stress.</p>
             </div>
           </div>
         </div>
@@ -870,8 +890,8 @@
           <div class="problem-card">
             <div class="problem-icon"><span class="material-icons-round">visibility_off</span></div>
             <div>
-              <h3>Keine Umsatzdaten</h3>
-              <p>Ohne digitale Tools fehlt der Überblick über die Performance.</p>
+              <h3 data-i18n="prob_c3_t">Keine Umsatzdaten</h3>
+              <p data-i18n="prob_c3_p">Ohne digitale Tools fehlt der Überblick über die Performance.</p>
             </div>
           </div>
         </div>
@@ -883,27 +903,27 @@
   <section class="section section-alt" id="zielgruppe">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="aud_label">
           <span class="material-icons-round" style="font-size:0.9rem;">groups</span>
           Für wen?
         </div>
-        <h2 class="section-title reveal reveal-delay-1">Deine ideale <span class="gradient-text">Zielgruppe</span></h2>
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="aud_title">Deine ideale <span class="gradient-text">Zielgruppe</span></h2>
       </div>
       <div class="card-grid card-grid-3">
         <div class="glass-card reveal reveal-delay-1" style="text-align:center;">
           <span class="audience-emoji">🍽️</span>
-          <h3>Restaurants & Cafés</h3>
-          <p>Bistros, Food Courts – jede Gastro-Branche.</p>
+          <h3 data-i18n="aud_c1_t">Restaurants & Cafés</h3>
+          <p data-i18n="aud_c1_p">Bistros, Food Courts – jede Gastro-Branche.</p>
         </div>
         <div class="glass-card reveal reveal-delay-2" style="text-align:center;">
           <span class="audience-emoji">🏪</span>
-          <h3>1–10 Standorte</h3>
-          <p>Kleinunternehmer bis mittelständische Ketten.</p>
+          <h3 data-i18n="aud_c2_t">1–10 Standorte</h3>
+          <p data-i18n="aud_c2_p">Kleinunternehmer bis mittelständische Ketten.</p>
         </div>
         <div class="glass-card reveal reveal-delay-3" style="text-align:center;">
           <span class="audience-emoji">👔</span>
-          <h3>Entscheider 30–55</h3>
-          <p>Inhaber oder Manager, frustriert von manuellem Betrieb.</p>
+          <h3 data-i18n="aud_c3_t">Entscheider 30–55</h3>
+          <p data-i18n="aud_c3_p">Inhaber oder Manager, frustriert von manuellem Betrieb.</p>
         </div>
       </div>
     </div>
@@ -915,34 +935,34 @@
   <section class="section" id="provision">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="prov_label">
           <span class="material-icons-round" style="font-size:0.9rem;">payments</span>
           Provision
         </div>
-        <h2 class="section-title reveal reveal-delay-1">Dein Verdienst auf <span class="gradient-text">einen Blick</span></h2>
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="prov_title">Dein Verdienst auf <span class="gradient-text">einen Blick</span></h2>
       </div>
 
       <div class="stats-grid reveal">
         <div class="stat-card">
           <div class="stat-value gradient-text">50%</div>
-          <div class="stat-label">Provision</div>
-          <div class="stat-sublabel">Auf jede erfolgreiche Vermittlung</div>
+          <div class="stat-label" data-i18n="prov_s1_l">Provision</div>
+          <div class="stat-sublabel" data-i18n="prov_s1_s">Auf jede erfolgreiche Vermittlung</div>
         </div>
         <div class="stat-card">
           <div class="stat-value gradient-text">90</div>
-          <div class="stat-label">Tage Cookie</div>
-          <div class="stat-sublabel">Cookie-Laufzeit</div>
+          <div class="stat-label" data-i18n="prov_s2_l">Tage Cookie</div>
+          <div class="stat-sublabel" data-i18n="prov_s2_s">Cookie-Laufzeit</div>
         </div>
         <div class="stat-card">
           <div class="stat-value gradient-text">€599</div>
-          <div class="stat-label">Starter-Paket</div>
-          <div class="stat-sublabel">Ab €599/Jahr</div>
+          <div class="stat-label" data-i18n="prov_s3_l">Starter-Paket</div>
+          <div class="stat-sublabel" data-i18n="prov_s3_s">Ab €599/Jahr</div>
         </div>
       </div>
 
       <div class="commission-note reveal reveal-delay-1">
         <span class="material-icons-round">info</span>
-        <div>Auszahlung erfolgt automatisch über Digistore24 nach Ablauf der 30-tägigen Rückgabefrist. Keine Mindestverkäufe erforderlich.</div>
+        <div data-i18n="prov_note">Auszahlung erfolgt automatisch über Digistore24 nach Ablauf der 30-tägigen Rückgabefrist. Keine Mindestverkäufe erforderlich.</div>
       </div>
     </div>
   </section>
@@ -951,11 +971,11 @@
   <section class="section section-alt" id="pakete">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="prod_label">
           <span class="material-icons-round" style="font-size:0.9rem;">inventory_2</span>
           Produkte
         </div>
-        <h2 class="section-title reveal reveal-delay-1">Die drei Servify-<span class="gradient-text">Pakete</span></h2>
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="prod_title">Die drei Servify-<span class="gradient-text">Pakete</span></h2>
       </div>
 
       <div class="pricing-grid reveal">
@@ -963,43 +983,43 @@
         <div class="pricing-card">
           <div class="pricing-name">Starter</div>
           <div class="pricing-price">599 <span>€</span></div>
-          <div class="pricing-period">pro Jahr</div>
+          <div class="pricing-period" data-i18n="prod_period">pro Jahr</div>
           <div class="pricing-klarna">
             <span class="material-icons-round">credit_score</span>
-            Bequem in Raten via Klarna
+            <span data-i18n="prod_klarna">Bequem in Raten via Klarna</span>
           </div>
-          <div class="pricing-subtitle">Ideal für Einsteiger</div>
+          <div class="pricing-subtitle" data-i18n="prod_s_sub">Ideal für Einsteiger</div>
           <ul class="pricing-features">
-            <li><span class="material-icons-round">check_circle</span> Dashboard (Basis)</li>
-            <li><span class="material-icons-round">check_circle</span> Tische & QR-Bestellung</li>
-            <li><span class="material-icons-round">check_circle</span> Speisekarte (Basis)</li>
-            <li><span class="material-icons-round">check_circle</span> Kellner-Ruf-System</li>
-            <li><span class="material-icons-round">check_circle</span> Verlauf (30 Tage)</li>
-            <li><span class="material-icons-round">check_circle</span> 1 Filiale</li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_dash">Dashboard (Basis)</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_qr">Tische & QR-Bestellung</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_menu">Speisekarte (Basis)</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_waiter">Kellner-Ruf-System</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_hist30">Verlauf (30 Tage)</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_1branch">1 Filiale</span></li>
             <li><span class="material-icons-round">check_circle</span> E-Mail Support</li>
           </ul>
         </div>
 
         <!-- PROFESSIONAL -->
         <div class="pricing-card popular">
-          <div class="pricing-badge">Beliebt</div>
+          <div class="pricing-badge" data-i18n="prod_badge">Beliebt</div>
           <div class="pricing-name">Professional</div>
           <div class="pricing-price">1199 <span>€</span></div>
-          <div class="pricing-period">pro Jahr</div>
+          <div class="pricing-period" data-i18n="prod_period">pro Jahr</div>
           <div class="pricing-klarna">
             <span class="material-icons-round">credit_score</span>
-            Bequem in Raten via Klarna
+            <span data-i18n="prod_klarna">Bequem in Raten via Klarna</span>
           </div>
-          <div class="pricing-subtitle">Für wachsende Betriebe</div>
-          <div class="pricing-inherit">Alles aus Starter, plus:</div>
+          <div class="pricing-subtitle" data-i18n="prod_p_sub">Für wachsende Betriebe</div>
+          <div class="pricing-inherit" data-i18n="prod_p_inh">Alles aus Starter, plus:</div>
           <ul class="pricing-features">
-            <li><span class="material-icons-round">check_circle</span> Erweitertes Dashboard</li>
-            <li><span class="material-icons-round">check_circle</span> POS & Kassensystem</li>
-            <li><span class="material-icons-round">check_circle</span> Lagerbestandsverwaltung</li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_adv_dash">Erweitertes Dashboard</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_pos">POS & Kassensystem</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_inv">Lagerbestandsverwaltung</span></li>
             <li><span class="material-icons-round">check_circle</span> Coupons & Happy Hour</li>
-            <li><span class="material-icons-round">check_circle</span> Finanzberichte (Basis)</li>
-            <li><span class="material-icons-round">check_circle</span> Personalverwaltung</li>
-            <li><span class="material-icons-round">check_circle</span> Unbegrenzter Verlauf</li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_fin">Finanzberichte (Basis)</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_staff">Personalverwaltung</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_unl_hist">Unbegrenzter Verlauf</span></li>
             <li><span class="material-icons-round">check_circle</span> E-Mail + Telefon Support</li>
           </ul>
         </div>
@@ -1008,21 +1028,21 @@
         <div class="pricing-card">
           <div class="pricing-name">Enterprise</div>
           <div class="pricing-price">1999 <span>€</span></div>
-          <div class="pricing-period">pro Jahr</div>
+          <div class="pricing-period" data-i18n="prod_period">pro Jahr</div>
           <div class="pricing-klarna">
             <span class="material-icons-round">credit_score</span>
-            Bequem in Raten via Klarna
+            <span data-i18n="prod_klarna">Bequem in Raten via Klarna</span>
           </div>
-          <div class="pricing-subtitle">Maximale Power</div>
-          <div class="pricing-inherit">Alles aus Professional, plus:</div>
+          <div class="pricing-subtitle" data-i18n="prod_e_sub">Maximale Power</div>
+          <div class="pricing-inherit" data-i18n="prod_e_inh">Alles aus Professional, plus:</div>
           <ul class="pricing-features">
             <li><span class="material-icons-round">check_circle</span> AI Theme (Branding)</li>
-            <li><span class="material-icons-round">check_circle</span> Kampagnen & Leads</li>
-            <li><span class="material-icons-round">check_circle</span> Mehrere Filialen</li>
-            <li><span class="material-icons-round">check_circle</span> Erw. Finanzanalyse & Prognosen</li>
-            <li><span class="material-icons-round">check_circle</span> Automatische Lager-Alerts</li>
-            <li><span class="material-icons-round">check_circle</span> Mehrsprachige Speisekarte</li>
-            <li><span class="material-icons-round">check_circle</span> Priorität 24/7 Support</li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_camp">Kampagnen & Leads</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_multi_branch">Mehrere Filialen</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_adv_fin">Erw. Finanzanalyse & Prognosen</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_stock_alerts">Automatische Lager-Alerts</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_multi_lang">Mehrsprachige Speisekarte</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="feat_247">Priorität 24/7 Support</span></li>
           </ul>
         </div>
       </div>
@@ -1033,14 +1053,14 @@
           <span class="material-icons-round">credit_score</span>
         </div>
         <div>
-          <h3>Wichtig: Bezahlung über Klarna</h3>
-          <p>
+          <h3 data-i18n="k_title">Wichtig: Bezahlung über Klarna</h3>
+          <p data-i18n="k_text">
             Servify wird ausschließlich über Klarna verkauft. Das bedeutet für den Kunden: Er kann in Raten zahlen, während wir als Anbieter den vollen Betrag sofort von Klarna erhalten.
           </p>
           <ul>
-            <li><span class="material-icons-round">check_circle</span> Starkes Verkaufsargument – Kunden müssen nicht den vollen Jahresbetrag auf einmal zahlen</li>
-            <li><span class="material-icons-round">check_circle</span> Bequeme Ratenzahlung senkt die Kaufhürde deutlich</li>
-            <li><span class="material-icons-round">check_circle</span> Voller Betrag wird sofort an Servify ausgezahlt</li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="k_l1">Starkes Verkaufsargument – Kunden müssen nicht den vollen Jahresbetrag auf einmal zahlen</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="k_l2">Bequeme Ratenzahlung senkt die Kaufhürde deutlich</span></li>
+            <li><span class="material-icons-round">check_circle</span> <span data-i18n="k_l3">Voller Betrag wird sofort an Servify ausgezahlt</span></li>
           </ul>
         </div>
       </div>
@@ -1053,11 +1073,11 @@
   <section class="section" id="vertrieb">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="chan_label">
           <span class="material-icons-round" style="font-size:0.9rem;">campaign</span>
           Vertriebskanäle
         </div>
-        <h2 class="section-title reveal reveal-delay-1">So erreichst du deine <span class="gradient-text">Kunden</span></h2>
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="chan_title">So erreichst du deine <span class="gradient-text">Kunden</span></h2>
       </div>
       <div class="card-grid card-grid-2">
         <div class="glass-card reveal reveal-delay-1">
@@ -1066,8 +1086,8 @@
               <span class="material-icons-round">play_circle</span>
             </div>
             <div>
-              <h3>YouTube & Social Media</h3>
-              <p>Reviews, Tutorials, Instagram & TikTok im Gastro-Niche.</p>
+              <h3 data-i18n="chan_c1_t">YouTube & Social Media</h3>
+              <p data-i18n="chan_c1_p">Reviews, Tutorials, Instagram & TikTok im Gastro-Niche.</p>
             </div>
           </div>
         </div>
@@ -1077,8 +1097,8 @@
               <span class="material-icons-round">article</span>
             </div>
             <div>
-              <h3>Blog & SEO</h3>
-              <p>Fachartikel und Suchmaschinenoptimierung.</p>
+              <h3 data-i18n="chan_c2_t">Blog & SEO</h3>
+              <p data-i18n="chan_c2_p">Fachartikel und Suchmaschinenoptimierung.</p>
             </div>
           </div>
         </div>
@@ -1088,8 +1108,8 @@
               <span class="material-icons-round">email</span>
             </div>
             <div>
-              <h3>Cold Email & LinkedIn</h3>
-              <p>Direkter Outreach an Restaurantbesitzer.</p>
+              <h3 data-i18n="chan_c3_t">Cold Email & LinkedIn</h3>
+              <p data-i18n="chan_c3_p">Direkter Outreach an Restaurantbesitzer.</p>
             </div>
           </div>
         </div>
@@ -1099,8 +1119,8 @@
               <span class="material-icons-round">phone_in_talk</span>
             </div>
             <div>
-              <h3>Cold Calling & D2D</h3>
-              <p>Anrufen oder persönlich vorbeikommen und demonstrieren.</p>
+              <h3 data-i18n="chan_c4_t">Cold Calling & D2D</h3>
+              <p data-i18n="chan_c4_p">Anrufen oder persönlich vorbeikommen und demonstrieren.</p>
             </div>
           </div>
         </div>
@@ -1112,33 +1132,33 @@
   <section class="section section-alt" id="material">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="mat_label">
           <span class="material-icons-round" style="font-size:0.9rem;">folder_open</span>
           Affiliate-Material
         </div>
-        <h2 class="section-title reveal reveal-delay-1">Alles, was du <span class="gradient-text">brauchst</span></h2>
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="mat_title">Alles, was du <span class="gradient-text">brauchst</span></h2>
       </div>
       <div class="card-grid card-grid-3">
         <div class="glass-card reveal reveal-delay-1" style="text-align:center;">
           <div class="material-icon-wrapper" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
             <span class="material-icons-round">image</span>
           </div>
-          <h3>Banner & Grafiken</h3>
-          <p>Professionelle Werbemittel für alle Kanäle.</p>
+          <h3 data-i18n="mat_c1_t">Banner & Grafiken</h3>
+          <p data-i18n="mat_c1_p">Professionelle Werbemittel für alle Kanäle.</p>
         </div>
         <div class="glass-card reveal reveal-delay-2" style="text-align:center;">
           <div class="material-icon-wrapper" style="background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));">
             <span class="material-icons-round">videocam</span>
           </div>
-          <h3>Demo-Videos</h3>
-          <p>Produktvideos und Screenshots direkt einsetzbar.</p>
+          <h3 data-i18n="mat_c2_t">Demo-Videos</h3>
+          <p data-i18n="mat_c2_p">Produktvideos und Screenshots direkt einsetzbar.</p>
         </div>
         <div class="glass-card reveal reveal-delay-3" style="text-align:center;">
           <div class="material-icon-wrapper" style="background: linear-gradient(135deg, var(--accent), #D63384);">
             <span class="material-icons-round">link</span>
           </div>
-          <h3>Dein Affiliate-Link</h3>
-          <p>Persönlicher Link über das Digistore24-Dashboard.</p>
+          <h3 data-i18n="mat_c3_t">Dein Affiliate-Link</h3>
+          <p data-i18n="mat_c3_p">Persönlicher Link über das Digistore24-Dashboard.</p>
         </div>
       </div>
     </div>
@@ -1150,32 +1170,32 @@
   <section class="section" id="faq">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="faq_label">
           <span class="material-icons-round" style="font-size:0.9rem;">help</span>
           FAQ
         </div>
-        <h2 class="section-title reveal reveal-delay-1">Häufige <span class="gradient-text">Fragen</span></h2>
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="faq_title">Häufige <span class="gradient-text">Fragen</span></h2>
       </div>
       <div class="faq-list reveal">
         <div class="faq-item">
-          <button class="faq-question">Wie funktioniert die Abrechnung?<span class="material-icons-round">expand_more</span></button>
-          <div class="faq-answer"><p>Automatisch über Digistore24 nach 30 Tagen.</p></div>
+          <button class="faq-question"><span data-i18n="faq_q1">Wie funktioniert die Abrechnung?</span><span class="material-icons-round">expand_more</span></button>
+          <div class="faq-answer"><p data-i18n="faq_a1">Automatisch über Digistore24 nach 30 Tagen.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Was passiert bei Rückerstattung?<span class="material-icons-round">expand_more</span></button>
-          <div class="faq-answer"><p>Provision wird storniert.</p></div>
+          <button class="faq-question"><span data-i18n="faq_q2">Was passiert bei Rückerstattung?</span><span class="material-icons-round">expand_more</span></button>
+          <div class="faq-answer"><p data-i18n="faq_a2">Provision wird storniert.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Kann ich mehrere Produkte bewerben?<span class="material-icons-round">expand_more</span></button>
-          <div class="faq-answer"><p>Ja, alle Servify-Pakete.</p></div>
+          <button class="faq-question"><span data-i18n="faq_q3">Kann ich mehrere Produkte bewerben?</span><span class="material-icons-round">expand_more</span></button>
+          <div class="faq-answer"><p data-i18n="faq_a3">Ja, alle Servify-Pakete.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Gibt es Mindestverkäufe?<span class="material-icons-round">expand_more</span></button>
-          <div class="faq-answer"><p>Nein, keine Mindestanzahl.</p></div>
+          <button class="faq-question"><span data-i18n="faq_q4">Gibt es Mindestverkäufe?</span><span class="material-icons-round">expand_more</span></button>
+          <div class="faq-answer"><p data-i18n="faq_a4">Nein, keine Mindestanzahl.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Wie lange läuft der Cookie?<span class="material-icons-round">expand_more</span></button>
-          <div class="faq-answer"><p>90 Tage nach Klick.</p></div>
+          <button class="faq-question"><span data-i18n="faq_q5">Wie lange läuft der Cookie?</span><span class="material-icons-round">expand_more</span></button>
+          <div class="faq-answer"><p data-i18n="faq_a5">90 Tage nach Klick.</p></div>
         </div>
       </div>
     </div>
@@ -1185,12 +1205,12 @@
   <section class="section section-alt" id="kontakt">
     <div class="container">
       <div class="section-header text-center">
-        <div class="section-label reveal">
+        <div class="section-label reveal" data-i18n-html="cont_label">
           <span class="material-icons-round" style="font-size:0.9rem;">rocket_launch</span>
           Kontakt
         </div>
-        <h2 class="section-title reveal reveal-delay-1">Bereit <span class="gradient-text">loszulegen?</span></h2>
-        <p class="section-subtitle mx-auto reveal reveal-delay-2">
+        <h2 class="section-title reveal reveal-delay-1" data-i18n-html="cont_title">Bereit <span class="gradient-text">loszulegen?</span></h2>
+        <p class="section-subtitle mx-auto reveal reveal-delay-2" data-i18n="cont_sub">
           Hast du Fragen zum Affiliate-Programm oder Interesse an Co-Marketing? Wir helfen dir gerne weiter.
         </p>
       </div>
@@ -1204,18 +1224,18 @@
         <div class="contact-card">
           <span class="material-icons-round" style="color: #25D366;">chat</span>
           <h3>WhatsApp</h3>
-          <p>Direktnachricht möglich</p>
+          <p data-i18n="cont_wa">Direktnachricht möglich</p>
         </div>
         <div class="contact-card">
           <span class="material-icons-round" style="color: var(--accent);">storefront</span>
           <h3>Digistore24</h3>
-          <p>Alle Infos im Dashboard</p>
+          <p data-i18n="cont_ds">Alle Infos im Dashboard</p>
         </div>
       </div>
 
       <div class="share-note reveal">
         <span class="material-icons-round">share</span>
-        Teile diesen Beitrag mit jemandem, der in der Gastro-Branche aktiv ist – gemeinsam verdienen wir mehr!
+        <span data-i18n="cont_share">Teile diesen Beitrag mit jemandem, der in der Gastro-Branche aktiv ist – gemeinsam verdienen wir mehr!</span>
       </div>
     </div>
   </section>
@@ -1223,12 +1243,275 @@
   <!-- ===================== FOOTER ===================== -->
   <footer class="aff-footer">
     <div class="container">
-      <p>&copy; 2026 Servify – Affiliate-Bereich. Nur für autorisierte Partner.</p>
+      <p data-i18n="footer_copy">&copy; 2026 Servify – Affiliate-Bereich. Nur für autorisierte Partner.</p>
     </div>
   </footer>
 
   <!-- ===================== SCRIPTS ===================== -->
   <script>
+    // ================== I18N ==================
+    const translations = {
+      de: {
+        nav_what: "Was ist Servify?",
+        nav_comm: "Provision",
+        nav_packs: "Pakete",
+        nav_faq: "FAQ",
+        nav_contact: "Kontakt",
+        hero_badge: '<span class="material-icons-round" style="font-size:1rem;">handshake</span> Exklusives Affiliate-Programm',
+        hero_title: 'Willkommen im Servify<br><span class="gradient-text">Affiliate-Bereich</span>',
+        hero_subtitle: 'Gemeinsam mehr erreichen. Werde Teil unseres Partner-Netzwerks und verdiene mit jeder erfolgreichen Vermittlung.',
+        hero_btn1: '<span class="material-icons-round">trending_up</span> Jetzt starten',
+        hero_btn2: '<span class="material-icons-round">play_circle</span> Mehr erfahren',
+        hero_stat_comm: "Provision", hero_stat_cookie: "Tage Cookie", hero_stat_pack: "Pakete",
+        what_label: '<span class="material-icons-round" style="font-size:0.9rem;">devices</span> Was ist Servify?',
+        what_title: 'Digitales Bestellsystem<br>für die <span class="gradient-text">Gastronomie</span>',
+        what_c1_t: "QR & NFC", what_c1_p: "Gäste scannen, bestellen und zahlen direkt am Tisch – ohne Warten.",
+        what_c2_t: "Kitchen Display", what_c2_p: "Bestellungen gehen direkt in die Küche. Keine Zettel, keine Fehler.",
+        what_c3_t: "Analytics", what_c3_p: "Umsatzdaten, Filialverwaltung und Reporting auf einen Blick.",
+        prob_label: '<span class="material-icons-round" style="font-size:0.9rem;">report_problem</span> Das Problem',
+        prob_title: 'Was Servify <span class="gradient-text">löst</span>',
+        prob_c1_t: "Lange Wartezeiten", prob_c1_p: "Gäste warten zu lang – Servify beschleunigt den gesamten Ablauf.",
+        prob_c2_t: "Überlastetes Personal", prob_c2_p: "Handschriftliche Bestellungen führen zu Fehlern und Stress.",
+        prob_c3_t: "Keine Umsatzdaten", prob_c3_p: "Ohne digitale Tools fehlt der Überblick über die Performance.",
+        aud_label: '<span class="material-icons-round" style="font-size:0.9rem;">groups</span> Für wen?',
+        aud_title: 'Deine ideale <span class="gradient-text">Zielgruppe</span>',
+        aud_c1_t: "Restaurants & Cafés", aud_c1_p: "Bistros, Food Courts – jede Gastro-Branche.",
+        aud_c2_t: "1–10 Standorte", aud_c2_p: "Kleinunternehmer bis mittelständische Ketten.",
+        aud_c3_t: "Entscheider 30–55", aud_c3_p: "Inhaber oder Manager, frustriert von manuellem Betrieb.",
+        prov_label: '<span class="material-icons-round" style="font-size:0.9rem;">payments</span> Provision',
+        prov_title: 'Dein Verdienst auf <span class="gradient-text">einen Blick</span>',
+        prov_s1_l: "Provision", prov_s1_s: "Auf jede erfolgreiche Vermittlung",
+        prov_s2_l: "Tage Cookie", prov_s2_s: "Cookie-Laufzeit",
+        prov_s3_l: "Starter-Paket", prov_s3_s: "Ab €599/Jahr",
+        prov_note: "Auszahlung erfolgt automatisch über Digistore24 nach Ablauf der 30-tägigen Rückgabefrist. Keine Mindestverkäufe erforderlich.",
+        prod_label: '<span class="material-icons-round" style="font-size:0.9rem;">inventory_2</span> Produkte',
+        prod_title: 'Die drei Servify-<span class="gradient-text">Pakete</span>',
+        prod_period: "pro Jahr", prod_klarna: "Bequem in Raten via Klarna",
+        prod_s_sub: "Ideal für Einsteiger", prod_badge: "Beliebt",
+        prod_p_sub: "Für wachsende Betriebe", prod_p_inh: "Alles aus Starter, plus:",
+        prod_e_sub: "Maximale Power", prod_e_inh: "Alles aus Professional, plus:",
+        feat_dash: "Dashboard (Basis)", feat_qr: "Tische & QR-Bestellung", feat_menu: "Speisekarte (Basis)",
+        feat_waiter: "Kellner-Ruf-System", feat_hist30: "Verlauf (30 Tage)", feat_1branch: "1 Filiale",
+        feat_adv_dash: "Erweitertes Dashboard", feat_pos: "POS & Kassensystem", feat_inv: "Lagerbestandsverwaltung",
+        feat_fin: "Finanzberichte (Basis)", feat_staff: "Personalverwaltung", feat_unl_hist: "Unbegrenzter Verlauf",
+        feat_camp: "Kampagnen & Leads", feat_multi_branch: "Mehrere Filialen", feat_adv_fin: "Erw. Finanzanalyse & Prognosen",
+        feat_stock_alerts: "Automatische Lager-Alerts", feat_multi_lang: "Mehrsprachige Speisekarte", feat_247: "Priorität 24/7 Support",
+        k_title: "Wichtig: Bezahlung über Klarna",
+        k_text: "Servify wird ausschließlich über Klarna verkauft. Das bedeutet für den Kunden: Er kann in Raten zahlen, während wir als Anbieter den vollen Betrag sofort von Klarna erhalten.",
+        k_l1: "Starkes Verkaufsargument – Kunden müssen nicht den vollen Jahresbetrag auf einmal zahlen",
+        k_l2: "Bequeme Ratenzahlung senkt die Kaufhürde deutlich",
+        k_l3: "Voller Betrag wird sofort an Servify ausgezahlt",
+        chan_label: '<span class="material-icons-round" style="font-size:0.9rem;">campaign</span> Vertriebskanäle',
+        chan_title: 'So erreichst du deine <span class="gradient-text">Kunden</span>',
+        chan_c1_t: "YouTube & Social Media", chan_c1_p: "Reviews, Tutorials, Instagram & TikTok im Gastro-Niche.",
+        chan_c2_t: "Blog & SEO", chan_c2_p: "Fachartikel und Suchmaschinenoptimierung.",
+        chan_c3_t: "Cold Email & LinkedIn", chan_c3_p: "Direkter Outreach an Restaurantbesitzer.",
+        chan_c4_t: "Cold Calling & D2D", chan_c4_p: "Anrufen oder persönlich vorbeikommen und demonstrieren.",
+        mat_label: '<span class="material-icons-round" style="font-size:0.9rem;">folder_open</span> Affiliate-Material',
+        mat_title: 'Alles, was du <span class="gradient-text">brauchst</span>',
+        mat_c1_t: "Banner & Grafiken", mat_c1_p: "Professionelle Werbemittel für alle Kanäle.",
+        mat_c2_t: "Demo-Videos", mat_c2_p: "Produktvideos und Screenshots direkt einsetzbar.",
+        mat_c3_t: "Dein Affiliate-Link", mat_c3_p: "Persönlicher Link über das Digistore24-Dashboard.",
+        faq_label: '<span class="material-icons-round" style="font-size:0.9rem;">help</span> FAQ',
+        faq_title: 'Häufige <span class="gradient-text">Fragen</span>',
+        faq_q1: "Wie funktioniert die Abrechnung?", faq_a1: "Automatisch über Digistore24 nach 30 Tagen.",
+        faq_q2: "Was passiert bei Rückerstattung?", faq_a2: "Provision wird storniert.",
+        faq_q3: "Kann ich mehrere Produkte bewerben?", faq_a3: "Ja, alle Servify-Pakete.",
+        faq_q4: "Gibt es Mindestverkäufe?", faq_a4: "Nein, keine Mindestanzahl.",
+        faq_q5: "Wie lange läuft der Cookie?", faq_a5: "90 Tage nach Klick.",
+        cont_label: '<span class="material-icons-round" style="font-size:0.9rem;">rocket_launch</span> Kontakt',
+        cont_title: 'Bereit <span class="gradient-text">loszulegen?</span>',
+        cont_sub: "Hast du Fragen zum Affiliate-Programm oder Interesse an Co-Marketing? Wir helfen dir gerne weiter.",
+        cont_wa: "Direktnachricht möglich", cont_ds: "Alle Infos im Dashboard",
+        cont_share: "Teile diesen Beitrag mit jemandem, der in der Gastro-Branche aktiv ist – gemeinsam verdienen wir mehr!",
+        footer_copy: "© 2026 Servify – Affiliate-Bereich. Nur für autorisierte Partner."
+      },
+      tr: {
+        nav_what: "Servify Nedir?",
+        nav_comm: "Komisyon",
+        nav_packs: "Paketler",
+        nav_faq: "SSS",
+        nav_contact: "İletişim",
+        hero_badge: '<span class="material-icons-round" style="font-size:1rem;">handshake</span> Özel Affiliate Programı',
+        hero_title: 'Servify<br><span class="gradient-text">Affiliate Alanına</span> Hoş Geldiniz',
+        hero_subtitle: 'Birlikte daha fazlasını başaralım. Partner ağımıza katılın ve her başarılı yönlendirmeden kazanın.',
+        hero_btn1: '<span class="material-icons-round">trending_up</span> Hemen Başla',
+        hero_btn2: '<span class="material-icons-round">play_circle</span> Daha Fazla Bilgi',
+        hero_stat_comm: "Komisyon", hero_stat_cookie: "Gün Çerez", hero_stat_pack: "Paket",
+        what_label: '<span class="material-icons-round" style="font-size:0.9rem;">devices</span> Servify Nedir?',
+        what_title: 'Gastronomi için<br><span class="gradient-text">Dijital Sipariş Sistemi</span>',
+        what_c1_t: "QR & NFC", what_c1_p: "Müşteriler masada tarar, sipariş verir ve öder – beklemeden.",
+        what_c2_t: "Mutfak Ekranı", what_c2_p: "Siparişler doğrudan mutfağa gider. Kağıt yok, hata yok.",
+        what_c3_t: "Analitik", what_c3_p: "Ciro verileri, şube yönetimi ve raporlama tek bakışta.",
+        prob_label: '<span class="material-icons-round" style="font-size:0.9rem;">report_problem</span> Sorun',
+        prob_title: 'Servify Ne <span class="gradient-text">Çözer</span>',
+        prob_c1_t: "Uzun Bekleme Süreleri", prob_c1_p: "Müşteriler çok bekliyor – Servify tüm süreci hızlandırır.",
+        prob_c2_t: "Aşırı Yüklenmiş Personel", prob_c2_p: "Elle yazılan siparişler hatalara ve strese yol açar.",
+        prob_c3_t: "Ciro Verisi Yok", prob_c3_p: "Dijital araçlar olmadan performans takibi yapılamaz.",
+        aud_label: '<span class="material-icons-round" style="font-size:0.9rem;">groups</span> Kimin İçin?',
+        aud_title: 'İdeal <span class="gradient-text">Hedef Kitlen</span>',
+        aud_c1_t: "Restoranlar & Kafeler", aud_c1_p: "Bistrolar, food court'lar – her gastronomi sektörü.",
+        aud_c2_t: "1–10 Şube", aud_c2_p: "Küçük işletmelerden orta ölçekli zincirlere.",
+        aud_c3_t: "Karar Vericiler 30–55", aud_c3_p: "Sahipler veya müdürler, manuel işleyişten bunalmış.",
+        prov_label: '<span class="material-icons-round" style="font-size:0.9rem;">payments</span> Komisyon',
+        prov_title: 'Kazancın Bir <span class="gradient-text">Bakışta</span>',
+        prov_s1_l: "Komisyon", prov_s1_s: "Her başarılı yönlendirmede",
+        prov_s2_l: "Gün Çerez", prov_s2_s: "Çerez süresi",
+        prov_s3_l: "Başlangıç Paketi", prov_s3_s: "€599/Yıl'dan itibaren",
+        prov_note: "Ödeme, 30 günlük iade süresinin ardından Digistore24 üzerinden otomatik yapılır. Minimum satış gereksinimi yoktur.",
+        prod_label: '<span class="material-icons-round" style="font-size:0.9rem;">inventory_2</span> Ürünler',
+        prod_title: 'Üç Servify <span class="gradient-text">Paketi</span>',
+        prod_period: "yıllık", prod_klarna: "Klarna ile taksitli ödeme",
+        prod_s_sub: "Başlangıç için ideal", prod_badge: "Popüler",
+        prod_p_sub: "Büyüyen işletmeler için", prod_p_inh: "Starter'daki her şey, artı:",
+        prod_e_sub: "Maksimum güç", prod_e_inh: "Professional'daki her şey, artı:",
+        feat_dash: "Dashboard (Temel)", feat_qr: "Masalar & QR Sipariş", feat_menu: "Menü (Temel)",
+        feat_waiter: "Garson Çağırma Sistemi", feat_hist30: "Geçmiş (30 Gün)", feat_1branch: "1 Şube",
+        feat_adv_dash: "Gelişmiş Dashboard", feat_pos: "POS & Kasa Sistemi", feat_inv: "Stok Yönetimi",
+        feat_fin: "Finansal Raporlar (Temel)", feat_staff: "Personel Yönetimi", feat_unl_hist: "Sınırsız Geçmiş",
+        feat_camp: "Kampanyalar & Potansiyel Müşteriler", feat_multi_branch: "Çoklu Şube", feat_adv_fin: "Gelişmiş Finans Analizi & Tahminler",
+        feat_stock_alerts: "Otomatik Stok Uyarıları", feat_multi_lang: "Çok Dilli Menü", feat_247: "Öncelikli 7/24 Destek",
+        k_title: "Önemli: Klarna ile Ödeme",
+        k_text: "Servify yalnızca Klarna üzerinden satılmaktadır. Bu, müşteri için taksitli ödeme imkanı sunarken, biz sağlayıcı olarak tam tutarı Klarna'dan hemen alıyoruz.",
+        k_l1: "Güçlü satış argümanı – Müşteriler yıllık tutarın tamamını bir seferde ödemek zorunda değil",
+        k_l2: "Rahat taksit ödemesi satın alma engelini önemli ölçüde düşürür",
+        k_l3: "Tam tutar hemen Servify'a ödenir",
+        chan_label: '<span class="material-icons-round" style="font-size:0.9rem;">campaign</span> Satış Kanalları',
+        chan_title: 'Müşterilerine <span class="gradient-text">Böyle Ulaşırsın</span>',
+        chan_c1_t: "YouTube & Sosyal Medya", chan_c1_p: "İncelemeler, eğitimler, Instagram & TikTok gastronomi nişinde.",
+        chan_c2_t: "Blog & SEO", chan_c2_p: "Uzman makaleler ve arama motoru optimizasyonu.",
+        chan_c3_t: "Cold Email & LinkedIn", chan_c3_p: "Restoran sahiplerine doğrudan ulaşım.",
+        chan_c4_t: "Soğuk Arama & Kapıdan Kapıya", chan_c4_p: "Arayın veya bizzat gidin ve gösterin.",
+        mat_label: '<span class="material-icons-round" style="font-size:0.9rem;">folder_open</span> Affiliate Materyalleri',
+        mat_title: 'İhtiyacın Olan <span class="gradient-text">Her Şey</span>',
+        mat_c1_t: "Banner & Grafikler", mat_c1_p: "Tüm kanallar için profesyonel reklam materyalleri.",
+        mat_c2_t: "Demo Videoları", mat_c2_p: "Ürün videoları ve ekran görüntüleri hemen kullanılabilir.",
+        mat_c3_t: "Affiliate Linkin", mat_c3_p: "Digistore24 panelinden kişisel link.",
+        faq_label: '<span class="material-icons-round" style="font-size:0.9rem;">help</span> SSS',
+        faq_title: 'Sık Sorulan <span class="gradient-text">Sorular</span>',
+        faq_q1: "Ödeme nasıl yapılır?", faq_a1: "30 gün sonra Digistore24 üzerinden otomatik olarak.",
+        faq_q2: "İade durumunda ne olur?", faq_a2: "Komisyon iptal edilir.",
+        faq_q3: "Birden fazla ürün tanıtabilir miyim?", faq_a3: "Evet, tüm Servify paketlerini.",
+        faq_q4: "Minimum satış var mı?", faq_a4: "Hayır, minimum yok.",
+        faq_q5: "Çerez ne kadar sürer?", faq_a5: "Tıklamadan sonra 90 gün.",
+        cont_label: '<span class="material-icons-round" style="font-size:0.9rem;">rocket_launch</span> İletişim',
+        cont_title: 'Başlamaya <span class="gradient-text">Hazır mısın?</span>',
+        cont_sub: "Affiliate programı hakkında soruların mı var veya ortak pazarlamaya ilgi mi duyuyorsun? Sana yardımcı olmaktan mutluluk duyarız.",
+        cont_wa: "Doğrudan mesaj gönderin", cont_ds: "Tüm bilgiler panelde",
+        cont_share: "Bu sayfayı gastronomi sektöründe aktif birisiyle paylaş – birlikte daha fazla kazanalım!",
+        footer_copy: "© 2026 Servify – Affiliate Alanı. Sadece yetkili partnerler için."
+      },
+      en: {
+        nav_what: "What is Servify?",
+        nav_comm: "Commission",
+        nav_packs: "Packages",
+        nav_faq: "FAQ",
+        nav_contact: "Contact",
+        hero_badge: '<span class="material-icons-round" style="font-size:1rem;">handshake</span> Exclusive Affiliate Program',
+        hero_title: 'Welcome to Servify<br><span class="gradient-text">Affiliate Program</span>',
+        hero_subtitle: 'Achieve more together. Join our partner network and earn with every successful referral.',
+        hero_btn1: '<span class="material-icons-round">trending_up</span> Get Started',
+        hero_btn2: '<span class="material-icons-round">play_circle</span> Learn More',
+        hero_stat_comm: "Commission", hero_stat_cookie: "Days Cookie", hero_stat_pack: "Packages",
+        what_label: '<span class="material-icons-round" style="font-size:0.9rem;">devices</span> What is Servify?',
+        what_title: 'Digital Ordering System<br>for <span class="gradient-text">Restaurants</span>',
+        what_c1_t: "QR & NFC", what_c1_p: "Guests scan, order and pay directly at the table – no waiting.",
+        what_c2_t: "Kitchen Display", what_c2_p: "Orders go directly to the kitchen. No paper, no mistakes.",
+        what_c3_t: "Analytics", what_c3_p: "Revenue data, branch management and reporting at a glance.",
+        prob_label: '<span class="material-icons-round" style="font-size:0.9rem;">report_problem</span> The Problem',
+        prob_title: 'What Servify <span class="gradient-text">Solves</span>',
+        prob_c1_t: "Long Wait Times", prob_c1_p: "Guests wait too long – Servify speeds up the entire process.",
+        prob_c2_t: "Overloaded Staff", prob_c2_p: "Handwritten orders lead to errors and stress.",
+        prob_c3_t: "No Revenue Data", prob_c3_p: "Without digital tools, there's no overview of performance.",
+        aud_label: '<span class="material-icons-round" style="font-size:0.9rem;">groups</span> For Whom?',
+        aud_title: 'Your Ideal <span class="gradient-text">Target Audience</span>',
+        aud_c1_t: "Restaurants & Cafés", aud_c1_p: "Bistros, food courts – every gastro sector.",
+        aud_c2_t: "1–10 Locations", aud_c2_p: "Small businesses to mid-sized chains.",
+        aud_c3_t: "Decision Makers 30–55", aud_c3_p: "Owners or managers, frustrated with manual operations.",
+        prov_label: '<span class="material-icons-round" style="font-size:0.9rem;">payments</span> Commission',
+        prov_title: 'Your Earnings at a <span class="gradient-text">Glance</span>',
+        prov_s1_l: "Commission", prov_s1_s: "On every successful referral",
+        prov_s2_l: "Days Cookie", prov_s2_s: "Cookie duration",
+        prov_s3_l: "Starter Package", prov_s3_s: "From €599/Year",
+        prov_note: "Payout is processed automatically via Digistore24 after the 30-day return period. No minimum sales required.",
+        prod_label: '<span class="material-icons-round" style="font-size:0.9rem;">inventory_2</span> Products',
+        prod_title: 'The Three Servify <span class="gradient-text">Packages</span>',
+        prod_period: "per year", prod_klarna: "Easy installments via Klarna",
+        prod_s_sub: "Ideal for beginners", prod_badge: "Popular",
+        prod_p_sub: "For growing businesses", prod_p_inh: "Everything from Starter, plus:",
+        prod_e_sub: "Maximum power", prod_e_inh: "Everything from Professional, plus:",
+        feat_dash: "Dashboard (Basic)", feat_qr: "Tables & QR Ordering", feat_menu: "Menu (Basic)",
+        feat_waiter: "Waiter Call System", feat_hist30: "History (30 Days)", feat_1branch: "1 Branch",
+        feat_adv_dash: "Advanced Dashboard", feat_pos: "POS & Cash Register", feat_inv: "Inventory Management",
+        feat_fin: "Financial Reports (Basic)", feat_staff: "Staff Management", feat_unl_hist: "Unlimited History",
+        feat_camp: "Campaigns & Leads", feat_multi_branch: "Multiple Branches", feat_adv_fin: "Adv. Financial Analysis & Forecasts",
+        feat_stock_alerts: "Automatic Stock Alerts", feat_multi_lang: "Multi-language Menu", feat_247: "Priority 24/7 Support",
+        k_title: "Important: Payment via Klarna",
+        k_text: "Servify is sold exclusively via Klarna. This means customers can pay in installments, while we as the provider receive the full amount immediately from Klarna.",
+        k_l1: "Strong selling point – Customers don't have to pay the full annual amount at once",
+        k_l2: "Convenient installment payments significantly lower the purchase barrier",
+        k_l3: "Full amount is paid out to Servify immediately",
+        chan_label: '<span class="material-icons-round" style="font-size:0.9rem;">campaign</span> Sales Channels',
+        chan_title: 'How to Reach Your <span class="gradient-text">Customers</span>',
+        chan_c1_t: "YouTube & Social Media", chan_c1_p: "Reviews, tutorials, Instagram & TikTok in the gastro niche.",
+        chan_c2_t: "Blog & SEO", chan_c2_p: "Expert articles and search engine optimization.",
+        chan_c3_t: "Cold Email & LinkedIn", chan_c3_p: "Direct outreach to restaurant owners.",
+        chan_c4_t: "Cold Calling & D2D", chan_c4_p: "Call or visit in person and demonstrate.",
+        mat_label: '<span class="material-icons-round" style="font-size:0.9rem;">folder_open</span> Affiliate Materials',
+        mat_title: 'Everything You <span class="gradient-text">Need</span>',
+        mat_c1_t: "Banners & Graphics", mat_c1_p: "Professional advertising materials for all channels.",
+        mat_c2_t: "Demo Videos", mat_c2_p: "Product videos and screenshots ready to use.",
+        mat_c3_t: "Your Affiliate Link", mat_c3_p: "Personal link via the Digistore24 dashboard.",
+        faq_label: '<span class="material-icons-round" style="font-size:0.9rem;">help</span> FAQ',
+        faq_title: 'Frequently Asked <span class="gradient-text">Questions</span>',
+        faq_q1: "How does billing work?", faq_a1: "Automatically via Digistore24 after 30 days.",
+        faq_q2: "What happens with refunds?", faq_a2: "Commission is cancelled.",
+        faq_q3: "Can I promote multiple products?", faq_a3: "Yes, all Servify packages.",
+        faq_q4: "Are there minimum sales?", faq_a4: "No, no minimum.",
+        faq_q5: "How long does the cookie last?", faq_a5: "90 days after click.",
+        cont_label: '<span class="material-icons-round" style="font-size:0.9rem;">rocket_launch</span> Contact',
+        cont_title: 'Ready to Get <span class="gradient-text">Started?</span>',
+        cont_sub: "Have questions about the affiliate program or interested in co-marketing? We're happy to help.",
+        cont_wa: "Direct message available", cont_ds: "All info in the dashboard",
+        cont_share: "Share this page with someone active in the gastro industry – together we earn more!",
+        footer_copy: "© 2026 Servify – Affiliate Area. Authorized partners only."
+      }
+    };
+
+    function setLanguage(lang) {
+      if (!translations[lang]) return;
+      document.getElementById('html-tag').setAttribute('lang', lang);
+      localStorage.setItem('appLang', lang);
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+
+      const t = translations[lang];
+      
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.textContent = t[key];
+      });
+
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (t[key]) el.innerHTML = t[key];
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      let savedLang = localStorage.getItem('appLang') || 'de';
+      if (!['de', 'tr', 'en'].includes(savedLang)) savedLang = 'de';
+      setLanguage(savedLang);
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          setLanguage(e.currentTarget.dataset.lang);
+        });
+      });
+    });
+    
     // Navbar scroll effect
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
