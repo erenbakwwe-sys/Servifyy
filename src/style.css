@@ -414,11 +414,33 @@ h1, h2, h3, h4, h5, h6, .heading {
 }
 
 .nav-brand {
-  font-family: var(--font-heading);
-  font-size: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-sub {
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: var(--color-gold-base, #D4AF37);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.brand-title {
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 1.4rem;
   font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA820A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .icon-btn {
@@ -2248,8 +2270,13 @@ h1, h2, h3, h4, h5, h6, .heading {
 }
 
 @media (max-width: 768px) {
-  .hero-title { font-size: 2.4rem; }
-  .hero-description { font-size: 0.95rem; }
+  .brand-sub { display: none !important; }
+  .brand-title { font-size: 1.05rem !important; letter-spacing: 1px; }
+  .navbar { padding: 10px 16px !important; }
+  .nav-right { gap: 12px; }
+  
+  .hero-title { font-size: 2.2rem; }
+  .hero-description { font-size: 0.9rem; }
   .hero-actions { flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
   
   .checkout-header-bar {
