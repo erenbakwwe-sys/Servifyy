@@ -186,11 +186,8 @@ async function handleCheckoutSubmit(e) {
     summary
   };
 
-  console.log('Final Order Submitted:', orderData);
-
   // Send Notification via Telegram Webhook
   const result = await sendTelegramOrderNotification(orderData);
-  console.log('Telegram Order Notification Result:', result);
 
   // Simulate fast payment authorization delay
   setTimeout(() => {

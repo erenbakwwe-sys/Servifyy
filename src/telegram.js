@@ -4,8 +4,8 @@ const STORAGE_KEY_TOKEN = 'vk_telegram_token';
 const STORAGE_KEY_CHATID = 'vk_telegram_chatid';
 const STORAGE_KEY_WEBHOOK = 'vk_telegram_webhook';
 
-const DEFAULT_BOT_TOKEN = '8954796018:AAH9nVxqRuhsirgDOocgRS3rn2gObYYiny4';
-const DEFAULT_CHAT_ID = '6330000122';
+const DEFAULT_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || '';
+const DEFAULT_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || '';
 
 export function getTelegramConfig() {
   return {
@@ -85,8 +85,6 @@ ${itemsFormatted}
 export async function sendTelegramOrderNotification(orderData) {
   const config = getTelegramConfig();
   const textMessage = formatOrderTelegramMessage(orderData);
-
-  console.log('Sending order notification to Telegram...', { orderData, config });
 
   // 1. If custom Webhook URL is set
   if (config.webhookUrl) {
