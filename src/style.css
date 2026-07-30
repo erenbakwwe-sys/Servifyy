@@ -69,6 +69,9 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
 }
 
 body {
@@ -76,8 +79,11 @@ body {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   line-height: 1.6;
-  overflow-x: hidden;
-  cursor: none; /* For custom cursor */
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  position: relative;
+  touch-action: manipulation;
 }
 
 a {
@@ -2270,20 +2276,49 @@ h1, h2, h3, h4, h5, h6, .heading {
 }
 
 @media (max-width: 768px) {
+  /* Prevent touch cursor interfering with mobile scroll */
+  .custom-cursor, .custom-cursor-follower {
+    display: none !important;
+  }
+  body {
+    cursor: auto !important;
+  }
+
+  /* Compact Navbar Brand */
   .brand-sub { display: none !important; }
-  .brand-title { font-size: 1.05rem !important; letter-spacing: 1px; }
+  .brand-title { font-size: 1.05rem !important; letter-spacing: 1px; white-space: nowrap; }
   .navbar { padding: 10px 16px !important; }
   .nav-right { gap: 12px; }
   
-  .hero-title { font-size: 2.2rem; }
-  .hero-description { font-size: 0.9rem; }
-  .hero-actions { flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
-  
+  /* Hero Section Typography & Layout */
+  .hero-section { height: auto !important; min-height: 75vh; padding: 50px 20px 30px 20px !important; }
+  .hero-title { font-size: clamp(1.7rem, 6vw, 2.5rem) !important; line-height: 1.3 !important; text-shadow: 0 4px 15px rgba(0,0,0,0.9); }
+  .hero-subtitle, .hero-description { font-size: 0.9rem !important; line-height: 1.6 !important; }
+  .hero-actions { flex-direction: column; width: 100%; max-width: 300px; margin: 0 auto; gap: 12px; }
+  .hero-actions .btn { width: 100%; text-align: center; justify-content: center; }
+
+  /* Section Titles & Typography Fix */
+  .section-title { font-size: clamp(1.35rem, 5vw, 2rem) !important; line-height: 1.35 !important; }
+  .section-subtitle { font-size: 0.7rem !important; letter-spacing: 2px !important; }
+
+  /* Product Showcase Grid */
+  .products-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+  .product-title { font-size: 1.05rem !important; line-height: 1.4 !important; }
+  .product-material { font-size: 0.8rem !important; line-height: 1.5 !important; }
+
+  /* Philosophy & Testimonials */
+  .philosophy-container { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .philosophy-text h2 { font-size: 1.35rem !important; line-height: 1.4 !important; }
+  .testimonials-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+  .testimonial-card { padding: 20px !important; }
+  .testimonial-text { font-size: 0.88rem !important; line-height: 1.6 !important; }
+
+  /* Checkout & Modals */
   .checkout-header-bar {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
-    padding: 16px 20px;
+    padding: 16px;
   }
   
   .checkout-trust-badges-header {
@@ -2292,7 +2327,7 @@ h1, h2, h3, h4, h5, h6, .heading {
   }
   
   .checkout-left-panel, .checkout-right-panel {
-    padding: 20px 16px;
+    padding: 16px !important;
   }
   
   .checkout-stepper {
@@ -2310,23 +2345,23 @@ h1, h2, h3, h4, h5, h6, .heading {
   }
   
   .pmodal-img-col {
-    height: 280px;
+    height: 260px;
     width: 100%;
   }
 }
 
 @media (max-width: 576px) {
-  .trust-container { grid-template-columns: 1fr; }
+  .trust-container { grid-template-columns: 1fr !important; gap: 16px !important; }
   
-  .footer-container { grid-template-columns: 1fr; gap: 28px; }
+  .footer-container { grid-template-columns: 1fr !important; gap: 28px !important; }
   
   .products-grid { grid-template-columns: 1fr; }
   
-  .form-row { flex-direction: column; gap: 10px; }
+  .form-row { flex-direction: column !important; gap: 10px !important; }
   
-  .payment-tabs { grid-template-columns: 1fr; }
+  .payment-tabs { grid-template-columns: 1fr !important; }
   
-  .cart-drawer { width: 100vw; right: -100vw; }
+  .cart-drawer { width: 100vw !important; right: -100vw; }
   
   .hero-title { font-size: 2rem; }
   
@@ -2337,12 +2372,14 @@ h1, h2, h3, h4, h5, h6, .heading {
   }
   
   .legal-modal-card {
-    max-width: 95vw;
-    padding: 16px;
+    max-width: 95vw !important;
+    padding: 16px !important;
   }
   
   .legal-body {
-    padding: 16px;
+    padding: 14px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.6 !important;
   }
 }
 
