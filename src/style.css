@@ -2221,57 +2221,101 @@ h1, h2, h3, h4, h5, h6, .heading {
 }
 
 /* --------------------------------------------------------------------------
-   24. RESPONSIVE DESIGN
+   24. RESPONSIVE DESIGN (FULL MOBILE & TABLET COMPATIBILITY)
    -------------------------------------------------------------------------- */
 @media (max-width: 1200px) {
-  .checkout-body {
+  .checkout-body-grid {
     grid-template-columns: 1fr;
   }
-  .checkout-modal-backdrop .modal-content {
-    overflow-y: auto;
+  
+  .checkout-right-panel {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 }
 
 @media (max-width: 992px) {
-  .section-padding { padding: 4rem 5%; }
-  
   .nav-left .nav-link { display: none; }
   
-  .trust-grid { grid-template-columns: repeat(2, 1fr); }
+  .trust-container { grid-template-columns: repeat(2, 1fr); gap: 20px; }
   
-  .philosophy-grid { grid-template-columns: 1fr; }
+  .philosophy-container { grid-template-columns: 1fr; gap: 36px; }
   
-  .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .footer-container { grid-template-columns: 1fr 1fr; gap: 32px; }
   
-  .quick-view-grid { grid-template-columns: 1fr; }
-  .qv-image { height: 400px; }
+  .hero-title { font-size: 3rem; }
   
-  .hero-title { font-size: 3.5rem; }
+  .pmodal-info-col { padding: 24px; }
+}
+
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.4rem; }
+  .hero-description { font-size: 0.95rem; }
+  .hero-actions { flex-direction: column; width: 100%; max-width: 320px; margin: 0 auto; }
+  
+  .checkout-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+  
+  .checkout-trust-badges-header {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .checkout-left-panel, .checkout-right-panel {
+    padding: 20px 16px;
+  }
+  
+  .checkout-stepper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .step-line { display: none; }
+  
+  .product-modal-card {
+    flex-direction: column;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .pmodal-img-col {
+    height: 280px;
+    width: 100%;
+  }
 }
 
 @media (max-width: 576px) {
-  .trust-grid { grid-template-columns: 1fr; }
+  .trust-container { grid-template-columns: 1fr; }
   
-  .footer-grid { grid-template-columns: 1fr; }
+  .footer-container { grid-template-columns: 1fr; gap: 28px; }
   
-  .product-grid { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: 1fr; }
   
-  .form-row { grid-template-columns: 1fr; }
-  
-  .cart-drawer { width: 100%; right: -100%; }
+  .form-row { flex-direction: column; gap: 10px; }
   
   .payment-tabs { grid-template-columns: 1fr; }
   
-  .hero-title { font-size: 2.5rem; }
+  .cart-drawer { width: 100vw; right: -100vw; }
   
-  .checkout-form-area, .checkout-summary-area {
-    padding: 1.5rem;
-  }
+  .hero-title { font-size: 2rem; }
   
   .experience-badge {
     position: static;
     margin-top: 1rem;
     box-shadow: none;
+  }
+  
+  .legal-modal-card {
+    max-width: 95vw;
+    padding: 16px;
+  }
+  
+  .legal-body {
+    padding: 16px;
   }
 }
 
