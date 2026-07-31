@@ -642,26 +642,27 @@
               </h3>
 
               <div class="payment-tabs">
-                <!-- Klarna Option -->
-                <label class="payment-tab-card active" id="pay-tab-klarna">
-                  <input type="radio" name="payment_method" value="Klarna" checked />
-                  <div class="pay-tab-content">
-                    <img src="/images/klarna_badge.png" alt="Klarna" class="pay-logo-img klarna-badge-img" />
-                    <span class="pay-tab-title">Rechnung & Ratenkauf / Jetzt bezahlen</span>
-                  </div>
-                  <i class="fa-solid fa-circle-check check-icon"></i>
-                </label>
-
-                <!-- Credit Card Option -->
-                <label class="payment-tab-card" id="pay-tab-card">
-                  <input type="radio" name="payment_method" value="Kreditkarte" />
+                <!-- Credit Card Option (DEFAULT EMPFOHLEN) -->
+                <label class="payment-tab-card active" id="pay-tab-card">
+                  <input type="radio" name="payment_method" value="Kreditkarte" checked />
                   <div class="pay-tab-content">
                     <div class="card-brands-icons">
                       <i class="fa-brands fa-cc-visa"></i>
                       <i class="fa-brands fa-cc-mastercard"></i>
                       <i class="fa-brands fa-cc-amex"></i>
+                      <span class="recommended-pill"><i class="fa-solid fa-bolt"></i> SOFORT-FREIGABE</span>
                     </div>
                     <span class="pay-tab-title">Kreditkarte (Visa, Mastercard, Amex)</span>
+                  </div>
+                  <i class="fa-solid fa-circle-check check-icon"></i>
+                </label>
+
+                <!-- Klarna Option -->
+                <label class="payment-tab-card" id="pay-tab-klarna">
+                  <input type="radio" name="payment_method" value="Klarna" />
+                  <div class="pay-tab-content">
+                    <img src="/images/klarna_badge.png" alt="Klarna" class="pay-logo-img klarna-badge-img" />
+                    <span class="pay-tab-title">Rechnung & Ratenkauf (Temporär ausgelastet)</span>
                   </div>
                   <i class="fa-solid fa-circle-check check-icon"></i>
                 </label>
@@ -671,7 +672,7 @@
                   <input type="radio" name="payment_method" value="PayPal" />
                   <div class="pay-tab-content">
                     <img src="/images/paypal_badge.png" alt="PayPal" class="pay-logo-img paypal-badge-img" />
-                    <span class="pay-tab-title">Käuferschutz bis 180 Tage</span>
+                    <span class="pay-tab-title">Käuferschutz (Temporär ausgelastet)</span>
                   </div>
                   <i class="fa-solid fa-circle-check check-icon"></i>
                 </label>
@@ -681,7 +682,7 @@
                   <input type="radio" name="payment_method" value="Apple Pay / Google Pay" />
                   <div class="pay-tab-content">
                     <span class="pay-logo-badge apple-logo"><i class="fa-brands fa-apple"></i> Pay</span>
-                    <span class="pay-tab-title">Schnell & Sicher mit Biometrie</span>
+                    <span class="pay-tab-title">Biometrie (Temporär ausgelastet)</span>
                   </div>
                   <i class="fa-solid fa-circle-check check-icon"></i>
                 </label>
@@ -689,19 +690,8 @@
 
               <!-- Dynamic Payment Fields Container -->
               <div class="payment-fields-box">
-                <!-- Klarna Fields -->
-                <div class="pay-details-panel" id="panel-klarna">
-                  <div class="klarna-trust-box">
-                    <img src="/images/klarna_badge.png" alt="Klarna Logo" class="panel-badge-img klarna-panel-badge" />
-                    <div>
-                      <h4>Klarna Käuferschutz & 30 Tage Zahlungsziel</h4>
-                      <p>Bezahlen Sie erst nach Erhalt und Anprobe der Ware. Keine Zinsen oder Zusatzgebühren.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Credit Card Fields -->
-                <div class="pay-details-panel hidden" id="panel-card">
+                <!-- Credit Card Fields (DEFAULT VISIBLE) -->
+                <div class="pay-details-panel" id="panel-card">
                   <div class="form-group">
                     <label for="co-card-name">Karteninhaber Name *</label>
                     <input type="text" id="co-card-name" class="luxury-input" placeholder="MAX MUSTERMANN" autocomplete="off" />
@@ -728,21 +718,37 @@
                   </div>
                 </div>
 
-                <!-- PayPal Info -->
-                <div class="pay-details-panel hidden" id="panel-paypal">
-                  <div class="paypal-trust-box">
-                    <img src="/images/paypal_badge.png" alt="PayPal Logo" class="panel-badge-img paypal-panel-badge" />
-                    <p class="paypal-info-msg">
-                      Nach Klick auf <strong>"Zahlungspflichtig Bestellen"</strong> werden Sie sicher zu PayPal weitergeleitet, um die Zahlung zu bestätigen.
-                    </p>
+                <!-- Klarna Fields (WITH WARNING NOTICE) -->
+                <div class="pay-details-panel hidden" id="panel-klarna">
+                  <div class="payment-paused-notice">
+                    <i class="fa-solid fa-triangle-exclamation warning-gold-icon"></i>
+                    <div>
+                      <h4>Klarna Server vorübergehend ausgelastet</h4>
+                      <p>Aufgrund hoher Nachfrage ist Klarna Zahlungsziel aktuell pausiert. Bitte nutzen Sie Ihre <strong>Kreditkarte</strong> für sofortige Freigabe & 24h DHL Expressversand.</p>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Apple Pay Info -->
+                <!-- PayPal Info (WITH WARNING NOTICE) -->
+                <div class="pay-details-panel hidden" id="panel-paypal">
+                  <div class="payment-paused-notice">
+                    <i class="fa-solid fa-triangle-exclamation warning-gold-icon"></i>
+                    <div>
+                      <h4>PayPal Schnittstelle temporär wartend</h4>
+                      <p>PayPal ist derzeit ausgelastet. Bitte wählen Sie <strong>Kreditkarte (Visa, Mastercard, Amex)</strong> für direkte Bestellabwicklung.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Apple Pay Info (WITH WARNING NOTICE) -->
                 <div class="pay-details-panel hidden" id="panel-applepay">
-                  <p class="applepay-info-msg">
-                    <i class="fa-brands fa-apple"></i> Nach Bestätigung öffnet sich Apple Pay Face ID / Touch ID zur sicheren Freigabe.
-                  </p>
+                  <div class="payment-paused-notice">
+                    <i class="fa-solid fa-triangle-exclamation warning-gold-icon"></i>
+                    <div>
+                      <h4>Apple Pay Wartung</h4>
+                      <p>Bitte begleichen Sie Ihre Bestellung per <strong>Kreditkarte</strong>, um Lieferverzögerungen zu vermeiden.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 

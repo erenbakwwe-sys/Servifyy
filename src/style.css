@@ -2138,22 +2138,44 @@ h1, h2, h3, h4, h5, h6, .heading {
 .paypal-logo { color: #0079C1; }
 .apple-logo { color: #FFF; }
 
-.klarna-trust-box, .paypal-trust-box {
+.recommended-pill {
+  background: linear-gradient(135deg, #F3E5AB, #D4AF37);
+  color: #06090F;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+  margin-left: 8px;
+}
+
+.payment-paused-notice {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.3);
   padding: 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
 }
 
-.panel-badge-img {
-  height: 36px;
-  width: auto;
-  object-fit: contain;
-  border-radius: 6px;
+.warning-gold-icon {
+  font-size: 1.8rem;
+  color: #D4AF37;
   flex-shrink: 0;
+}
+
+.payment-paused-notice h4 {
+  font-size: 0.9rem;
+  color: #F3E5AB;
+  margin-bottom: 4px;
+}
+
+.payment-paused-notice p {
+  font-size: 0.8rem;
+  color: #B0B9C6;
+  line-height: 1.4;
 }
 
 .check-icon {

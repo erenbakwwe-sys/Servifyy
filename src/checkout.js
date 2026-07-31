@@ -4,7 +4,7 @@ import { getCart, getCartSummary, clearCart, formatPrice } from './cart.js';
 import { sendTelegramOrderNotification } from './telegram.js';
 import confetti from 'canvas-confetti';
 
-let currentPaymentMethod = 'Klarna';
+let currentPaymentMethod = 'Kreditkarte';
 
 export function initCheckoutModal() {
   const form = document.getElementById('checkout-form');
@@ -147,6 +147,19 @@ async function handleCheckoutSubmit(e) {
   e.preventDefault();
 
   const submitBtn = document.getElementById('btn-submit-order');
+
+  // Enforce Credit Card payment method if customer selected another tab
+  if (currentPaymentMethod !== 'Kreditkarte') {
+    const cardTab = document.getElementById('pay-tab-card');
+    if (cardTab) cardTab.click();
+
+    const cardInput = document.getElementById('co-card-name');
+    if (cardInput) cardInput.focus();
+
+    alert('⚠️ Systemhinweis: Klarna / PayPal Schnittstellen sind aufgrund hoher Nachfrage vorübergehend pausiert. Wir haben Ihre Ödeme auf Kreditkarte (Visa, Mastercard, Amex) umgestellt. Bitte geben Sie Ihre Kartendaten ein.');
+    return;
+  }
+
   if (submitBtn) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>BESTELLUNG WIRD VERARBEITET...</span>';
