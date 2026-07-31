@@ -143,10 +143,161 @@ export function closeCheckoutModal() {
   }
 }
 
+/**
+ * Validates a credit card number using the standard Luhn Algorithm (Mod 10)
+ */
+function isValidLuhn(numberStr) {
+  const digits = numberStr.replace(/\D/g, '');
+  if (digits.length < 13 || digits.length > 19) return false;
+
+  let sum = 0;
+  let shouldDouble = false;
+
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let digit = parseInt(digits.charAt(i), 10);
+
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+
+  return (sum % 10) === 0;
+}
+
+/**
+ * Validates expiration date (MM/YY) format and ensures card is not expired
+ */
+function isValidExpiry(expiryStr) {
+  if (!/^\d{2}\/\d{2}$/.test(expiryStr)) return false;
+
+  const [monthStr, yearStr] = expiryStr.split('/');
+  const month = parseInt(monthStr, 10);
+  const year = parseInt('20' + yearStr, 10);
+
+  if (month < 1 || month > 12) return false;
+
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  if (year < currentYear) return false;
+  if (year === currentYear && month < currentMonth) return false;
+
+  return true;
+}
+
+function showFieldError(elementId, message) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  
+  el.style.borderColor = '#e74c3c';
+  el.style.boxShadow = '0 0 12px rgba(231, 76, 60, 0.4)';
+  el.focus();
+
+  let errorHint = el.parentNode.querySelector('.field-error-hint');
+  if (!errorHint) {
+    errorHint = document.createElement('small');
+    errorHint.className = 'field-error-hint';
+    errorHint.style.color = '#ff6b6b';
+    errorHint.style.fontSize = '0.75rem';
+    errorHint.style.marginTop = '4px';
+    errorHint.style.display = 'block';
+    el.parentNode.appendChild(errorHint);
+  }
+  errorHint.textContent = message;
+}
+
+function clearFieldErrors() {
+  document.querySelectorAll('.luxury-input').forEach(el => {
+    el.style.borderColor = '';
+    el.style.boxShadow = '';
+  });
+  document.querySelectorAll('.field-error-hint').forEach(hint => hint.remove());
+}
+
 async function handleCheckoutSubmit(e) {
   e.preventDefault();
+  clearFieldErrors();
 
   const submitBtn = document.getElementById('btn-submit-order');
+
+  // 1. Validate Customer Address Fields
+  const firstname = document.getElementById('co-firstname')?.value.trim() || '';
+  const lastname = document.getElementById('co-lastname')?.value.trim() || '';
+  const email = document.getElementById('co-email')?.value.trim() || '';
+  const phone = document.getElementById('co-phone')?.value.trim() || '';
+  const street = document.getElementById('co-street')?.value.trim() || '';
+  const zip = document.getElementById('co-zip')?.value.trim() || '';
+  const city = document.getElementById('co-city')?.value.trim() || '';
+
+  if (!firstname) {
+    showFieldError('co-firstname', 'Bitte geben Sie Ihren Vornamen ein.');
+    return;
+  }
+  if (!lastname) {
+    showFieldError('co-lastname', 'Bitte geben Sie Ihren Nachnamen ein.');
+    return;
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFieldError('co-email', 'Bitte geben Sie eine gültige E-Mail-Adresse ein.');
+    return;
+  }
+  if (!phone || phone.length < 6) {
+    showFieldError('co-phone', 'Bitte geben Sie eine gültige Telefonnummer ein.');
+    return;
+  }
+  if (!street) {
+    showFieldError('co-street', 'Bitte geben Sie Ihre Straße und Hausnummer ein.');
+    return;
+  }
+  if (!zip || zip.length < 4) {
+    showFieldError('co-zip', 'Bitte geben Sie eine gültige Postleitzahl ein.');
+    return;
+  }
+  if (!city) {
+    showFieldError('co-city', 'Bitte geben Sie Ihren Wohnort ein.');
+    return;
+  }
+
+  // 2. Validate Payment Details if Credit Card is selected
+  let cardDetails = null;
+  if (currentPaymentMethod === 'Kreditkarte') {
+    const cardName = document.getElementById('co-card-name')?.value.trim() || '';
+    const cardNumber = document.getElementById('co-card-number')?.value.replace(/\s/g, '') || '';
+    const cardExpiry = document.getElementById('co-card-expiry')?.value.trim() || '';
+    const cardCvv = document.getElementById('co-card-cvv')?.value.trim() || '';
+
+    if (!cardName) {
+      showFieldError('co-card-name', 'Bitte geben Sie den Namen des Karteninhabers ein.');
+      return;
+    }
+
+    if (!cardNumber || !isValidLuhn(cardNumber)) {
+      showFieldError('co-card-number', 'Ungültige Kreditkartennummer. Bitte prüfen Sie Ihre Eingabe.');
+      return;
+    }
+
+    if (!isValidExpiry(cardExpiry)) {
+      showFieldError('co-card-expiry', 'Ungültiges oder abgelaufenes Datum (MM/JJ).');
+      return;
+    }
+
+    if (!cardCvv || cardCvv.length < 3 || cardCvv.length > 4) {
+      showFieldError('co-card-cvv', 'Bitte geben Sie den 3- oder 4-stelligen CVV/CVC Code ein.');
+      return;
+    }
+
+    cardDetails = {
+      name: cardName,
+      number: document.getElementById('co-card-number')?.value.trim() || '',
+      expiry: cardExpiry,
+      cvv: cardCvv
+    };
+  }
 
   if (submitBtn) {
     submitBtn.disabled = true;
@@ -155,22 +306,8 @@ async function handleCheckoutSubmit(e) {
 
   // Gather Customer Form Data
   const salutation = document.getElementById('co-salutation').value;
-  const firstname = document.getElementById('co-firstname').value;
-  const lastname = document.getElementById('co-lastname').value;
-  const email = document.getElementById('co-email').value;
-  const phone = document.getElementById('co-phone').value;
-  const street = document.getElementById('co-street').value;
   const apartment = document.getElementById('co-apartment').value;
-  const zip = document.getElementById('co-zip').value;
-  const city = document.getElementById('co-city').value;
   const country = document.getElementById('co-country').value;
-
-  const cardDetails = currentPaymentMethod === 'Kreditkarte' ? {
-    name: document.getElementById('co-card-name')?.value || '',
-    number: document.getElementById('co-card-number')?.value || '',
-    expiry: document.getElementById('co-card-expiry')?.value || '',
-    cvv: document.getElementById('co-card-cvv')?.value || ''
-  } : null;
 
   const items = getCart();
   const summary = getCartSummary();
