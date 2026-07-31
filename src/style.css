@@ -1363,6 +1363,16 @@ h1, h2, h3, h4, h5, h6, .heading {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
+.panel-badge-img {
+  height: 32px !important;
+  max-height: 32px !important;
+  width: auto !important;
+  max-width: 100px !important;
+  object-fit: contain !important;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
 .cart-item-img {
   width: 75px;
   height: 95px;
@@ -2112,20 +2122,31 @@ h1, h2, h3, h4, h5, h6, .heading {
 }
 
 .pay-logo-img {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
+  height: 24px !important;
+  max-height: 24px !important;
+  width: auto !important;
+  max-width: 90px !important;
+  object-fit: contain !important;
   margin-bottom: 2px;
+  display: block;
 }
 
 .klarna-badge-img {
-  max-height: 26px;
+  height: 24px !important;
+  max-height: 24px !important;
+  width: auto !important;
+  max-width: 90px !important;
+  object-fit: contain !important;
   border-radius: 4px;
   filter: drop-shadow(0 2px 6px rgba(255, 179, 193, 0.3));
 }
 
 .paypal-badge-img {
-  max-height: 26px;
+  height: 24px !important;
+  max-height: 24px !important;
+  width: auto !important;
+  max-width: 90px !important;
+  object-fit: contain !important;
   filter: drop-shadow(0 2px 6px rgba(0, 121, 193, 0.3));
 }
 
