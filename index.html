@@ -646,7 +646,7 @@
                 <label class="payment-tab-card active" id="pay-tab-klarna">
                   <input type="radio" name="payment_method" value="Klarna" checked />
                   <div class="pay-tab-content">
-                    <span class="pay-logo-badge klarna-logo">Klarna.</span>
+                    <img src="/images/klarna_badge.png" alt="Klarna" class="pay-logo-img klarna-badge-img" />
                     <span class="pay-tab-title">Rechnung & Ratenkauf / Jetzt bezahlen</span>
                   </div>
                   <i class="fa-solid fa-circle-check check-icon"></i>
@@ -670,7 +670,7 @@
                 <label class="payment-tab-card" id="pay-tab-paypal">
                   <input type="radio" name="payment_method" value="PayPal" />
                   <div class="pay-tab-content">
-                    <span class="pay-logo-badge paypal-logo"><i class="fa-brands fa-paypal"></i> PayPal</span>
+                    <img src="/images/paypal_badge.png" alt="PayPal" class="pay-logo-img paypal-badge-img" />
                     <span class="pay-tab-title">Käuferschutz bis 180 Tage</span>
                   </div>
                   <i class="fa-solid fa-circle-check check-icon"></i>
@@ -692,7 +692,7 @@
                 <!-- Klarna Fields -->
                 <div class="pay-details-panel" id="panel-klarna">
                   <div class="klarna-trust-box">
-                    <i class="fa-solid fa-shield-cat gold-icon"></i>
+                    <img src="/images/klarna_badge.png" alt="Klarna Logo" class="panel-badge-img klarna-panel-badge" />
                     <div>
                       <h4>Klarna Käuferschutz & 30 Tage Zahlungsziel</h4>
                       <p>Bezahlen Sie erst nach Erhalt und Anprobe der Ware. Keine Zinsen oder Zusatzgebühren.</p>
@@ -730,9 +730,12 @@
 
                 <!-- PayPal Info -->
                 <div class="pay-details-panel hidden" id="panel-paypal">
-                  <p class="paypal-info-msg">
-                    <i class="fa-brands fa-paypal"></i> Nach Klick auf <strong>"Zahlungspflichtig Bestellen"</strong> werden Sie sicher zu PayPal weitergeleitet, um die Zahlung zu bestätigen.
-                  </p>
+                  <div class="paypal-trust-box">
+                    <img src="/images/paypal_badge.png" alt="PayPal Logo" class="panel-badge-img paypal-panel-badge" />
+                    <p class="paypal-info-msg">
+                      Nach Klick auf <strong>"Zahlungspflichtig Bestellen"</strong> werden Sie sicher zu PayPal weitergeleitet, um die Zahlung zu bestätigen.
+                    </p>
+                  </div>
                 </div>
 
                 <!-- Apple Pay Info -->

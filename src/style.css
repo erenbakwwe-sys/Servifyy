@@ -2111,6 +2111,24 @@ h1, h2, h3, h4, h5, h6, .heading {
   color: #B0B9C6;
 }
 
+.pay-logo-img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 2px;
+}
+
+.klarna-badge-img {
+  max-height: 26px;
+  border-radius: 4px;
+  filter: drop-shadow(0 2px 6px rgba(255, 179, 193, 0.3));
+}
+
+.paypal-badge-img {
+  max-height: 26px;
+  filter: drop-shadow(0 2px 6px rgba(0, 121, 193, 0.3));
+}
+
 .pay-logo-badge {
   font-weight: 700;
   font-size: 1rem;
@@ -2120,11 +2138,22 @@ h1, h2, h3, h4, h5, h6, .heading {
 .paypal-logo { color: #0079C1; }
 .apple-logo { color: #FFF; }
 
-.card-brands-icons {
+.klarna-trust-box, .paypal-trust-box {
   display: flex;
-  gap: 8px;
-  font-size: 1.2rem;
-  color: #F3E5AB;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.panel-badge-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .check-icon {
