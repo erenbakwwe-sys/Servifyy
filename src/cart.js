@@ -142,7 +142,7 @@ export function updateCartUI() {
               <div class="cart-item-price">${formatPrice(item.price * item.quantity)}</div>
             </div>
           </div>
-          <button style="background:none;border:none;color:var(--text-muted);cursor:pointer;align-self:flex-start;" onclick="window.removeCartItem('${item.id}', '${item.selectedSize}')">
+          <button class="remove-item-btn" title="Entfernen" onclick="window.removeCartItem('${item.id}', '${item.selectedSize}')">
             &times;
           </button>
         </div>
