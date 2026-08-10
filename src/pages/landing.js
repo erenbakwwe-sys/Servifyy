@@ -1004,6 +1004,11 @@ export function renderLanding(container) {
             <a href="#demos">${t('demoSectionTag', 'landing')}</a>
             <a href="#pricing">${t('pricing', 'landing')}</a>
           </div>
+          <div class="footer-links" style="margin-top:8px;opacity:0.7;font-size:0.82rem;">
+            <a href="/terms.html" target="_blank">${t('termsOfService', 'landing')}</a>
+            <a href="/privacy.html" target="_blank">${t('privacyPolicy', 'landing')}</a>
+            <a href="/refund.html" target="_blank">${t('refundPolicy', 'landing')}</a>
+          </div>
           <div class="footer-copy">${t('footerCopy', 'landing')}</div>
         </div>
       </div>

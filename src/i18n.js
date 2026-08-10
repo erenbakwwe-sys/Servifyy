@@ -574,7 +574,11 @@ export const translations = {
       faq3Q: 'Müşterilerimizin sipariş vermesi için uygulama yüklemesi gerekir mi?',
       faq3A: 'Hayır. Müşterileriniz masadaki QR kodu telefon kameralarıyla okuttuklarında menünüz direkt olarak web tarayıcılarında açılır. Herhangi bir App Store veya Google Play uygulaması indirmelerine gerek yoktur.',
       faq4Q: 'Garson çağırma sistemi nasıl çalışır?',
-      faq4A: 'Müşteriler telefonlarındaki dijital menü üzerinden tek bir tuşa basarak garson çağırabilir, hesap isteyebilir veya sipariş geçebilirler. Bu çağrılar anında sesli bildirimlerle yöneticinin ve garsonların yönetim paneline düşer.'
+      faq4A: 'Müşteriler telefonlarındaki dijital menü üzerinden tek bir tuşa basarak garson çağırabilir, hesap isteyebilir veya sipariş geçebilirler. Bu çağrılar anında sesli bildirimlerle yöneticinin ve garsonların yönetim paneline düşer.',
+      footerCopy: '© 2026 Servify. Tüm hakları saklıdır.',
+      termsOfService: 'Kullanım Şartları',
+      privacyPolicy: 'Gizlilik Politikası',
+      refundPolicy: 'İade Politikası'
     },
     auth: {
       createAccount: 'Hesap Oluştur',
@@ -1244,7 +1248,11 @@ export const translations = {
       faq3Q: 'Do customers need to install an app to order?',
       faq3A: 'No. Customers scan the QR code with their camera, and your menu opens directly in their browser. No app download is required.',
       faq4Q: 'How does the waiter call system work?',
-      faq4A: 'Customers press a button on the menu to call a waiter, ask for the bill, or place orders. These notifications ring on the admin panel.'
+      faq4A: 'Customers press a button on the menu to call a waiter, ask for the bill, or place orders. These notifications ring on the admin panel.',
+      footerCopy: '© 2026 Servify. All rights reserved.',
+      termsOfService: 'Terms of Service',
+      privacyPolicy: 'Privacy Policy',
+      refundPolicy: 'Refund Policy'
     },
     auth: {
       createAccount: 'Create Account',
@@ -1914,7 +1922,11 @@ export const translations = {
       faq3Q: 'Müssen Kunden eine App installieren, um zu bestellen?',
       faq3A: 'Nein. Kunden scannen den QR-Code mit ihrer Kamera, und Ihr Menü öffnet sich direkt im Browser. Es ist kein App-Download erforderlich.',
       faq4Q: 'Wie funktioniert das Kellnerrufsystem?',
-      faq4A: 'Kunden drücken eine Taste auf dem Menü, um den Kellner zu rufen, die Rechnung anzufordern oder zu bestellen. Diese Benachrichtigungen klingeln sofort im Admin-Panel.'
+      faq4A: 'Kunden drücken eine Taste auf dem Menü, um den Kellner zu rufen, die Rechnung anzufordern oder zu bestellen. Diese Benachrichtigungen klingeln sofort im Admin-Panel.',
+      footerCopy: '© 2026 Servify. Alle Rechte vorbehalten.',
+      termsOfService: 'Nutzungsbedingungen',
+      privacyPolicy: 'Datenschutzrichtlinie',
+      refundPolicy: 'Rückerstattungsrichtlinie'
     },
     auth: {
       createAccount: 'Konto erstellen',
