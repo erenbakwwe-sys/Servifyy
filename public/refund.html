@@ -107,16 +107,17 @@
     .nav-links { display: flex; align-items: center; gap: 4px; }
 
     .lang-switcher {
-      display: flex; align-items: center; gap: 8px; margin-right: 12px;
+      display: flex; align-items: center; gap: 6px;
     }
     .lang-btn {
-      background: rgba(255, 255, 255, 0.05); border: 2px solid transparent; border-radius: 50%;
-      cursor: pointer; font-size: 1.1rem; padding: 4px; width: 34px; height: 34px;
-      display: flex; align-items: center; justify-content: center;
-      transition: all var(--transition); filter: grayscale(0.6) opacity(0.7);
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
+      color: var(--text-secondary); padding: 5px 11px;
+      display: flex; align-items: center; gap: 5px;
+      transition: all var(--transition);
     }
-    .lang-btn:hover { filter: grayscale(0) opacity(1); transform: scale(1.1); background: rgba(255, 255, 255, 0.1); }
-    .lang-btn.active { filter: grayscale(0) opacity(1); border-color: var(--primary-light); background: rgba(108, 92, 231, 0.15); box-shadow: 0 0 10px var(--primary-glow); }
+    .lang-btn:hover { color: var(--text-primary); background: rgba(255, 255, 255, 0.12); }
+    .lang-btn.active { color: white; border-color: var(--primary-light); background: linear-gradient(135deg, var(--primary), var(--primary-dark)); box-shadow: 0 2px 10px var(--primary-glow); }
 
     /* ============================================
        CONTENT
@@ -156,12 +157,10 @@
         </div>
         <span class="gradient-text">Servify</span>
       </a>
-      <div class="nav-links">
-        <div class="lang-switcher">
-          <button class="lang-btn active" data-lang="de" title="Deutsch">🇩🇪</button>
-          <button class="lang-btn" data-lang="tr" title="Türkçe">🇹🇷</button>
-          <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
-        </div>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="de" title="Deutsch">🇩🇪 DE</button>
+        <button class="lang-btn" data-lang="tr" title="Türkçe">🇹🇷 TR</button>
+        <button class="lang-btn" data-lang="en" title="English">🇬🇧 EN</button>
       </div>
     </div>
   </nav>
