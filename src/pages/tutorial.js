@@ -210,21 +210,38 @@ export function startTutorialTour() {
     overlay.style.padding = '20px';
 
     overlay.innerHTML = `
-      <div class="modal tour-finish-modal" style="max-width: 480px; width: 100%; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(20, 20, 35, 0.95) 100%); border: 1px solid rgba(108, 92, 231, 0.3); border-radius: 24px; padding: 40px 32px; text-align: center; box-shadow: 0 24px 80px rgba(108, 92, 231, 0.25); transform: scale(0.9); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
-        <div style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 32px var(--primary-glow);">
-          <span class="material-icons-round" style="font-size: 2.2rem; color: white;">thumb_up</span>
+      <div class="modal tour-finish-modal" style="max-width: 480px; width: 100%; background: linear-gradient(145deg, rgba(28, 26, 42, 0.98), rgba(15, 14, 23, 0.98)); border: 1px solid rgba(108, 92, 231, 0.35); border-radius: 24px; padding: 36px 30px; text-align: center; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(108, 92, 231, 0.2); backdrop-filter: blur(20px); transform: scale(0.9); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 32px var(--primary-glow);">
+          <span class="material-icons-round" style="font-size: 2rem; color: white;">check_circle</span>
         </div>
-        <h3 style="font-size: 1.6rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em;">${t('demoPopupTitle', 'admin')}</h3>
-        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 32px 0;">
-          ${t('demoPopupDesc', 'admin')}
+        
+        <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(108, 92, 231, 0.12); border: 1px solid rgba(108, 92, 231, 0.25); color: var(--primary-light); padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+          ${t('demoPopupBadge', 'admin')}
+        </div>
+
+        <h3 style="font-size: 1.45rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.3;">${t('demoPopupTitle', 'admin')}</h3>
+        
+        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 24px 0;">
+          ${t('demoPopupLongDesc', 'admin')}
         </p>
-        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
-          <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #6c5ce7, #8e44ad); border-color: transparent; box-shadow: 0 8px 24px rgba(108, 92, 231, 0.3); gap: 8px; justify-content: center; font-weight: 700; height: 50px;">
-            <span class="material-icons-round">calendar_month</span>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+          <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #6C5CE7, #5A4BD1); border-color: transparent; box-shadow: 0 8px 24px rgba(108, 92, 231, 0.3); gap: 8px; justify-content: center; font-weight: 700; height: 48px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.9rem;">
+            <span class="material-icons-round" style="font-size: 1.15rem;">calendar_month</span>
             ${t('demoPopupCalendly', 'admin')}
           </a>
+          <a href="#/auth" class="btn btn-secondary btn-lg" style="height: 44px; justify-content: center; font-size: 0.88rem; font-weight: 600; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: var(--text-primary); text-decoration: none; display: flex; align-items: center;">
+            ${t('demoPopupCreateAccount', 'admin')}
+          </a>
         </div>
-        <button class="btn btn-ghost" id="close-finish-modal" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-decoration: underline;">
+
+        <div style="font-size: 0.74rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px;">
+          <span style="display: flex; align-items: center; gap: 4px;"><span class="material-icons-round" style="font-size: 0.88rem; color: #00CEC9;">check_circle</span> ${t('demoPopupNoCc', 'admin')}</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><span class="material-icons-round" style="font-size: 0.88rem; color: #00CEC9;">check_circle</span> ${t('demoPopupNoCommit', 'admin')}</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><span class="material-icons-round" style="font-size: 0.88rem; color: #00CEC9;">check_circle</span> ${t('demoPopupSetupIncl', 'admin')}</span>
+        </div>
+
+        <button class="btn btn-ghost" id="close-finish-modal" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500; background: none; border: none; cursor: pointer;">
           ${t('demoPopupDismiss', 'admin')}
         </button>
       </div>

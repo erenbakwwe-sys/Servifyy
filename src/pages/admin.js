@@ -261,39 +261,34 @@ function renderAdminLayout(container, userId) {
     demoCta.style.bottom = '24px';
     demoCta.style.right = '24px';
     demoCta.style.zIndex = '9999';
-    demoCta.style.background = 'var(--bg-card)';
-    demoCta.style.border = '1px solid rgba(108, 92, 231, 0.4)';
+    demoCta.style.background = 'rgba(20, 19, 32, 0.95)';
+    demoCta.style.border = '1px solid rgba(108, 92, 231, 0.35)';
     demoCta.style.borderRadius = '16px';
-    demoCta.style.padding = '16px 20px';
-    demoCta.style.boxShadow = '0 12px 40px rgba(108, 92, 231, 0.25)';
-    demoCta.style.maxWidth = '400px';
+    demoCta.style.padding = '16px 18px';
+    demoCta.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(108, 92, 231, 0.15)';
+    demoCta.style.maxWidth = '360px';
     demoCta.style.width = 'calc(100% - 48px)';
+    demoCta.style.backdropFilter = 'blur(16px)';
     
     demoCta.innerHTML = `
-      <button class="demo-cta-close" style="position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--text-muted); cursor: pointer; padding:0;"><span class="material-icons-round" style="font-size: 1.1rem;">close</span></button>
-      <div class="demo-cta-content" style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(108, 92, 231, 0.15); color: var(--primary-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span class="material-icons-round" style="font-size: 1.5rem;">auto_awesome</span></div>
-        <div class="demo-cta-text" style="flex: 1; min-width: 200px;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 2px 0; color: var(--text-primary);">${t('demoPopupTitle', 'admin')}</h4>
-          <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">${t('demoPopupDesc', 'admin')}</p>
-        </div>
-        <div class="demo-cta-actions" style="display: flex; gap: 8px; width: 100%; margin-top: 8px;">
-          <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6c5ce7, #8e44ad); border-color: transparent; color: white; flex: 1; justify-content: center; font-size: 0.78rem; font-weight:700; display:flex; align-items:center; gap:4px; padding:6px 12px; height:34px; border-radius:8px;">
-            <span class="material-icons-round" style="font-size: 1rem;">calendar_month</span> ${t('demoPromoBtn', 'admin')}
-          </a>
-        </div>
+      <button class="demo-cta-close" style="position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.1rem;">close</span></button>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00CEC9; box-shadow: 0 0 8px #00CEC9;"></span>
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--primary-light); text-transform: uppercase; letter-spacing: 0.5px;">${t('demoMode', 'admin')}</span>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 12px 0; line-height: 1.45;">${t('demoPromoText', 'admin')}</p>
+      <div style="display: flex; gap: 8px;">
+        <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="flex: 1; justify-content: center; font-size: 0.78rem; font-weight: 700; height: 34px; border-radius: 8px; gap: 6px; text-decoration: none;">
+          <span class="material-icons-round" style="font-size: 1rem;">calendar_month</span> ${t('demoPromoBtn', 'admin')}
+        </a>
+        <a href="#/auth" class="btn btn-secondary btn-sm" style="font-size: 0.78rem; font-weight: 600; height: 34px; border-radius: 8px; text-decoration: none; padding: 0 12px;">
+          ${t('demoPopupCreateAccount', 'admin')}
+        </a>
       </div>
     `;
     container.appendChild(demoCta);
     
     demoCta.querySelector('.demo-cta-close').onclick = () => demoCta.remove();
-    
-    // Set a timer to trigger a beautiful popup modal after 20 seconds
-    setTimeout(() => {
-      if (document.querySelector('.demo-cta-banner')) { // still on admin page and not closed
-        showDemoContactModal();
-      }
-    }, 20000);
   }
 }
 
@@ -1353,7 +1348,7 @@ function showDemoContactModal() {
   overlay.className = 'modal-overlay';
   overlay.style.position = 'fixed';
   overlay.style.inset = '0';
-  overlay.style.background = 'rgba(10, 10, 15, 0.85)'; // Slightly darker background for better focus
+  overlay.style.background = 'rgba(10, 10, 15, 0.65)';
   overlay.style.backdropFilter = 'blur(12px)';
   overlay.style.webkitBackdropFilter = 'blur(12px)';
   overlay.style.zIndex = '999999';
@@ -1363,97 +1358,37 @@ function showDemoContactModal() {
   overlay.style.padding = '20px';
 
   overlay.innerHTML = `
-    <style>
-      @keyframes pulse-glow {
-        0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
-        70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-      }
-      .demo-popup-card {
-        position: relative;
-        max-width: 450px;
-        width: 100%;
-        background: linear-gradient(135deg, var(--bg-card) 0%, rgba(20, 20, 35, 0.98) 100%);
-        border: 1px solid rgba(108, 92, 231, 0.35);
-        border-radius: 24px;
-        padding: 40px 32px;
-        text-align: center;
-        box-shadow: 0 24px 80px rgba(108, 92, 231, 0.3);
-        transform: scale(0.9);
-        opacity: 0;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .pulse-btn {
-        animation: pulse-glow 2s infinite;
-      }
-      @media (max-width: 480px) {
-        .demo-popup-card {
-          padding: 32px 24px;
-          border-radius: 20px;
-          margin: 12px;
-        }
-        .demo-popup-title {
-          font-size: 1.35rem !important;
-        }
-        .demo-popup-text {
-          font-size: 0.88rem !important;
-          margin-bottom: 24px !important;
-          line-height: 1.5 !important;
-        }
-        .demo-popup-btn {
-          height: 48px !important;
-          font-size: 0.85rem !important;
-        }
-        .demo-popup-icon-box {
-          width: 64px !important;
-          height: 64px !important;
-          margin-bottom: 16px !important;
-        }
-        .demo-popup-icon-box span {
-          font-size: 1.9rem !important;
-        }
-      }
-    </style>
-    
-    <div class="demo-popup-card">
-      <!-- Scarcity Badge (FOMO) -->
-      <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(235, 94, 40, 0.1); border: 1px solid rgba(235, 94, 40, 0.25); color: #eb5e28; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">
-        🔥 ${t('demoPopupFomo', 'admin')}
+    <div class="demo-popup-card" style="position:relative; max-width:480px; width:100%; background:linear-gradient(145deg, rgba(28, 26, 42, 0.98), rgba(15, 14, 23, 0.98)); border:1px solid rgba(108, 92, 231, 0.3); border-radius:24px; padding:36px 30px; text-align:center; box-shadow:0 24px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(108, 92, 231, 0.15); backdrop-filter:blur(20px); transform:scale(0.9); opacity:0; transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+      <button id="close-demo-contact-x" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-muted); cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:all 0.2s;"><span class="material-icons-round" style="font-size:1.15rem;">close</span></button>
+      
+      <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(108, 92, 231, 0.12); border:1px solid rgba(108, 92, 231, 0.25); color:var(--primary-light); padding:5px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; margin-bottom:18px; letter-spacing:0.3px;">
+        <span class="material-icons-round" style="font-size:0.95rem;">verified</span>
+        ${t('demoPopupBadge', 'admin')}
       </div>
       
-      <div class="demo-popup-icon-box" style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 8px 32px var(--primary-glow);">
-        <span class="material-icons-round" style="font-size: 2.2rem; color: white;">rocket_launch</span>
-      </div>
+      <h3 style="font-size:1.45rem; font-weight:800; margin:0 0 10px 0; color:var(--text-primary); letter-spacing:-0.01em; line-height:1.3;">${t('demoPopupTitle', 'admin')}</h3>
       
-      <h3 class="demo-popup-title" style="font-size: 1.45rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.25;">${t('demoPopupTitle', 'admin')}</h3>
-      
-      <!-- Social Proof -->
-      <div style="font-size: 0.78rem; color: #fdcb6e; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-        <span>⭐⭐⭐⭐⭐</span>
-        <span style="color: var(--text-secondary);">${t('demoPopupSocial', 'admin')}</span>
-      </div>
-      
-      <p class="demo-popup-text" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.55; margin: 0 0 24px 0;">
+      <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.6; margin:0 0 24px 0;">
         ${t('demoPopupLongDesc', 'admin')}
       </p>
       
-      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-        <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg demo-popup-btn pulse-btn" style="background: linear-gradient(135deg, #6c5ce7, #8e44ad); border-color: transparent; gap: 8px; justify-content: center; font-weight: 700; height: 50px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.92rem;">
-          <span class="material-icons-round">calendar_month</span>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+        <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background:linear-gradient(135deg, #6C5CE7, #5A4BD1); border-color:transparent; gap:8px; justify-content:center; font-weight:700; height:48px; display:flex; align-items:center; color:white; text-decoration:none; border-radius:12px; font-size:0.9rem; box-shadow:0 8px 24px rgba(108, 92, 231, 0.3);">
+          <span class="material-icons-round" style="font-size:1.15rem;">calendar_month</span>
           ${t('demoPopupCalendly', 'admin')}
+        </a>
+        <a href="#/auth" class="btn btn-secondary btn-lg" style="height:44px; justify-content:center; font-size:0.88rem; font-weight:600; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:var(--text-primary); text-decoration:none; display:flex; align-items:center;">
+          ${t('demoPopupCreateAccount', 'admin')}
         </a>
       </div>
       
-      <!-- Risk Reversal Text -->
-      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
-        <span>💳 ${t('demoPopupNoCc', 'admin')}</span>
-        <span>•</span>
-        <span>🤝 ${t('demoPopupNoCommit', 'admin')}</span>
-        <span>•</span>
-        <span>⚡ ${t('demoPopupSetupIncl', 'admin')}</span>
+      <div style="font-size:0.75rem; color:var(--text-muted); display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
+        <span style="display:flex; align-items:center; gap:4px;"><span class="material-icons-round" style="font-size:0.9rem; color:#00CEC9;">check_circle</span> ${t('demoPopupNoCc', 'admin')}</span>
+        <span style="display:flex; align-items:center; gap:4px;"><span class="material-icons-round" style="font-size:0.9rem; color:#00CEC9;">check_circle</span> ${t('demoPopupNoCommit', 'admin')}</span>
+        <span style="display:flex; align-items:center; gap:4px;"><span class="material-icons-round" style="font-size:0.9rem; color:#00CEC9;">check_circle</span> ${t('demoPopupSetupIncl', 'admin')}</span>
       </div>
       
-      <button class="btn btn-ghost" id="close-demo-contact" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-decoration: underline; background: none; border: none; cursor: pointer;">
+      <button class="btn btn-ghost" id="close-demo-contact" style="font-size:0.8rem; color:var(--text-muted); font-weight:500; background:none; border:none; cursor:pointer;">
         ${t('demoPopupDismiss', 'admin')}
       </button>
     </div>
@@ -1479,5 +1414,6 @@ function showDemoContactModal() {
     setTimeout(() => overlay.remove(), 250);
   };
 
-  overlay.querySelector('#close-demo-contact').onclick = closeModal;
+  overlay.querySelector('#close-demo-contact')?.addEventListener('click', closeModal);
+  overlay.querySelector('#close-demo-contact-x')?.addEventListener('click', closeModal);
 }
