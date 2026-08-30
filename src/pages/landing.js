@@ -25,6 +25,7 @@ export function renderLanding(container) {
             <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 TR</option>
             <option value="en" ${getLang() === 'en' ? 'selected' : ''}>🇬🇧 EN</option>
             <option value="de" ${getLang() === 'de' ? 'selected' : ''}>🇩🇪 DE</option>
+            <option value="da" ${getLang() === 'da' ? 'selected' : ''}>🇩🇰 DA</option>
           </select>
         </div>
         <div class="mobile-menu-btn" id="mobile-menu-btn">
@@ -47,6 +48,7 @@ export function renderLanding(container) {
           <option value="tr" ${getLang() === 'tr' ? 'selected' : ''}>🇹🇷 Türkçe</option>
           <option value="en" ${getLang() === 'en' ? 'selected' : ''}>🇬🇧 English</option>
           <option value="de" ${getLang() === 'de' ? 'selected' : ''}>🇩🇪 Deutsch</option>
+          <option value="da" ${getLang() === 'da' ? 'selected' : ''}>🇩🇰 Dansk</option>
         </select>
       </div>
     </div>

@@ -696,7 +696,7 @@ select.input-field {
 .tour-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.35);
   z-index: 9998;
   pointer-events: auto;
 }
@@ -705,7 +705,7 @@ select.input-field {
   position: absolute;
   border: 2px solid var(--primary);
   border-radius: var(--radius-md);
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 30px var(--primary-glow);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35), 0 0 30px var(--primary-glow);
   z-index: 9999;
   pointer-events: none;
   transition: all var(--transition-base);

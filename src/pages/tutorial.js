@@ -66,7 +66,7 @@ export function startTutorialTour() {
         highlight.style.width = rect.width + 8 + 'px';
         highlight.style.height = rect.height + 8 + 'px';
         highlight.style.borderColor = step.color;
-        highlight.style.boxShadow = `0 0 0 9999px rgba(0,0,0,0.75), 0 0 40px ${step.color}55, 0 0 80px ${step.color}22`;
+        highlight.style.boxShadow = `0 0 0 9999px rgba(0,0,0,0.35), 0 0 40px ${step.color}55, 0 0 80px ${step.color}22`;
         document.body.appendChild(highlight);
 
         // Rich Tooltip
@@ -200,7 +200,7 @@ export function startTutorialTour() {
     overlay.className = 'modal-overlay';
     overlay.style.position = 'fixed';
     overlay.style.inset = '0';
-    overlay.style.background = 'rgba(10, 10, 15, 0.8)';
+    overlay.style.background = 'rgba(10, 10, 15, 0.5)';
     overlay.style.backdropFilter = 'blur(12px)';
     overlay.style.webkitBackdropFilter = 'blur(12px)';
     overlay.style.zIndex = '999999';
@@ -263,8 +263,8 @@ function injectTourStyles() {
     }
 
     @keyframes tourPulse {
-      0%, 100% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.75), 0 0 30px var(--step-color, #6C5CE7); }
-      50% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.75), 0 0 50px var(--step-color, #6C5CE7), 0 0 100px var(--step-color, #6C5CE7); }
+      0%, 100% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.35), 0 0 30px var(--step-color, #6C5CE7); }
+      50% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.35), 0 0 50px var(--step-color, #6C5CE7), 0 0 100px var(--step-color, #6C5CE7); }
     }
 
     .tour-tooltip-v2 {
