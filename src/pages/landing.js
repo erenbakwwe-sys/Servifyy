@@ -638,6 +638,30 @@ export function renderLanding(container) {
               <p>${t('demoCard3Desc', 'landing')}</p>
             </div>
           </div>
+          <div class="demo-card">
+            <div class="demo-card-preview">
+              <div class="demo-browser-bar">
+                <div class="demo-browser-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="demo-browser-url">cafevitus.vercel.app</div>
+              </div>
+              <iframe src="https://cafevitus.vercel.app/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="Cafe Vitus Demo"></iframe>
+              <div class="demo-card-overlay">
+                <a href="https://cafevitus.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+                  <span class="material-icons-round">open_in_new</span>
+                  ${t('demoVisit', 'landing')}
+                </a>
+              </div>
+            </div>
+            <div class="demo-card-info">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+                <div class="demo-card-badge" style="margin-bottom:0;">${t('demoCafe', 'landing')}</div>
+              </div>
+              <h3>${t('demoCard5Title', 'landing')}</h3>
+              <p>${t('demoCard5Desc', 'landing')}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
