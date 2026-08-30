@@ -168,9 +168,9 @@ function renderAdminLayout(container, userId) {
       <main class="admin-main">
         ${userId === 'demo' ? `
           <div class="demo-top-promo-bar" style="background: linear-gradient(90deg, #6c5ce7, #8e44ad); color: white; padding: 10px 16px; text-align: center; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; z-index: 100; position: relative; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); flex-wrap: wrap;">
-            <span>🔥 ${t('demoPromoText', 'admin')}</span>
-            <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" style="background: white; color: #6c5ce7; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: 800; transition: transform 0.2s;">
-              <span class="material-icons-round" style="font-size:0.85rem;">calendar_month</span> ${t('demoPromoBtn', 'admin')}
+            <span>${t('demoPromoText', 'admin')}</span>
+            <a href="https://wa.me/4542415169" target="_blank" rel="noopener noreferrer" style="background: #25D366; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: 800; transition: transform 0.2s;">
+              <span class="material-icons-round" style="font-size:0.85rem;">chat</span> ${t('demoPromoBtn', 'admin')}
             </a>
           </div>
         ` : ''}
@@ -278,8 +278,8 @@ function renderAdminLayout(container, userId) {
       </div>
       <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 12px 0; line-height: 1.45;">${t('demoPromoText', 'admin')}</p>
       <div style="display: flex; gap: 8px;">
-        <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="flex: 1; justify-content: center; font-size: 0.78rem; font-weight: 700; height: 34px; border-radius: 8px; gap: 6px; text-decoration: none;">
-          <span class="material-icons-round" style="font-size: 1rem;">calendar_month</span> ${t('demoPromoBtn', 'admin')}
+        <a href="https://wa.me/4542415169" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="flex: 1; justify-content: center; font-size: 0.78rem; font-weight: 700; height: 34px; border-radius: 8px; gap: 6px; text-decoration: none; background: #25D366; border-color: transparent; color: white;">
+          <span class="material-icons-round" style="font-size: 1rem;">chat</span> ${t('demoPromoBtn', 'admin')}
         </a>
         <a href="#/auth" class="btn btn-secondary btn-sm" style="font-size: 0.78rem; font-weight: 600; height: 34px; border-radius: 8px; text-decoration: none; padding: 0 12px;">
           ${t('demoPopupCreateAccount', 'admin')}
@@ -1373,8 +1373,8 @@ function showDemoContactModal() {
       </p>
       
       <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-        <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background:linear-gradient(135deg, #6C5CE7, #5A4BD1); border-color:transparent; gap:8px; justify-content:center; font-weight:700; height:48px; display:flex; align-items:center; color:white; text-decoration:none; border-radius:12px; font-size:0.9rem; box-shadow:0 8px 24px rgba(108, 92, 231, 0.3);">
-          <span class="material-icons-round" style="font-size:1.15rem;">calendar_month</span>
+        <a href="https://wa.me/4542415169" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background:linear-gradient(135deg, #25D366, #128C7E); border-color:transparent; gap:8px; justify-content:center; font-weight:700; height:48px; display:flex; align-items:center; color:white; text-decoration:none; border-radius:12px; font-size:0.9rem; box-shadow:0 8px 24px rgba(37, 211, 102, 0.3);">
+          <span class="material-icons-round" style="font-size:1.15rem;">chat</span>
           ${t('demoPopupCalendly', 'admin')}
         </a>
         <a href="#/auth" class="btn btn-secondary btn-lg" style="height:44px; justify-content:center; font-size:0.88rem; font-weight:600; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:var(--text-primary); text-decoration:none; display:flex; align-items:center;">

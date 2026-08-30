@@ -226,8 +226,8 @@ export function startTutorialTour() {
         </p>
         
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-          <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #6C5CE7, #5A4BD1); border-color: transparent; box-shadow: 0 8px 24px rgba(108, 92, 231, 0.3); gap: 8px; justify-content: center; font-weight: 700; height: 48px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.9rem;">
-            <span class="material-icons-round" style="font-size: 1.15rem;">calendar_month</span>
+          <a href="https://wa.me/4542415169" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #25D366, #128C7E); border-color: transparent; box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3); gap: 8px; justify-content: center; font-weight: 700; height: 48px; display: flex; align-items: center; color: white; text-decoration: none; border-radius: 12px; font-size: 0.9rem;">
+            <span class="material-icons-round" style="font-size: 1.15rem;">chat</span>
             ${t('demoPopupCalendly', 'admin')}
           </a>
           <a href="#/auth" class="btn btn-secondary btn-lg" style="height: 44px; justify-content: center; font-size: 0.88rem; font-weight: 600; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: var(--text-primary); text-decoration: none; display: flex; align-items: center;">
