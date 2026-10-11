@@ -2703,16 +2703,58 @@ export const translations = {
   }
 };
 
-let currentLang = localStorage.getItem('appLang');
+const pageTitles = {
+  tr: 'Servify – Restoranlar İçin Dijital QR Menü & Sipariş Sistemi | %0 Komisyon',
+  da: 'Servify – QR Bestillingssystem & POS til Restauranter | 0% Provision',
+  de: 'Servify – QR-Bestellsystem für Restaurants | 0% Provision',
+  en: 'Servify | Smart QR Menu & Restaurant POS System (0% Commission)'
+};
+
+function updateDocumentLangAndTitle(lang) {
+  if (typeof document !== 'undefined') {
+    document.title = pageTitles[lang] || pageTitles.en;
+    if (document.documentElement) {
+      document.documentElement.lang = lang;
+    }
+  }
+}
+
+function detectBrowserLang() {
+  if (typeof navigator === 'undefined') return 'tr';
+  const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+  if (navLang.startsWith('tr')) return 'tr';
+  if (navLang.startsWith('da')) return 'da';
+  if (navLang.startsWith('de')) return 'de';
+  if (navLang.startsWith('en')) return 'en';
+  return 'en';
+}
+
+let currentLang = (typeof localStorage !== 'undefined' && localStorage.getItem('appLang')) || null;
 
 export function getLang() {
-  return currentLang || 'tr';
+  if (!currentLang) {
+    currentLang = detectBrowserLang();
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('appLang', currentLang);
+      localStorage.setItem('adminLang', currentLang);
+    }
+  }
+  updateDocumentLangAndTitle(currentLang);
+  return currentLang;
 }
 
 export function setLang(lang) {
   currentLang = lang;
-  localStorage.setItem('appLang', lang);
-  localStorage.setItem('adminLang', lang); // For backward compatibility
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('appLang', lang);
+    localStorage.setItem('adminLang', lang); // For backward compatibility
+  }
+  updateDocumentLangAndTitle(lang);
+}
+
+// Initial sync
+if (typeof window !== 'undefined') {
+  updateDocumentLangAndTitle(getLang());
 }
 
 export function t(key, section = null) {
@@ -2726,3 +2768,4 @@ export function t(key, section = null) {
 // Keep backward compatibility
 export const getAdminLang = getLang;
 export const setAdminLang = setLang;
+

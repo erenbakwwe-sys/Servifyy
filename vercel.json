@@ -4,6 +4,12 @@
     { "source": "/privacy.html", "destination": "/privacy.html" },
     { "source": "/refund.html", "destination": "/refund.html" },
     { "source": "/affiliate.html", "destination": "/affiliate.html" },
-    { "source": "/((?!assets|favicon|icons|og-image|demo-video|robots|sitemap).*)", "destination": "/index.html" }
+    { "source": "/tr", "destination": "/tr/index.html" },
+    { "source": "/tr/", "destination": "/tr/index.html" },
+    { "source": "/da", "destination": "/da/index.html" },
+    { "source": "/da/", "destination": "/da/index.html" },
+    { "source": "/de", "destination": "/de/index.html" },
+    { "source": "/de/", "destination": "/de/index.html" },
+    { "source": "/((?!assets|favicon|icons|og-image|demo-video|robots|sitemap|tr|da|de).*)", "destination": "/index.html" }
   ]
 }
