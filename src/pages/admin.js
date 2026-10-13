@@ -100,7 +100,7 @@ function renderAdminLayout(container, userId) {
       <div class="sidebar-overlay" id="sidebar-overlay"></div>
       <aside class="admin-sidebar" id="admin-sidebar">
         <div class="sidebar-header">
-          <div class="sidebar-logo"><span class="material-icons-round">restaurant_menu</span></div>
+          <div class="sidebar-logo" style="background: transparent; padding: 2px;"><img src="/logo-icon.png" alt="Servify" style="width: 100%; height: 100%; object-fit: contain;" /></div>
           <div class="sidebar-info">
             <h3>${restaurantName}</h3>
             ${userData?.plan === 'trial' ? `<span class="trial-badge"><span class="material-icons-round" style="font-size:0.7rem;">schedule</span> ${trialDays} ${t('trialDaysLeft')}</span>` : ''}

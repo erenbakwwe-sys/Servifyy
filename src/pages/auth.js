@@ -15,11 +15,8 @@ export function renderAuth(container, params = {}) {
         <div class="orb orb-2"></div>
       </div>
       <div class="auth-card">
-        <div class="auth-logo">
-          <div class="logo-icon">
-            <span class="material-icons-round">restaurant_menu</span>
-          </div>
-          <span class="gradient-text">QR Menü</span>
+        <div class="auth-logo" style="margin-bottom: 24px; display: flex; justify-content: center;">
+          <img src="/logo.png" alt="Servify SaaS" style="height: 48px; width: auto; max-width: 200px; object-fit: contain;" />
         </div>
         <h2 class="auth-title">${isRegister ? t('createAccount', 'auth') : t('welcome', 'auth')}</h2>
         <p class="auth-subtitle">${isRegister ? t('registerSub', 'auth') : t('loginSub', 'auth')}</p>

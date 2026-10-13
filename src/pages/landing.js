@@ -9,11 +9,8 @@ export function renderLanding(container) {
     <!-- Navigation -->
     <nav class="landing-nav" id="landing-nav">
       <div class="nav-inner">
-        <a href="#/" class="nav-logo">
-          <div class="logo-icon">
-            <span class="material-icons-round">restaurant_menu</span>
-          </div>
-          <span class="gradient-text">QR Menü</span>
+        <a href="#/" class="nav-logo" style="text-decoration:none; display:flex; align-items:center;">
+          <img src="/logo.png" alt="Servify SaaS" style="height:36px; width:auto; max-width:160px; object-fit:contain;" />
         </a>
         <div class="nav-links" id="nav-links">
           <a href="#features">${t('features', 'landing')}</a>
@@ -1019,11 +1016,8 @@ export function renderLanding(container) {
     <footer class="landing-footer">
       <div class="container">
         <div class="footer-inner">
-          <div class="nav-logo">
-            <div class="logo-icon" style="width:32px;height:32px;font-size:1rem;">
-              <span class="material-icons-round">restaurant_menu</span>
-            </div>
-            <span class="gradient-text" style="font-size:1.1rem;">QR Menü</span>
+          <div class="nav-logo" style="display:flex; align-items:center;">
+            <img src="/logo.png" alt="Servify SaaS" style="height:32px; width:auto; max-width:140px; object-fit:contain;" />
           </div>
           <div class="footer-links">
             <a href="#features">${t('features', 'landing')}</a>

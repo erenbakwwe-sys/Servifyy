@@ -9,11 +9,8 @@ export function renderStaffLogin(container) {
         <div class="orb orb-2"></div>
       </div>
       <div class="auth-card">
-        <div class="auth-logo">
-          <div class="logo-icon" style="background: linear-gradient(135deg, var(--primary), #6366f1);">
-            <span class="material-icons-round">badge</span>
-          </div>
-          <span class="gradient-text">QR Menü</span>
+        <div class="auth-logo" style="margin-bottom: 24px; display: flex; justify-content: center;">
+          <img src="/logo.png" alt="Servify SaaS" style="height: 48px; width: auto; max-width: 200px; object-fit: contain;" />
         </div>
         <h2 class="auth-title">${t('staff').staffTitle}</h2>
         <p class="auth-subtitle">${t('staff').staffSubtitle}</p>

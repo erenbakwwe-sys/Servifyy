@@ -30,8 +30,8 @@ export async function renderCustomerMenu(container, params) {
   // Show loading
   container.innerHTML = `
     <div class="customer-loading" id="customer-loading">
-      <div class="loading-logo">
-        <span class="material-icons-round">restaurant_menu</span>
+      <div class="loading-logo" style="background: transparent;">
+        <img src="/logo-icon.png" alt="Servify" style="width: 48px; height: 48px; object-fit: contain;" />
       </div>
       <div class="loading-text">${t('menuLoading', 'customer')}</div>
       <div class="spinner"></div>
