@@ -752,8 +752,8 @@ export function renderLanding(container) {
               </div>
             </div>
             
-            <a id="roi-whatsapp-btn" href="https://wa.me/4542415169" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block btn-lg" style="height: 52px; background: #25D366; border-color: transparent; color: white; justify-content: center; font-weight: 700; margin-top: 10px; display:flex; align-items:center; gap:8px; box-shadow: 0 8px 24px rgba(37,211,102,0.25); text-decoration:none; border-radius:12px;">
-              <span class="material-icons-round">chat</span>
+            <a id="roi-whatsapp-btn" href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block btn-lg" style="height: 52px; background: linear-gradient(135deg, #6c5ce7, #8e44ad); border-color: transparent; color: white; justify-content: center; font-weight: 700; margin-top: 10px; display:flex; align-items:center; gap:8px; box-shadow: 0 8px 24px rgba(108,92,231,0.25); text-decoration:none; border-radius:12px;">
+              <span class="material-icons-round">calendar_month</span>
               ${t('roiBtn', 'landing')}
             </a>
           </div>
@@ -1036,8 +1036,8 @@ export function renderLanding(container) {
 
     <!-- Floating Contact Widget -->
     <div class="floating-contact-widget">
-      <a href="https://wa.me/4542415169" target="_blank" rel="noopener noreferrer" class="floating-btn whatsapp-btn" title="WhatsApp">
-        <span class="material-icons-round">chat</span>
+      <a href="https://calendly.com/bendeehshd/neues-meeting" target="_blank" rel="noopener noreferrer" class="floating-btn" title="Termin Buchen / Randevu Planla" style="background: linear-gradient(135deg, #6c5ce7, #8e44ad); box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4); color: white;">
+        <span class="material-icons-round">calendar_month</span>
       </a>
     </div>
   `;
@@ -1135,11 +1135,10 @@ export function renderLanding(container) {
       hoursVal.textContent = hoursSaved + ' ' + t('roiHoursUnit', 'landing');
       printVal.textContent = printingSaved.toLocaleString('tr-TR') + ' ₺';
 
-      // Update WhatsApp Link dynamically
+      // Update appointment link
       const roiWhatsappBtn = container.querySelector('#roi-whatsapp-btn');
       if (roiWhatsappBtn) {
-        const text = `Merhaba, ${tables} masalı ve ortalama ${ticket} ₺ adisyonlu restoranımız için aylık tahmini ${revIncrease.toLocaleString('tr-TR')} ₺ gelir artışı sağlayan Servify QR menü sistemini ücretsiz kurdurmak ve test etmek istiyoruz.`;
-        roiWhatsappBtn.href = `https://wa.me/4542415169?text=${encodeURIComponent(text)}`;
+        roiWhatsappBtn.href = 'https://calendly.com/bendeehshd/neues-meeting';
       }
     };
     
